@@ -23,7 +23,7 @@ public class TestRailException extends RuntimeException {
      * @param error the error message from TestRail service
      */
     TestRailException(int responseCode, String error) {
-        super(error);
+        super(responseCode + " - " + error);
         this.responseCode = responseCode;
     }
 

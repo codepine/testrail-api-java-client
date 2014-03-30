@@ -3,6 +3,7 @@ package com.cymbocha.apis.testrail;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.PropertyNamingStrategy;
+import com.google.common.base.Objects;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.NonNull;
@@ -14,6 +15,7 @@ import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.nio.charset.Charset;
@@ -74,8 +76,7 @@ public abstract class Request<T> {
             con.setRequestProperty("Content-Type", "application/json");
             String basicAuth = "Basic "
                     + DatatypeConverter.printBase64Binary((config.getUsername()
-                    + ":" + config.getPassword()).getBytes(Charset
-                    .forName("UTF-8")));
+                    + ":" + config.getPassword()).getBytes(Charset.forName("UTF-8")));
             con.setRequestProperty("Authorization", basicAuth);
             if (method == Method.POST) {
                 Object content = getContent();
@@ -85,13 +86,23 @@ public abstract class Request<T> {
                 }
             }
             log.debug("Sending " + method + " request to URL : " + url);
-            int responseCode = con.getResponseCode();
+            int responseCode = 0;
+            try {
+                responseCode = con.getResponseCode();
+            } catch (IOException e) {
+                // swallow it since for 401 getResponseCode throws an IOException
+                responseCode = con.getResponseCode();
+            }
             log.debug("Response Code : " + responseCode);
 
-            if (responseCode != 200) {
+            if (responseCode != HttpURLConnection.HTTP_OK) {
+                InputStream errorStream = con.getErrorStream();
                 TestRailException.Builder exceptionBuilder = new TestRailException.Builder().setResponseCode(responseCode);
+                if (errorStream == null) {
+                    throw exceptionBuilder.setError("<server did not send any error message>").build();
+                }
                 throw ((TestRailException.Builder) JSON.readerForUpdating(exceptionBuilder).readValue(
-                        new BufferedInputStream(con.getErrorStream()))).build();
+                        new BufferedInputStream(errorStream))).build();
             }
 
             InputStream responseStream = new BufferedInputStream(con.getInputStream());
