@@ -11,10 +11,7 @@ import lombok.extern.log4j.Log4j;
 
 import javax.net.ssl.HttpsURLConnection;
 import javax.xml.bind.DatatypeConverter;
-import java.io.BufferedInputStream;
-import java.io.BufferedOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
+import java.io.*;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -82,7 +79,9 @@ public abstract class Request<T> {
                 Object content = getContent();
                 if (content != null) {
                     con.setDoOutput(true);
-                    JSON.writeValue(new BufferedOutputStream(con.getOutputStream()), getContent());
+                    try (OutputStream outputStream = new BufferedOutputStream(con.getOutputStream())) {
+                        JSON.writeValue(outputStream, content);
+                    }
                 }
             }
             log.debug("Sending " + method + " request to URL : " + url);
@@ -96,20 +95,25 @@ public abstract class Request<T> {
             log.debug("Response Code : " + responseCode);
 
             if (responseCode != HttpURLConnection.HTTP_OK) {
-                InputStream errorStream = con.getErrorStream();
-                TestRailException.Builder exceptionBuilder = new TestRailException.Builder().setResponseCode(responseCode);
-                if (errorStream == null) {
-                    throw exceptionBuilder.setError("<server did not send any error message>").build();
+                try (InputStream errorStream = con.getErrorStream()) {
+                    TestRailException.Builder exceptionBuilder = new TestRailException.Builder().setResponseCode(responseCode);
+                    if (errorStream == null) {
+                        throw exceptionBuilder.setError("<server did not send any error message>").build();
+                    }
+                    throw ((TestRailException.Builder) JSON.readerForUpdating(exceptionBuilder).readValue(
+                            new BufferedInputStream(errorStream))).build();
                 }
-                throw ((TestRailException.Builder) JSON.readerForUpdating(exceptionBuilder).readValue(
-                        new BufferedInputStream(errorStream))).build();
             }
 
-            InputStream responseStream = new BufferedInputStream(con.getInputStream());
-            if (responseClass != null) {
-                return JSON.readValue(responseStream, responseClass);
-            } else {
-                return JSON.readValue(responseStream, responseType);
+            try (InputStream responseStream = new BufferedInputStream(con.getInputStream())) {
+                if (responseClass != null) {
+                    if(responseClass == Void.class) {
+                        return null;
+                    }
+                    return JSON.readValue(responseStream, responseClass);
+                } else {
+                    return JSON.readValue(responseStream, responseType);
+                }
             }
 
         } catch (MalformedURLException e) {

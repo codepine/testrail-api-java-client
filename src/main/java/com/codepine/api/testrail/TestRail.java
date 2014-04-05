@@ -1,7 +1,6 @@
 package com.cymbocha.apis.testrail;
 
 import com.cymbocha.apis.testrail.model.Project;
-import com.google.common.base.Preconditions;
 import lombok.*;
 
 /**
@@ -18,15 +17,15 @@ public class TestRail {
     @NoArgsConstructor(access = AccessLevel.PRIVATE)
     public class Projects {
 
-        public Get get(int id) {
-            return new Get(id);
+        public Get get(@NonNull Project project) {
+            return new Get(project);
         }
 
         public class Get extends Request<Project> {
             private static final String REST_PATH = "get_project/";
 
-            private Get(int id) {
-                super(config, Method.GET, REST_PATH + id, Project.class);
+            private Get(@NonNull Project project) {
+                super(config, Method.GET, REST_PATH + project.getId(), Project.class);
             }
         }
 
@@ -42,8 +41,30 @@ public class TestRail {
             }
         }
 
-        public Update update(Project project) {
-            project = Preconditions.checkNotNull(project, "project cannot be null");
+        public Add add(@NonNull Project project) {
+            return new Add(project);
+        }
+
+        public class Add extends Request<Project> {
+            private static final String REST_PATH = "add_project";
+
+            private final Project project;
+
+            private Add(@NonNull Project project) {
+                super(config, Method.POST, REST_PATH, Project.class);
+                this.project = project;
+            }
+
+            @Override
+            protected Object getContent() {
+                return new Object() {
+                    @Delegate(types = {View.Project.Add.class})
+                    private Project delegate = project;
+                };
+            }
+        }
+
+        public Update update(@NonNull Project project) {
             return new Update(project);
         }
 
@@ -59,17 +80,26 @@ public class TestRail {
 
             @Override
             protected Object getContent() {
-                abstract class ContentView {
-                    abstract String getName();
-                    abstract String getAnnouncement();
-                    abstract boolean isShowCompleted();
-                    abstract boolean isCompleted();
-                }
-
                 return new Object() {
-                    @Delegate(types = {ContentView.class})
-                    Project delegate = project;
+                    @Delegate(types = {View.Project.Update.class})
+                    private Project delegate = project;
                 };
+            }
+
+        }
+
+        public Delete delete(@NonNull Project project) {
+            return new Delete(project);
+        }
+
+        public class Delete extends Request<Void> {
+            private static final String REST_PATH = "delete_project/";
+
+            private final Project project;
+
+            private Delete(@NonNull Project project) {
+                super(config, Method.POST, REST_PATH + project.getId(), Void.class);
+                this.project = project;
             }
 
         }
