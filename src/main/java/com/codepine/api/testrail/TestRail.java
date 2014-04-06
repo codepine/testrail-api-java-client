@@ -1,5 +1,6 @@
 package com.cymbocha.apis.testrail;
 
+import com.cymbocha.apis.testrail.model.CaseField;
 import com.cymbocha.apis.testrail.model.Project;
 import lombok.*;
 
@@ -104,4 +105,25 @@ public class TestRail {
 
         }
     }
+
+    public CaseFields caseFields() {
+        return new CaseFields();
+    }
+
+    @NoArgsConstructor
+    public class CaseFields {
+
+        public List list() {
+            return new List();
+        }
+
+        public class List extends Request<java.util.List<CaseField>> {
+            private static final String REST_PATH = "get_case_fields";
+
+            private List() {
+                super(config, Method.GET, REST_PATH, List.<java.util.List<CaseField>>responseType());
+            }
+        }
+    }
+
 }
