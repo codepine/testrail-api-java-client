@@ -1,6 +1,3 @@
-/**
- *
- */
 package com.cymbocha.apis.testrail.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
@@ -10,20 +7,16 @@ import lombok.Getter;
 import lombok.experimental.Accessors;
 
 /**
- * TestRail project.
+ * TestRail case type.
  */
 @Data
 @Accessors(chain = true)
-public class Project {
+public class CaseType {
 
     private int id;
     private String name;
-    private String announcement;
-    private boolean showAnnouncement;
     @JsonProperty
     @Getter(onMethod = @_({@JsonIgnore}))
-    private boolean isCompleted;
-    private Long completedOn;
-    private String url;
+    private boolean isDefault;
 
 }

@@ -1,7 +1,6 @@
 package com.cymbocha.apis.testrail;
 
-import com.cymbocha.apis.testrail.model.CaseField;
-import com.cymbocha.apis.testrail.model.Project;
+import com.cymbocha.apis.testrail.model.*;
 import lombok.*;
 
 /**
@@ -9,10 +8,23 @@ import lombok.*;
  */
 @AllArgsConstructor
 public class TestRail {
+    
     private final TestRailConfig config;
 
     public Projects projects() {
         return new Projects();
+    }
+
+    public CaseFields caseFields() {
+        return new CaseFields();
+    }
+
+    public CaseTypes caseTypes() {
+        return new CaseTypes();
+    }
+
+    public Configurations configurations() {
+        return new Configurations();
     }
 
     @NoArgsConstructor(access = AccessLevel.PRIVATE)
@@ -20,6 +32,22 @@ public class TestRail {
 
         public Get get(@NonNull Project project) {
             return new Get(project);
+        }
+
+        public List list() {
+            return new List();
+        }
+
+        public Add add(@NonNull Project project) {
+            return new Add(project);
+        }
+
+        public Update update(@NonNull Project project) {
+            return new Update(project);
+        }
+
+        public Delete delete(@NonNull Project project) {
+            return new Delete(project);
         }
 
         public class Get extends Request<Project> {
@@ -30,20 +58,12 @@ public class TestRail {
             }
         }
 
-        public List list() {
-            return new List();
-        }
-
         public class List extends Request<java.util.List<Project>> {
             private static final String REST_PATH = "get_projects";
 
             private List() {
                 super(config, Method.GET, REST_PATH, List.<java.util.List<Project>>responseType());
             }
-        }
-
-        public Add add(@NonNull Project project) {
-            return new Add(project);
         }
 
         public class Add extends Request<Project> {
@@ -63,10 +83,6 @@ public class TestRail {
                     private Project delegate = project;
                 };
             }
-        }
-
-        public Update update(@NonNull Project project) {
-            return new Update(project);
         }
 
         public class Update extends Request<Project> {
@@ -89,10 +105,6 @@ public class TestRail {
 
         }
 
-        public Delete delete(@NonNull Project project) {
-            return new Delete(project);
-        }
-
         public class Delete extends Request<Void> {
             private static final String REST_PATH = "delete_project/";
 
@@ -104,10 +116,6 @@ public class TestRail {
             }
 
         }
-    }
-
-    public CaseFields caseFields() {
-        return new CaseFields();
     }
 
     @NoArgsConstructor
@@ -126,4 +134,38 @@ public class TestRail {
         }
     }
 
+    @NoArgsConstructor
+    public class CaseTypes {
+
+        public List list() {
+            return new List();
+        }
+
+        public class List extends Request<java.util.List<CaseType>> {
+            private static final String REST_PATH = "get_case_types";
+
+            private List() {
+                super(config, Method.GET, REST_PATH, List.<java.util.List<CaseType>>responseType());
+            }
+        }
+
+    }
+
+    @NoArgsConstructor
+    public class Configurations {
+
+        public List list(@NonNull Project project) {
+            return new List(project);
+        }
+
+        public class List extends Request<java.util.List<Configuration>> {
+            private static final String REST_PATH = "get_configs/";
+
+            private List(Project project) {
+                super(config, Method.GET, REST_PATH + project.getId(), List.<java.util.List<Configuration>>responseType());
+            }
+
+        }
+
+    }
 }
