@@ -1,14 +1,18 @@
 package com.cymbocha.apis.testrail;
 
 import com.cymbocha.apis.testrail.model.*;
-import lombok.*;
+import com.fasterxml.jackson.core.type.TypeReference;
+import lombok.AccessLevel;
+import lombok.AllArgsConstructor;
+import lombok.NoArgsConstructor;
+import lombok.NonNull;
 
 /**
  * @author kms
  */
 @AllArgsConstructor
 public class TestRail {
-    
+
     private final TestRailConfig config;
 
     public Projects projects() {
@@ -25,6 +29,14 @@ public class TestRail {
 
     public Configurations configurations() {
         return new Configurations();
+    }
+
+    public Sections sections() {
+        return new Sections();
+    }
+
+    public Suites suites() {
+        return new Suites();
     }
 
     @NoArgsConstructor(access = AccessLevel.PRIVATE)
@@ -62,7 +74,8 @@ public class TestRail {
             private static final String REST_PATH = "get_projects";
 
             private List() {
-                super(config, Method.GET, REST_PATH, List.<java.util.List<Project>>responseType());
+                super(config, Method.GET, REST_PATH, new TypeReference<java.util.List<Project>>() {
+                });
             }
         }
 
@@ -78,11 +91,9 @@ public class TestRail {
 
             @Override
             protected Object getContent() {
-                return new Object() {
-                    @Delegate(types = {View.Project.Add.class})
-                    private Project delegate = project;
-                };
+                return project;
             }
+
         }
 
         public class Update extends Request<Project> {
@@ -97,10 +108,7 @@ public class TestRail {
 
             @Override
             protected Object getContent() {
-                return new Object() {
-                    @Delegate(types = {View.Project.Update.class})
-                    private Project delegate = project;
-                };
+                return project;
             }
 
         }
@@ -129,7 +137,8 @@ public class TestRail {
             private static final String REST_PATH = "get_case_fields";
 
             private List() {
-                super(config, Method.GET, REST_PATH, List.<java.util.List<CaseField>>responseType());
+                super(config, Method.GET, REST_PATH, new TypeReference<java.util.List<CaseField>>() {
+                });
             }
         }
     }
@@ -145,7 +154,8 @@ public class TestRail {
             private static final String REST_PATH = "get_case_types";
 
             private List() {
-                super(config, Method.GET, REST_PATH, List.<java.util.List<CaseType>>responseType());
+                super(config, Method.GET, REST_PATH, new TypeReference<java.util.List<CaseType>>() {
+                });
             }
         }
 
@@ -162,9 +172,174 @@ public class TestRail {
             private static final String REST_PATH = "get_configs/";
 
             private List(Project project) {
-                super(config, Method.GET, REST_PATH + project.getId(), List.<java.util.List<Configuration>>responseType());
+                super(config, Method.GET, REST_PATH + project.getId(), new TypeReference<java.util.List<Configuration>>() {
+                });
             }
 
+        }
+
+    }
+
+    @NoArgsConstructor
+    public class Sections {
+
+        public Get get(@NonNull Section section) {
+            return new Get(section);
+        }
+
+        public List list(@NonNull Project project, Suite suite) {
+            return new List(project, suite);
+        }
+
+        public Add add(@NonNull Project project, @NonNull Section section) {
+            return new Add(project, section);
+        }
+
+        public Update update(@NonNull Section section) {
+            return new Update(section);
+        }
+
+        public Delete delete(@NonNull Section section) {
+            return new Delete(section);
+        }
+
+        public class Get extends Request<Section> {
+            private static final String REST_PATH = "get_section/";
+
+            private Get(Section section) {
+                super(config, Method.GET, REST_PATH + section.getId(), Section.class);
+            }
+
+        }
+
+        public class List extends Request<java.util.List<Section>> {
+            private static final String REST_PATH = "get_sections/%s&suite_id=%s";
+
+            private List(Project project, Suite suite) {
+                super(config, Method.GET, String.format(REST_PATH, project.getId(), suite.getId()), new TypeReference<java.util.List<Section>>() {
+                });
+            }
+        }
+
+        public class Add extends Request<Section> {
+            private static final String REST_PATH = "add_section/";
+
+            private final Section section;
+
+            private Add(Project project, Section section) {
+                super(config, Method.POST, REST_PATH + project.getId(), Section.class);
+                this.section = section;
+            }
+
+            @Override
+            protected Object getContent() {
+                return section;
+            }
+        }
+
+        public class Update extends Request<Section> {
+            private static final String REST_PATH = "update_section/";
+
+            private final Section section;
+
+            private Update(Section section) {
+                super(config, Method.POST, REST_PATH + section.getId(), Section.class);
+                this.section = section;
+            }
+
+            @Override
+            protected Object getContent() {
+                return section;
+            }
+        }
+
+        public class Delete extends Request<Void> {
+            private static final String REST_PATH = "delete_section/";
+
+            private Delete(Section section) {
+                super(config, Method.POST, REST_PATH + section.getId(), Void.class);
+            }
+        }
+    }
+
+    @NoArgsConstructor
+    public class Suites {
+
+        public Get get(@NonNull Suite suite) {
+            return new Get(suite);
+        }
+
+        public List list(@NonNull Project project) {
+            return new List(project);
+        }
+
+        public Add add(@NonNull Suite suite) {
+            return new Add(suite);
+        }
+
+        public Update update(@NonNull Suite suite) {
+            return new Update(suite);
+        }
+
+        public Delete delete(@NonNull Suite suite) {
+            return new Delete(suite);
+        }
+
+        public class Get extends Request<Suite> {
+            private static final String REST_PATH = "get_suite/";
+
+            private Get(Suite suite) {
+                super(config, Method.GET, REST_PATH + suite.getId(), Suite.class);
+            }
+        }
+
+        public class List extends Request<java.util.List<Suite>> {
+            private static final String REST_PATH = "get_suites/";
+
+            private List(Project project) {
+                super(config, Method.GET, REST_PATH + project.getId(), new TypeReference<java.util.List<Suite>>() {
+                });
+            }
+        }
+
+        public class Add extends Request<Suite> {
+            private static final String REST_PATH = "add_suite/";
+
+            private final Suite suite;
+
+            private Add(Suite suite) {
+                super(config, Method.POST, REST_PATH + suite.getProjectId(), Suite.class);
+                this.suite = suite;
+            }
+
+            @Override
+            protected Object getContent() {
+                return suite;
+            }
+        }
+
+        public class Update extends Request<Suite> {
+            private static final String REST_PATH = "update_suite/";
+
+            private final Suite suite;
+
+            private Update(Suite suite) {
+                super(config, Method.POST, REST_PATH + suite.getId(), Suite.class);
+                this.suite = suite;
+            }
+
+            @Override
+            protected Object getContent() {
+                return suite;
+            }
+        }
+
+        public class Delete extends Request<Void> {
+            private static final String REST_PATH = "delete_suite/";
+
+            private Delete(Suite suite) {
+                super(config, Method.POST, REST_PATH + suite.getId(), Void.class);
+            }
         }
 
     }

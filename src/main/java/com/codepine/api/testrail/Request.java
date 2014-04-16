@@ -1,8 +1,9 @@
 package com.cymbocha.apis.testrail;
 
+import com.cymbocha.apis.testrail.utils.JsonPropertyNamingStrategy;
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.PropertyNamingStrategy;
+import com.fasterxml.jackson.databind.*;
 import com.google.common.base.Objects;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
@@ -24,15 +25,8 @@ import java.nio.charset.Charset;
 @Log4j
 public abstract class Request<T> {
 
-    /**
-     * Allowed HTTP methods.
-     */
-    protected static enum Method {
-        GET, POST;
-    }
-
     private static final ObjectMapper JSON = new ObjectMapper()
-            .setPropertyNamingStrategy(PropertyNamingStrategy.CAMEL_CASE_TO_LOWER_CASE_WITH_UNDERSCORES);
+            .setPropertyNamingStrategy(PropertyNamingStrategy.CAMEL_CASE_TO_LOWER_CASE_WITH_UNDERSCORES).configure(MapperFeature.DEFAULT_VIEW_INCLUSION, false).setSerializationInclusion(JsonInclude.Include.NON_DEFAULT);
 
     @NonNull
     private final TestRailConfig config;
@@ -80,7 +74,7 @@ public abstract class Request<T> {
                 if (content != null) {
                     con.setDoOutput(true);
                     try (OutputStream outputStream = new BufferedOutputStream(con.getOutputStream())) {
-                        JSON.writeValue(outputStream, content);
+                        JSON.writerWithView(this.getClass()).writeValue(outputStream, content);
                     }
                 }
             }
@@ -107,7 +101,7 @@ public abstract class Request<T> {
 
             try (InputStream responseStream = new BufferedInputStream(con.getInputStream())) {
                 if (responseClass != null) {
-                    if(responseClass == Void.class) {
+                    if (responseClass == Void.class) {
                         return null;
                     }
                     return JSON.readValue(responseStream, responseClass);
@@ -127,13 +121,15 @@ public abstract class Request<T> {
         return config.getBaseApiUrl() + restPath;
     }
 
-    protected static <T> TypeReference<T> responseType() {
-        return new TypeReference<T>() {
-        };
-    }
-
     protected Object getContent() {
         return null;
+    }
+
+    /**
+     * Allowed HTTP methods.
+     */
+    protected static enum Method {
+        GET, POST;
     }
 
 }
