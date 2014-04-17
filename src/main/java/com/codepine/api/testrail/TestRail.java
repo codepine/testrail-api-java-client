@@ -45,6 +45,10 @@ public class TestRail {
         return new Milestones();
     }
 
+    public Priorities priorities() {
+        return new Priorities();
+    }
+
     @NoArgsConstructor(access = AccessLevel.PRIVATE)
     public class Projects {
 
@@ -263,6 +267,24 @@ public class TestRail {
 
             private Delete(Milestone milestone) {
                 super(config, Method.POST, REST_PATH + milestone.getId(), Void.class);
+            }
+        }
+
+    }
+
+    @NoArgsConstructor
+    public class Priorities {
+
+        public List list() {
+            return new List();
+        }
+
+        public class List extends Request<java.util.List<Priority>> {
+            private static final String REST_PATH = "get_priorities";
+
+            private List() {
+                super(config, Method.GET, REST_PATH, new TypeReference<java.util.List<Priority>>() {
+                });
             }
         }
 
