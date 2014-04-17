@@ -7,6 +7,8 @@ import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
 
+import java.util.List;
+
 /**
  * @author kms
  */
@@ -37,6 +39,10 @@ public class TestRail {
 
     public Suites suites() {
         return new Suites();
+    }
+
+    public Milestones milestones() {
+        return new Milestones();
     }
 
     @NoArgsConstructor(access = AccessLevel.PRIVATE)
@@ -176,6 +182,88 @@ public class TestRail {
                 });
             }
 
+        }
+
+    }
+
+    @NoArgsConstructor
+    public class Milestones {
+
+        public Get get(@NonNull Milestone milestone) {
+            return new Get(milestone);
+        }
+
+        public List list(@NonNull Project project) {
+            return new List(project);
+        }
+
+        public Add add(@NonNull Milestone milestone) {
+            return new Add(milestone);
+        }
+
+        public Update update(@NonNull Milestone milestone) {
+            return new Update(milestone);
+        }
+
+        public Delete delete(@NonNull Milestone milestone) {
+            return new Delete(milestone);
+        }
+
+        public class Get extends Request<Milestone> {
+            private static final String REST_PATH = "get_milestone/";
+
+            private Get(Milestone milestone) {
+                super(config, Method.GET, REST_PATH + milestone.getId(), Milestone.class);
+            }
+        }
+
+        public class List extends Request<java.util.List<Milestone>> {
+            private static final String REST_PATH = "get_milestones/";
+
+            private List(Project project) {
+                super(config, Method.GET, REST_PATH + project.getId(), new TypeReference<java.util.List<Milestone>>() {
+                });
+            }
+        }
+
+        public class Add extends Request<Milestone> {
+            private static final String REST_PATH = "add_milestone/";
+
+            private final Milestone milestone;
+
+            private Add(Milestone milestone) {
+                super(config, Method.POST, REST_PATH + milestone.getProjectId(), Milestone.class);
+                this.milestone = milestone;
+            }
+
+            @Override
+            protected Object getContent() {
+                return milestone;
+            }
+        }
+
+        public class Update extends Request<Milestone> {
+            private static final String REST_PATH = "update_milestone/";
+
+            private final Milestone milestone;
+
+            private Update(Milestone milestone) {
+                super(config, Method.POST, REST_PATH + milestone.getId(), Milestone.class);
+                this.milestone = milestone;
+            }
+
+            @Override
+            protected Object getContent() {
+                return milestone;
+            }
+        }
+
+        public class Delete extends Request<Void> {
+            private static final String REST_PATH = "delete_milestone/";
+
+            private Delete(Milestone milestone) {
+                super(config, Method.POST, REST_PATH + milestone.getId(), Void.class);
+            }
         }
 
     }
