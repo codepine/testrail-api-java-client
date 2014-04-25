@@ -7,6 +7,9 @@ import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
 
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.List;
 
 /**
@@ -47,6 +50,10 @@ public class TestRail {
 
     public Priorities priorities() {
         return new Priorities();
+    }
+
+    public Users users() {
+        return new Users();
     }
 
     @NoArgsConstructor(access = AccessLevel.PRIVATE)
@@ -449,6 +456,48 @@ public class TestRail {
 
             private Delete(Suite suite) {
                 super(config, Method.POST, REST_PATH + suite.getId(), Void.class);
+            }
+        }
+
+    }
+
+    @NoArgsConstructor
+    public class Users {
+
+        public Get get(@NonNull User user) {
+            return new Get(user);
+        }
+
+        public GetByEmail getByEmail(@NonNull User user) {
+            return new GetByEmail(user);
+        }
+
+        public List list() {
+            return new List();
+        }
+
+        public class Get extends Request<User> {
+            private static final String REST_PATH = "get_user/";
+
+            private Get(User user) {
+                super(config, Method.GET, REST_PATH + user.getId(), User.class);
+            }
+        }
+
+        public class GetByEmail extends Request<User> {
+            private static final String REST_PATH = "get_user_by_email&email=";
+
+            private GetByEmail(User user) {
+                super(config, Method.GET, REST_PATH + user.getEmail(), User.class);
+            }
+        }
+
+        public class List extends Request<java.util.List<User>> {
+            private static final String REST_PATH = "get_users";
+
+            private List() {
+                super(config, Method.GET, REST_PATH, new TypeReference<java.util.List<User>>() {
+                });
             }
         }
 
