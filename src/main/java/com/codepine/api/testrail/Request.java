@@ -1,10 +1,11 @@
 package com.cymbocha.apis.testrail;
 
-import com.cymbocha.apis.testrail.utils.JsonPropertyNamingStrategy;
+import com.cymbocha.apis.testrail.model.Field;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.*;
-import com.google.common.base.Objects;
+import com.fasterxml.jackson.databind.MapperFeature;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.PropertyNamingStrategy;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.NonNull;
@@ -25,8 +26,8 @@ import java.nio.charset.Charset;
 @Log4j
 public abstract class Request<T> {
 
-    private static final ObjectMapper JSON = new ObjectMapper()
-            .setPropertyNamingStrategy(PropertyNamingStrategy.CAMEL_CASE_TO_LOWER_CASE_WITH_UNDERSCORES).configure(MapperFeature.DEFAULT_VIEW_INCLUSION, false).setSerializationInclusion(JsonInclude.Include.NON_DEFAULT);
+    protected static final ObjectMapper JSON = new ObjectMapper()
+            .setPropertyNamingStrategy(PropertyNamingStrategy.CAMEL_CASE_TO_LOWER_CASE_WITH_UNDERSCORES).configure(MapperFeature.DEFAULT_VIEW_INCLUSION, false).setSerializationInclusion(JsonInclude.Include.NON_DEFAULT).registerModule(new FieldModule());
 
     @NonNull
     private final TestRailConfig config;

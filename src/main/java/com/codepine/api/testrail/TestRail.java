@@ -7,11 +7,6 @@ import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
 
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Paths;
-import java.util.List;
-
 /**
  * @author kms
  */
@@ -50,6 +45,10 @@ public class TestRail {
 
     public Priorities priorities() {
         return new Priorities();
+    }
+
+    public ResultFields resultFields() {
+        return new ResultFields();
     }
 
     public Users users() {
@@ -295,6 +294,23 @@ public class TestRail {
             }
         }
 
+    }
+
+    @NoArgsConstructor
+    public class ResultFields {
+
+        public List list() {
+            return new List();
+        }
+
+        public class List extends Request<java.util.List<ResultField>> {
+            private static final String REST_PATH = "get_result_fields";
+
+            private List() {
+                super(config, Method.GET, REST_PATH, new TypeReference<java.util.List<ResultField>>() {
+                });
+            }
+        }
     }
 
     @NoArgsConstructor
