@@ -55,6 +55,10 @@ public class TestRail {
         return new Users();
     }
 
+    public Statuses statuses() {
+        return new Statuses();
+    }
+
     @NoArgsConstructor(access = AccessLevel.PRIVATE)
     public class Projects {
 
@@ -393,6 +397,24 @@ public class TestRail {
                 super(config, Method.POST, REST_PATH + section.getId(), Void.class);
             }
         }
+    }
+
+    @NoArgsConstructor
+    public class Statuses {
+
+        public List list() {
+            return new List();
+        }
+
+        public class List extends Request<java.util.List<Status>> {
+            private static final String REST_PATH = "get_statuses";
+
+            private List() {
+                super(config, Method.GET, REST_PATH, new TypeReference<java.util.List<Status>>() {
+                });
+            }
+        }
+
     }
 
     @NoArgsConstructor
