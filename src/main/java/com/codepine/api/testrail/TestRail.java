@@ -19,6 +19,10 @@ public class TestRail {
         return new Projects();
     }
 
+    public Cases cases() {
+        return new Cases();
+    }
+
     public CaseFields caseFields() {
         return new CaseFields();
     }
@@ -143,6 +147,93 @@ public class TestRail {
                 this.project = project;
             }
 
+        }
+    }
+
+    @NoArgsConstructor(access = AccessLevel.PRIVATE)
+    public class Cases {
+
+        public Get get(@NonNull Case testCase) {
+            return new Get(testCase);
+        }
+
+        public List list(@NonNull Project project, @NonNull Suite suite) {
+            return list(project, suite, null);
+        }
+
+        public List list(@NonNull Project project, @NonNull Suite suite, Section section) {
+            return new List(project, suite, section);
+        }
+
+        public Add add(@NonNull Case testCase) {
+            return new Add(testCase);
+        }
+
+        public Update update(@NonNull Case testCase) {
+            return new Update(testCase);
+        }
+
+        public Delete delete(@NonNull Case testCase) {
+            return new Delete(testCase);
+        }
+
+        public class Get extends Request<Case> {
+            private static final String REST_PATH = "get_case/";
+
+            private Get(Case testCase) {
+                super(config, Method.GET, REST_PATH + testCase.getId(), Case.class);
+            }
+        }
+
+        public class List extends Request<java.util.List<Case>> {
+            private static final String REST_PATH = "get_cases/%s&suite_id=%s&section_id=%s";
+
+            private List(Project project, Suite suite, Section section) {
+                super(config, Method.GET, String.format(REST_PATH, project.getId(), suite.getId(), section == null ? "" : section.getId()), new TypeReference<java.util.List<Case>>() {
+                });
+            }
+        }
+
+        public class Add extends Request<Case> {
+            private static final String REST_PATH = "add_case/";
+
+            private final Case testCase;
+
+            private Add(Case testCase) {
+                super(config, Method.POST, REST_PATH + testCase.getSectionId(), Case.class);
+                this.testCase = testCase;
+            }
+
+            @Override
+            protected Object getContent() {
+                return testCase;
+            }
+
+        }
+
+        public class Update extends Request<Case> {
+            private static final String REST_PATH = "update_case/";
+
+            private final Case testCase;
+
+            private Update(Case testCase) {
+                super(config, Method.POST, REST_PATH + testCase.getId(), Case.class);
+                this.testCase = testCase;
+            }
+
+            @Override
+            protected Object getContent() {
+                return testCase;
+            }
+
+        }
+
+        public class Delete extends Request<Void> {
+            private static final String REST_PATH = "delete_case/";
+
+            private Delete(Case testCase) {
+                super(config, Method.POST, REST_PATH + testCase.getId(), Void.class);
+            }
         }
     }
 
