@@ -55,6 +55,10 @@ public class TestRail {
         return new ResultFields();
     }
 
+    public Tests tests() {
+        return new Tests();
+    }
+
     public Users users() {
         return new Users();
     }
@@ -585,6 +589,36 @@ public class TestRail {
 
             private Delete(Suite suite) {
                 super(config, Method.POST, REST_PATH + suite.getId(), Void.class);
+            }
+        }
+
+    }
+
+    @NoArgsConstructor
+    public class Tests {
+
+        public Get get(@NonNull Test test) {
+            return new Get(test);
+        }
+
+        public List list(@NonNull Run run) {
+            return new List(run);
+        }
+
+        public class Get extends Request<Test> {
+            private static final String REST_PATH = "get_test/";
+
+            private Get(Test test) {
+                super(config, Method.GET, REST_PATH + test.getId(), Test.class);
+            }
+        }
+
+        public class List extends Request<java.util.List<Test>> {
+            private static final String REST_PATH = "get_tests/";
+
+            private List(Run run) {
+                super(config, Method.GET, REST_PATH + run.getId(), new TypeReference<java.util.List<Test>>() {
+                });
             }
         }
 
