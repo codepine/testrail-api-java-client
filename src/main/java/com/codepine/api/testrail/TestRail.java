@@ -67,6 +67,10 @@ public class TestRail {
         return new Statuses();
     }
 
+    public Runs runs() {
+        return new Runs();
+    }
+
     @NoArgsConstructor(access = AccessLevel.PRIVATE)
     public class Projects {
 
@@ -410,6 +414,100 @@ public class TestRail {
                 });
             }
         }
+    }
+
+    @NoArgsConstructor
+    public class Runs {
+
+        public Get get(@NonNull Run run) {
+            return new Get(run);
+        }
+
+        public List list(@NonNull Project project) {
+            return new List(project);
+        }
+
+        public Add add(@NonNull Run run) {
+            return new Add(run);
+        }
+
+        public Update update(@NonNull Run run) {
+            return new Update(run);
+        }
+
+        public Close close(@NonNull Run run) {
+            return new Close(run);
+        }
+
+        public Delete delete(@NonNull Run run) {
+            return new Delete(run);
+        }
+
+        public class Get extends Request<Run> {
+            private static final String REST_PATH = "get_run/";
+
+            private Get(Run run) {
+                super(config, Method.GET, REST_PATH + run.getId(), Run.class);
+            }
+        }
+
+        public class List extends Request<java.util.List<Run>> {
+            private static final String REST_PATH = "get_runs/";
+
+            private List(Project project) {
+                super(config, Method.GET, REST_PATH + project.getId(), new TypeReference<java.util.List<Run>>() {
+                });
+            }
+        }
+
+        public class Add extends Request<Run> {
+            private static final String REST_PATH = "add_run/";
+
+            private final Run run;
+
+            private Add(Run run) {
+                super(config, Method.POST, REST_PATH + run.getProjectId(), Run.class);
+                this.run = run;
+            }
+
+            @Override
+            protected Object getContent() {
+                return run;
+            }
+        }
+
+        public class Update extends Request<Run> {
+            private static final String REST_PATH = "update_run/";
+
+            private final Run run;
+
+            private Update(Run run) {
+                super(config, Method.POST, REST_PATH + run.getId(), Run.class);
+                this.run = run;
+            }
+
+            @Override
+            protected Object getContent() {
+                return run;
+            }
+        }
+
+        public class Close extends Request<Run> {
+            private static final String REST_PATH = "close_run/";
+
+            private Close(Run run) {
+                super(config, Method.POST, REST_PATH + run.getId(), Run.class);
+            }
+        }
+
+        public class Delete extends Request<Void> {
+            private static final String REST_PATH = "delete_run/";
+
+            private Delete(Run run) {
+                super(config, Method.POST, REST_PATH + run.getId(), Void.class);
+            }
+        }
+
     }
 
     @NoArgsConstructor

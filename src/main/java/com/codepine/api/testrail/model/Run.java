@@ -1,7 +1,9 @@
 package com.cymbocha.apis.testrail.model;
 
+import com.cymbocha.apis.testrail.TestRail;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonView;
 import lombok.Data;
 import lombok.Getter;
 import lombok.experimental.Accessors;
@@ -18,8 +20,10 @@ public class Run {
 
     private int id;
 
+    @JsonView({TestRail.Runs.Add.class, TestRail.Runs.Update.class})
     private String name;
 
+    @JsonView({TestRail.Runs.Add.class, TestRail.Runs.Update.class})
     private String description;
 
     private String url;
@@ -28,13 +32,20 @@ public class Run {
 
     private Integer planId;
 
+    @JsonView(TestRail.Runs.Add.class)
     private int suiteId;
 
+    @JsonView({TestRail.Runs.Add.class, TestRail.Runs.Update.class})
     private Integer milestoneId;
 
+    @JsonView(TestRail.Runs.Add.class)
     private Integer assignedtoId;
 
-    private boolean includeAll;
+    @JsonView({TestRail.Runs.Add.class, TestRail.Runs.Update.class})
+    private Boolean includeAll;
+
+    @JsonView({TestRail.Runs.Add.class, TestRail.Runs.Update.class})
+    private List<Integer> caseIds;
 
     private Date createdOn;
 
