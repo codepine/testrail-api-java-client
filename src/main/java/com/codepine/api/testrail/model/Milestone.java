@@ -4,8 +4,10 @@ import com.cymbocha.apis.testrail.TestRail;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonView;
+import lombok.AccessLevel;
 import lombok.Data;
 import lombok.Getter;
+import lombok.Setter;
 import lombok.experimental.Accessors;
 
 import java.util.Date;
@@ -31,9 +33,17 @@ public class Milestone {
     private Date dueOn;
 
     @JsonView({TestRail.Milestones.Update.class})
-    @JsonProperty
-    @Getter(onMethod = @_({@JsonIgnore}))
-    private boolean isCompleted;
+    @Getter(value = AccessLevel.PRIVATE)
+    @Setter(value = AccessLevel.PRIVATE)
+    private Boolean isCompleted;
+
+    public Boolean isCompleted() {
+        return getIsCompleted();
+    }
+
+    public Milestone setCompleted(boolean isCompleted) {
+        return setIsCompleted(isCompleted);
+    }
 
     private Date completedOn;
 
