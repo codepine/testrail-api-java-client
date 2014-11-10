@@ -1,4 +1,4 @@
-package com.cymbocha.apis.testrail;
+package com.cymbocha.apis.testrail.internal;
 
 import com.cymbocha.apis.testrail.model.Field;
 import com.fasterxml.jackson.core.JsonParser;
@@ -13,10 +13,10 @@ import java.io.IOException;
 
 /**
  * Jackson module for {@link com.cymbocha.apis.testrail.model.Field}.
- *
+ * <p/>
  * INTERNAL ONLY
  */
-class FieldModule extends SimpleModule {
+public class FieldModule extends SimpleModule {
 
     @Override
     public void setupModule(SetupContext setupContext) {

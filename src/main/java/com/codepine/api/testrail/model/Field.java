@@ -1,26 +1,14 @@
 package com.cymbocha.apis.testrail.model;
 
-import com.cymbocha.apis.testrail.utils.IntToBooleanDeserializer;
-import com.cymbocha.apis.testrail.utils.StringToMapDeserializer;
+import com.cymbocha.apis.testrail.internal.IntToBooleanDeserializer;
+import com.cymbocha.apis.testrail.internal.StringToMapDeserializer;
 import com.fasterxml.jackson.annotation.*;
-import com.fasterxml.jackson.core.JsonParser;
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.*;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
-import com.fasterxml.jackson.databind.deser.*;
-import com.fasterxml.jackson.databind.deser.std.StdDeserializer;
-import com.fasterxml.jackson.databind.module.SimpleModule;
-import com.google.common.base.Function;
-import com.google.common.base.Preconditions;
-import com.google.common.base.Splitter;
-import com.google.common.collect.Maps;
 import lombok.*;
 import lombok.experimental.Accessors;
 
-import java.io.*;
 import java.math.BigInteger;
 import java.util.HashMap;
-import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 

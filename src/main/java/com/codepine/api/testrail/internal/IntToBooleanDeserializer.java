@@ -1,4 +1,4 @@
-package com.cymbocha.apis.testrail.utils;
+package com.cymbocha.apis.testrail.internal;
 
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.core.JsonProcessingException;

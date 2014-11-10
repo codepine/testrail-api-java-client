@@ -1,4 +1,4 @@
-package com.cymbocha.apis.testrail;
+package com.cymbocha.apis.testrail.internal;
 
 import com.cymbocha.apis.testrail.model.Plan;
 import com.cymbocha.apis.testrail.model.Run;
