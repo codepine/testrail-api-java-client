@@ -71,6 +71,10 @@ public class TestRail {
         return new Runs();
     }
 
+    public Plans plans() {
+        return new Plans();
+    }
+
     @NoArgsConstructor(access = AccessLevel.PRIVATE)
     public class Projects {
 
@@ -397,6 +401,151 @@ public class TestRail {
             }
         }
 
+    }
+
+    @NoArgsConstructor
+    public class Plans {
+
+        public Get get(@NonNull Plan plan) {
+            return new Get(plan);
+        }
+
+        public Add add(@NonNull Plan plan) {
+            return new Add(plan);
+        }
+
+        public List list(@NonNull Project project) {
+            return new List(project);
+        }
+
+        public Update update(@NonNull Plan plan) {
+            return new Update(plan);
+        }
+
+        public Close close(@NonNull Plan plan) {
+            return new Close(plan);
+        }
+
+        public Delete delete(@NonNull Plan plan) {
+            return new Delete(plan);
+        }
+
+        public AddEntry addEntry(@NonNull Plan plan, @NonNull Plan.Entry entry) {
+            return new AddEntry(plan, entry);
+        }
+
+        public UpdateEntry updateEntry(@NonNull Plan plan, @NonNull Plan.Entry entry) {
+            return new UpdateEntry(plan, entry);
+        }
+
+        public DeleteEntry deleteEntry(@NonNull Plan plan, @NonNull Plan.Entry entry) {
+            return new DeleteEntry(plan, entry);
+        }
+
+        public class Get extends Request<Plan> {
+            private static final String REST_PATH = "get_plan/";
+
+            private Get(Plan plan) {
+                super(config, Method.GET, REST_PATH + plan.getId(), Plan.class);
+            }
+        }
+
+        public class List extends Request<java.util.List<Plan>> {
+            private static final String REST_PATH = "get_plans/";
+
+            private List(Project project) {
+                super(config, Method.GET, REST_PATH + project.getId(), new TypeReference<java.util.List<Plan>>() {
+                });
+            }
+        }
+
+        public class Add extends Request<Plan> {
+            private static final String REST_PATH = "add_plan/";
+
+            private final Plan plan;
+
+            private Add(Plan plan) {
+                super(config, Method.POST, REST_PATH + plan.getProjectId(), Plan.class);
+                this.plan = plan;
+            }
+
+            @Override
+            protected Object getContent() {
+                return plan;
+            }
+        }
+
+        public class AddEntry extends Request<Plan.Entry> {
+            private static final String REST_PATH = "add_plan_entry/";
+
+            private final Plan.Entry entry;
+
+            private AddEntry(Plan plan, Plan.Entry entry) {
+                super(config, Method.POST, REST_PATH + plan.getId(), Plan.Entry.class);
+                this.entry = entry;
+            }
+
+            @Override
+            protected Object getContent() {
+                return entry;
+            }
+        }
+
+        public class Update extends Request<Plan> {
+            private static final String REST_PATH = "update_plan/";
+
+            private final Plan plan;
+
+            private Update(Plan plan) {
+                super(config, Method.POST, REST_PATH + plan.getId(), Plan.class);
+                this.plan = plan;
+            }
+
+            @Override
+            protected Object getContent() {
+                return plan;
+            }
+        }
+
+        public class UpdateEntry extends Request<Plan.Entry> {
+            private static final String REST_PATH = "update_plan_entry/%s/%s";
+
+            private final Plan.Entry entry;
+
+            private UpdateEntry(Plan plan, Plan.Entry entry) {
+                super(config, Method.POST, String.format(REST_PATH, plan.getId(), entry.getId()), Plan.Entry.class);
+                this.entry = entry;
+            }
+
+            @Override
+            protected Object getContent() {
+                return entry;
+            }
+        }
+
+        public class Close extends Request<Plan> {
+            private static final String REST_PATH = "close_plan/";
+
+            private Close(Plan plan) {
+                super(config, Method.POST, REST_PATH + plan.getId(), Plan.class);
+            }
+        }
+
+        public class Delete extends Request<Void> {
+            private static final String REST_PATH = "delete_plan/";
+
+            private Delete(Plan plan) {
+                super(config, Method.POST, REST_PATH + plan.getId(), Void.class);
+            }
+        }
+
+        public class DeleteEntry extends Request<Void> {
+            private static final String REST_PATH = "delete_plan_entry/%s/%s";
+
+            private DeleteEntry(Plan plan, Plan.Entry entry) {
+                super(config, Method.POST, String.format(REST_PATH, plan.getId(), entry.getId()), Void.class);
+            }
+        }
     }
 
     @NoArgsConstructor

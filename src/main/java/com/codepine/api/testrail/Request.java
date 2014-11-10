@@ -1,6 +1,6 @@
 package com.cymbocha.apis.testrail;
 
-import com.cymbocha.apis.testrail.model.Field;
+import com.cymbocha.apis.testrail.internal.UnixTimestampModule;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.MapperFeature;
@@ -27,7 +27,7 @@ import java.nio.charset.Charset;
 public abstract class Request<T> {
 
     protected static final ObjectMapper JSON = new ObjectMapper()
-            .setPropertyNamingStrategy(PropertyNamingStrategy.CAMEL_CASE_TO_LOWER_CASE_WITH_UNDERSCORES).configure(MapperFeature.DEFAULT_VIEW_INCLUSION, false).setSerializationInclusion(JsonInclude.Include.NON_DEFAULT).registerModule(new FieldModule());
+            .setPropertyNamingStrategy(PropertyNamingStrategy.CAMEL_CASE_TO_LOWER_CASE_WITH_UNDERSCORES).configure(MapperFeature.DEFAULT_VIEW_INCLUSION, false).setSerializationInclusion(JsonInclude.Include.NON_DEFAULT).registerModules(new FieldModule(), new PlanModule(), new UnixTimestampModule());
 
     @NonNull
     private final TestRailConfig config;

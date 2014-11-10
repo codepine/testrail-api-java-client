@@ -38,13 +38,13 @@ public class Run {
     @JsonView({TestRail.Runs.Add.class, TestRail.Runs.Update.class})
     private Integer milestoneId;
 
-    @JsonView(TestRail.Runs.Add.class)
+    @JsonView({TestRail.Runs.Add.class, TestRail.Plans.Add.class, TestRail.Plans.AddEntry.class})
     private Integer assignedtoId;
 
-    @JsonView({TestRail.Runs.Add.class, TestRail.Runs.Update.class})
+    @JsonView({TestRail.Runs.Add.class, TestRail.Runs.Update.class, TestRail.Plans.Add.class, TestRail.Plans.AddEntry.class})
     private Boolean includeAll;
 
-    @JsonView({TestRail.Runs.Add.class, TestRail.Runs.Update.class})
+    @JsonView({TestRail.Runs.Add.class, TestRail.Runs.Update.class, TestRail.Plans.Add.class, TestRail.Plans.AddEntry.class})
     private List<Integer> caseIds;
 
     private Date createdOn;
@@ -59,6 +59,7 @@ public class Run {
 
     private List<String> config;
 
+    @JsonView({TestRail.Plans.Add.class, TestRail.Plans.AddEntry.class})
     private List<Integer> configIds;
 
     private int passedCount;
