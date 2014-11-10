@@ -164,7 +164,7 @@ public class Field {
         @Accessors(chain = true)
         @ToString(callSuper = true)
         public static class UserOptions extends Options {
-            private long defaultValue;
+            private int defaultValue;
         }
 
         /**
