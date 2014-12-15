@@ -2,6 +2,7 @@ package com.cymbocha.apis.testrail;
 
 import com.cymbocha.apis.testrail.model.*;
 import com.fasterxml.jackson.core.type.TypeReference;
+import com.google.common.base.Preconditions;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;
@@ -73,6 +74,10 @@ public class TestRail {
 
     public Plans plans() {
         return new Plans();
+    }
+
+    public Results results() {
+        return new Results();
     }
 
     @NoArgsConstructor(access = AccessLevel.PRIVATE)
@@ -547,6 +552,134 @@ public class TestRail {
             }
         }
     }
+
+    @NoArgsConstructor
+    public class Results {
+
+        public List list(@NonNull Test test) {
+            return new List(test);
+        }
+
+        public ListForRun list(@NonNull Run run) {
+            return new ListForRun(run);
+        }
+
+        public ListForCase list(@NonNull Run run, @NonNull Case testCase) {
+            return new ListForCase(run, testCase);
+        }
+
+        public Add add(@NonNull Result result) {
+            return new Add(result);
+        }
+
+        public AddForCase add(@NonNull Run run, @NonNull Case testCase, @NonNull Result result) {
+            return new AddForCase(run, testCase, result);
+        }
+
+        public AddList add(@NonNull Run run, @NonNull java.util.List<Result> results) {
+            Preconditions.checkArgument(!results.isEmpty(), "results cannot be empty");
+            return new AddList(run, results);
+        }
+
+        public AddListForCases addForCases(@NonNull Run run, @NonNull java.util.List<Result> results) {
+            return new AddListForCases(run, results);
+        }
+
+        public class List extends Request<java.util.List<Result>> {
+            private static final String REST_PATH = "get_results/";
+
+            private List(Test test) {
+                super(config, Method.GET, REST_PATH + test.getId(), new TypeReference<java.util.List<Result>>() {
+                });
+            }
+        }
+
+        public class ListForRun extends Request<java.util.List<Result>> {
+            private static final String REST_PATH = "get_results_for_run/";
+
+            private ListForRun(Run run) {
+                super(config, Method.GET, REST_PATH + run.getId(), new TypeReference<java.util.List<Result>>() {
+                });
+            }
+        }
+
+        public class ListForCase extends Request<java.util.List<Result>> {
+            private static final String REST_PATH = "get_results_for_case/";
+
+            private ListForCase(Run run, Case testCase) {
+                super(config, Method.GET, REST_PATH + run.getId() + "/" + testCase.getId(), new TypeReference<java.util.List<Result>>() {
+                });
+            }
+        }
+
+        public class Add extends Request<Result> {
+            private static final String REST_PATH = "add_result/";
+
+            private final Result result;
+
+            private Add(Result result) {
+                super(config, Method.POST, REST_PATH + result.getTestId(), Result.class);
+                this.result = result;
+            }
+
+            @Override
+            protected Object getContent() {
+                return result;
+            }
+        }
+
+        public class AddForCase extends Request<Result> {
+            private static final String REST_PATH = "add_result_for_case/";
+
+            private final Result result;
+
+            private AddForCase(Run run, Case testCase, Result result) {
+                super(config, Method.POST, REST_PATH + run.getId() + "/" + testCase.getId(), Result.class);
+                this.result = result;
+            }
+
+            @Override
+            protected Object getContent() {
+                return result;
+            }
+        }
+
+        public class AddList extends Request<java.util.List<Result>> {
+            private static final String REST_PATH = "add_results/";
+
+            private final Result.List results;
+
+            private AddList(Run run, java.util.List<Result> results) {
+                super(config, Method.POST, REST_PATH + run.getId(), new TypeReference<java.util.List<Result>>() {
+                });
+                this.results = new Result.List(results);
+            }
+
+            @Override
+            protected Object getContent() {
+                return results;
+            }
+        }
+
+        public class AddListForCases extends Request<java.util.List<Result>> {
+            private static final String REST_PATH = "add_results_for_cases/";
+
+            private final Result.List results;
+
+            private AddListForCases(Run run, java.util.List<Result> results) {
+                super(config, Method.POST, REST_PATH + run.getId(), new TypeReference<java.util.List<Result>>() {
+                });
+                this.results = new Result.List(results);
+            }
+
+            @Override
+            protected Object getContent() {
+                return results;
+            }
+        }
+
+    }
+
 
     @NoArgsConstructor
     public class ResultFields {
