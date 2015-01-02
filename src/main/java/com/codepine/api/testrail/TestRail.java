@@ -2,103 +2,224 @@ package com.cymbocha.apis.testrail;
 
 import com.cymbocha.apis.testrail.model.*;
 import com.fasterxml.jackson.core.type.TypeReference;
-import com.google.common.base.Preconditions;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
 
+import static com.google.common.base.Preconditions.checkArgument;
+
 /**
+ * Client for Test Rail API. Configure and use it to create requests for the API.
+ *
  * @author kms
+ * @see <a href="http://docs.gurock.com/testrail-api2/start">TestRail API v2 Documentation</a>
  */
 @AllArgsConstructor
 public class TestRail {
 
     private final TestRailConfig config;
 
+    /**
+     * An accessor for creating requests for "Projects".
+     *
+     * @return a request factory
+     */
     public Projects projects() {
         return new Projects();
     }
 
+    /**
+     * An accessor for creating requests for "Cases".
+     *
+     * @return a request factory
+     */
     public Cases cases() {
         return new Cases();
     }
 
+    /**
+     * An accessor for creating requests for "Case Fields".
+     *
+     * @return a request factory
+     */
     public CaseFields caseFields() {
         return new CaseFields();
     }
 
+    /**
+     * An accessor for creating requests for "Case Types".
+     *
+     * @return a request factory
+     */
     public CaseTypes caseTypes() {
         return new CaseTypes();
     }
 
+    /**
+     * An accessor for creating requests for "Configurations".
+     *
+     * @return a request factory
+     */
     public Configurations configurations() {
         return new Configurations();
     }
 
+    /**
+     * An accessor for creating requests for "Sections".
+     *
+     * @return a request factory
+     */
     public Sections sections() {
         return new Sections();
     }
 
+    /**
+     * An accessor for creating requests for "Suites".
+     *
+     * @return a request factory
+     */
     public Suites suites() {
         return new Suites();
     }
 
+    /**
+     * An accessor for creating requests for "Milestones".
+     *
+     * @return a request factory
+     */
     public Milestones milestones() {
         return new Milestones();
     }
 
+    /**
+     * An accessor for creating requests for "Priorities".
+     *
+     * @return a request factory
+     */
     public Priorities priorities() {
         return new Priorities();
     }
 
+    /**
+     * An accessor for creating requests for "Result Fields".
+     *
+     * @return a request factory
+     */
     public ResultFields resultFields() {
         return new ResultFields();
     }
 
+    /**
+     * An accessor for creating requests for "Tests".
+     *
+     * @return a request factory
+     */
     public Tests tests() {
         return new Tests();
     }
 
+    /**
+     * An accessor for creating requests for "Users".
+     *
+     * @return a request factory
+     */
     public Users users() {
         return new Users();
     }
 
+    /**
+     * An accessor for creating requests for "Statuses".
+     *
+     * @return a request factory
+     */
     public Statuses statuses() {
         return new Statuses();
     }
 
+    /**
+     * An accessor for creating requests for "Runs".
+     *
+     * @return a request factory
+     */
     public Runs runs() {
         return new Runs();
     }
 
+    /**
+     * An accessor for creating requests for "Plans".
+     *
+     * @return a request factory
+     */
     public Plans plans() {
         return new Plans();
     }
 
+    /**
+     * An accessor for creating requests for "Results".
+     *
+     * @return a request factory
+     */
     public Results results() {
         return new Results();
     }
 
+    /**
+     * Request factories for "Projects".
+     */
     @NoArgsConstructor(access = AccessLevel.PRIVATE)
     public class Projects {
 
-        public Get get(@NonNull Project project) {
-            return new Get(project);
+        /**
+         * Returns an existing project.
+         *
+         * @param projectId the ID of the project
+         * @return the request
+         * @throws java.lang.IllegalArgumentException if projectId is not positive
+         */
+        public Get get(final int projectId) {
+            checkArgument(projectId > 0, "projectId should be positive");
+            return new Get(projectId);
         }
 
+        /**
+         * Returns the list of available projects.
+         *
+         * @return the request
+         */
         public List list() {
             return new List();
         }
 
+        /**
+         * Creates a new project.
+         *
+         * @param project the project to be added
+         * @return the request
+         * @throws java.lang.NullPointerException if project is null
+         */
         public Add add(@NonNull Project project) {
             return new Add(project);
         }
 
+        /**
+         * Updates an existing project. Partial updates are supported, i.e. you can set and update specific fields only.
+         *
+         * @param project the project to be updated
+         * @return the request
+         * @throws java.lang.NullPointerException if project is null
+         */
         public Update update(@NonNull Project project) {
             return new Update(project);
         }
 
+        /**
+         * Deletes an existing project.
+         *
+         * @param project the project to be deleted
+         * @return the request
+         * @throws java.lang.NullPointerException if project is null
+         */
         public Delete delete(@NonNull Project project) {
             return new Delete(project);
         }
@@ -106,8 +227,8 @@ public class TestRail {
         public class Get extends Request<Project> {
             private static final String REST_PATH = "get_project/";
 
-            private Get(@NonNull Project project) {
-                super(config, Method.GET, REST_PATH + project.getId(), Project.class);
+            private Get(int projectId) {
+                super(config, Method.GET, REST_PATH + projectId, Project.class);
             }
         }
 
@@ -167,29 +288,89 @@ public class TestRail {
         }
     }
 
+    /**
+     * Request factories for "Cases".
+     */
     @NoArgsConstructor(access = AccessLevel.PRIVATE)
     public class Cases {
 
-        public Get get(@NonNull Case testCase) {
-            return new Get(testCase);
+        /**
+         * Returns an existing test case.
+         *
+         * @param testCaseId the ID of the test case
+         * @return the request
+         * @throws java.lang.IllegalArgumentException if testCaseId is not positive
+         */
+        public Get get(final int testCaseId) {
+            checkArgument(testCaseId > 0, "testCaseId should be positive");
+            return new Get(testCaseId);
         }
 
+        /**
+         * Returns the list of available test cases.
+         *
+         * @param project the project which is operating in a single suite mode
+         * @return the request
+         * @throws java.lang.NullPointerException if project is null
+         */
+        public List list(@NonNull Project project) {
+            return new List(project, null, null);
+        }
+
+        /**
+         * Returns the list of available test cases.
+         *
+         * @param project the project
+         * @param suite   the test suite
+         * @return the request
+         * @throws java.lang.NullPointerException if any argument is null
+         */
         public List list(@NonNull Project project, @NonNull Suite suite) {
-            return list(project, suite, null);
+            return new List(project, suite, null);
         }
 
-        public List list(@NonNull Project project, @NonNull Suite suite, Section section) {
+        /**
+         * Returns the list of available test cases.
+         *
+         * @param project the project
+         * @param suite   the test suite
+         * @param section the section
+         * @return the request
+         * @throws java.lang.NullPointerException if any argument is null
+         */
+        public List list(@NonNull Project project, @NonNull Suite suite, @NonNull Section section) {
             return new List(project, suite, section);
         }
 
+        /**
+         * Creates a new test case.
+         *
+         * @param testCase the test case to be added
+         * @return the request
+         * @throws java.lang.NullPointerException if testCase is null
+         */
         public Add add(@NonNull Case testCase) {
             return new Add(testCase);
         }
 
+        /**
+         * Updates an existing test case. Partial updates are supported, i.e. you can set and update specific fields only.
+         *
+         * @param testCase the test case to be updated
+         * @return the request
+         * @throws java.lang.NullPointerException if testCase is null
+         */
         public Update update(@NonNull Case testCase) {
             return new Update(testCase);
         }
 
+        /**
+         * Deletes an existing test case.
+         *
+         * @param testCase the test case to be deleted
+         * @return the request
+         * @throws java.lang.NullPointerException if testCase is null
+         */
         public Delete delete(@NonNull Case testCase) {
             return new Delete(testCase);
         }
@@ -197,8 +378,8 @@ public class TestRail {
         public class Get extends Request<Case> {
             private static final String REST_PATH = "get_case/";
 
-            private Get(Case testCase) {
-                super(config, Method.GET, REST_PATH + testCase.getId(), Case.class);
+            private Get(int testCaseId) {
+                super(config, Method.GET, REST_PATH + testCaseId, Case.class);
             }
         }
 
@@ -206,7 +387,7 @@ public class TestRail {
             private static final String REST_PATH = "get_cases/%s&suite_id=%s&section_id=%s";
 
             private List(Project project, Suite suite, Section section) {
-                super(config, Method.GET, String.format(REST_PATH, project.getId(), suite.getId(), section == null ? "" : section.getId()), new TypeReference<java.util.List<Case>>() {
+                super(config, Method.GET, String.format(REST_PATH, project.getId(), suite == null ? "" : suite.getId(), section == null ? "" : section.getId()), new TypeReference<java.util.List<Case>>() {
                 });
             }
         }
@@ -254,9 +435,17 @@ public class TestRail {
         }
     }
 
+    /**
+     * Request factories for "Case Fields".
+     */
     @NoArgsConstructor
     public class CaseFields {
 
+        /**
+         * Returns a list of available test case custom fields.
+         *
+         * @return the request
+         */
         public List list() {
             return new List();
         }
@@ -271,9 +460,17 @@ public class TestRail {
         }
     }
 
+    /**
+     * Request factories for "Case Types".
+     */
     @NoArgsConstructor
     public class CaseTypes {
 
+        /**
+         * Returns a list of available case types.
+         *
+         * @return the request
+         */
         public List list() {
             return new List();
         }
@@ -289,9 +486,19 @@ public class TestRail {
 
     }
 
+    /**
+     * Request factories for "Configurations".
+     */
     @NoArgsConstructor
     public class Configurations {
 
+        /**
+         * Returns a list of available configurations, grouped by configuration groups.
+         *
+         * @param project the project to get the configurations for
+         * @return the request
+         * @throws java.lang.NullPointerException if project is null
+         */
         public List list(@NonNull Project project) {
             return new List(project);
         }
@@ -308,25 +515,64 @@ public class TestRail {
 
     }
 
+    /**
+     * Request factories for "Milestones".
+     */
     @NoArgsConstructor
     public class Milestones {
 
-        public Get get(@NonNull Milestone milestone) {
-            return new Get(milestone);
+        /**
+         * Returns an existing milestone.
+         *
+         * @param milestoneId the ID of the milestone
+         * @return the request
+         * @throws java.lang.IllegalArgumentException if milestoneId is not positive
+         */
+        public Get get(final int milestoneId) {
+            checkArgument(milestoneId > 0, "milestoneId should be positive");
+            return new Get(milestoneId);
         }
 
+        /**
+         * Returns the list of milestones for a project.
+         *
+         * @param project the project to get the milestones for
+         * @return the request
+         * @throws java.lang.NullPointerException if project is null
+         */
         public List list(@NonNull Project project) {
             return new List(project);
         }
 
+        /**
+         * Creates a new milestone.
+         *
+         * @param milestone the milestone to be added
+         * @return the request
+         * @throws java.lang.NullPointerException if milestone is null
+         */
         public Add add(@NonNull Milestone milestone) {
             return new Add(milestone);
         }
 
+        /**
+         * Updates an existing milestone. Partial updates are supported, i.e. you can set and update specific fields only.
+         *
+         * @param milestone the milestone to be updated
+         * @return the request
+         * @throws java.lang.NullPointerException if milestone is null
+         */
         public Update update(@NonNull Milestone milestone) {
             return new Update(milestone);
         }
 
+        /**
+         * Deletes an existing milestone.
+         *
+         * @param milestone the milestone to be deleted
+         * @return the request
+         * @throws java.lang.NullPointerException if milestone is null
+         */
         public Delete delete(@NonNull Milestone milestone) {
             return new Delete(milestone);
         }
@@ -334,8 +580,8 @@ public class TestRail {
         public class Get extends Request<Milestone> {
             private static final String REST_PATH = "get_milestone/";
 
-            private Get(Milestone milestone) {
-                super(config, Method.GET, REST_PATH + milestone.getId(), Milestone.class);
+            private Get(int milestoneId) {
+                super(config, Method.GET, REST_PATH + milestoneId, Milestone.class);
             }
         }
 
@@ -390,9 +636,17 @@ public class TestRail {
 
     }
 
+    /**
+     * Request factories for "Priorities".
+     */
     @NoArgsConstructor
     public class Priorities {
 
+        /**
+         * Returns a list of available priorities.
+         *
+         * @return the request
+         */
         public List list() {
             return new List();
         }
@@ -408,41 +662,111 @@ public class TestRail {
 
     }
 
+    /**
+     * Request factories for "Plans".
+     */
     @NoArgsConstructor
     public class Plans {
 
-        public Get get(@NonNull Plan plan) {
-            return new Get(plan);
+        /**
+         * Returns an existing test plan.
+         *
+         * @param planId the ID of the test plan
+         * @return the request
+         * @throws java.lang.IllegalArgumentException if planId is not positive
+         */
+        public Get get(final int planId) {
+            checkArgument(planId > 0, "planId should be positive");
+            return new Get(planId);
         }
 
-        public Add add(@NonNull Plan plan) {
-            return new Add(plan);
-        }
-
+        /**
+         * Returns a list of test plans for a project.
+         *
+         * @param project the project to get the test plans for
+         * @return the request
+         * @throws java.lang.NullPointerException if project is null
+         */
         public List list(@NonNull Project project) {
             return new List(project);
         }
 
+        /**
+         * Creates a new test plan.
+         *
+         * @param plan the test plan to be added
+         * @return the request
+         * @throws java.lang.NullPointerException if plan is null
+         */
+        public Add add(@NonNull Plan plan) {
+            return new Add(plan);
+        }
+
+        /**
+         * Updates an existing test plan. Partial updates are supported, i.e. you can set and update specific fields only.
+         *
+         * @param plan the test plan to be updated
+         * @return the request
+         * @throws java.lang.NullPointerException if plan is null
+         */
         public Update update(@NonNull Plan plan) {
             return new Update(plan);
         }
 
+        /**
+         * Closes an existing test plan and archives its test runs & results.
+         *
+         * @param plan the test plan to be closed
+         * @return the request
+         * @throws java.lang.NullPointerException if plan is null
+         */
         public Close close(@NonNull Plan plan) {
             return new Close(plan);
         }
 
+        /**
+         * Deletes an existing test plan.
+         *
+         * @param plan the test plan to be deleted
+         * @return the request
+         * @throws java.lang.NullPointerException if plan is null
+         */
         public Delete delete(@NonNull Plan plan) {
             return new Delete(plan);
         }
 
+        /**
+         * Adds one or more new test runs to a test plan.
+         *
+         * @param plan  the test plan to add the entry to
+         * @param entry the plan entry to be added
+         * @return the request
+         * @throws java.lang.NullPointerException if any argument is null
+         */
         public AddEntry addEntry(@NonNull Plan plan, @NonNull Plan.Entry entry) {
             return new AddEntry(plan, entry);
         }
 
+        /**
+         * Updates one or more existing test runs in a plan. Partial updates are supported, i.e. you can set and update specific fields only.
+         *
+         * @param plan  the test plan to update the entry in
+         * @param entry the plan entry to be updated
+         * @return the request
+         * @throws java.lang.NullPointerException if any argument is null
+         */
         public UpdateEntry updateEntry(@NonNull Plan plan, @NonNull Plan.Entry entry) {
             return new UpdateEntry(plan, entry);
         }
 
+        /**
+         * Deletes one or more existing test runs from a plan.
+         *
+         * @param plan  the test plan to delete entry from
+         * @param entry the plan entry to be deleted
+         * @return the request
+         * @throws java.lang.NullPointerException if any argument is null
+         */
         public DeleteEntry deleteEntry(@NonNull Plan plan, @NonNull Plan.Entry entry) {
             return new DeleteEntry(plan, entry);
         }
@@ -450,8 +774,8 @@ public class TestRail {
         public class Get extends Request<Plan> {
             private static final String REST_PATH = "get_plan/";
 
-            private Get(Plan plan) {
-                super(config, Method.GET, REST_PATH + plan.getId(), Plan.class);
+            private Get(int planId) {
+                super(config, Method.GET, REST_PATH + planId, Plan.class);
             }
         }
 
@@ -553,35 +877,95 @@ public class TestRail {
         }
     }
 
+    /**
+     * Request factories for "Results".
+     */
     @NoArgsConstructor
     public class Results {
 
+        /**
+         * Returns a list of test results for a test.
+         *
+         * @param test the test to get the results for
+         * @return the request
+         * @throws java.lang.NullPointerException if test is null
+         */
         public List list(@NonNull Test test) {
             return new List(test);
         }
 
-        public ListForRun list(@NonNull Run run) {
-            return new ListForRun(run);
-        }
-
+        /**
+         * Returns a list of test results for a test run and case combination.
+         *
+         * @param run      the test run
+         * @param testCase the test case
+         * @return the request
+         * @throws java.lang.NullPointerException if any argument is null
+         */
         public ListForCase list(@NonNull Run run, @NonNull Case testCase) {
             return new ListForCase(run, testCase);
         }
 
+        /**
+         * Returns a list of test results for a test run.
+         *
+         * @param run the test run to get the results for
+         * @return the request
+         * @throws java.lang.NullPointerException if run is null
+         */
+        public ListForRun list(@NonNull Run run) {
+            return new ListForRun(run);
+        }
+
+        /**
+         * Adds a new test result, comment or assigns a test.
+         *
+         * @param result the test result to be added
+         * @return the request
+         * @throws java.lang.NullPointerException if result is null
+         */
         public Add add(@NonNull Result result) {
             return new Add(result);
         }
 
+        /**
+         * Adds a new test result, comment or assigns a test (for a test run and case combination).
+         *
+         * @param run      the test run
+         * @param testCase the test case
+         * @param result   the test result to be added
+         * @return the request
+         * @throws java.lang.NullPointerException if any argument is null
+         */
         public AddForCase add(@NonNull Run run, @NonNull Case testCase, @NonNull Result result) {
             return new AddForCase(run, testCase, result);
         }
 
+        /**
+         * Adds one or more new test results, comments or assigns one or more tests.
+         *
+         * @param run     the test run to add the results to
+         * @param results the test results to be added
+         * @return the request
+         * @throws java.lang.NullPointerException     if any argument is null
+         * @throws java.lang.IllegalArgumentException if results is empty
+         */
         public AddList add(@NonNull Run run, @NonNull java.util.List<Result> results) {
-            Preconditions.checkArgument(!results.isEmpty(), "results cannot be empty");
+            checkArgument(!results.isEmpty(), "results cannot be empty");
             return new AddList(run, results);
         }
 
+        /**
+         * Adds one or more new test results, comments or assigns one or more tests (using the case IDs).
+         *
+         * @param run     the test run to add the results to
+         * @param results the test results to be added
+         * @return the request
+         * @throws java.lang.NullPointerException     if any argument is null
+         * @throws java.lang.IllegalArgumentException if results is empty
+         */
         public AddListForCases addForCases(@NonNull Run run, @NonNull java.util.List<Result> results) {
+            checkArgument(!results.isEmpty(), "results cannot be empty");
             return new AddListForCases(run, results);
         }
 
@@ -681,9 +1065,17 @@ public class TestRail {
     }
 
 
+    /**
+     * Request factories for "Result Fields".
+     */
     @NoArgsConstructor
     public class ResultFields {
 
+        /**
+         * Returns a list of available test result custom fields.
+         *
+         * @return the request
+         */
         public List list() {
             return new List();
         }
@@ -698,29 +1090,75 @@ public class TestRail {
         }
     }
 
+    /**
+     * Request factories for "Runs".
+     */
     @NoArgsConstructor
     public class Runs {
 
-        public Get get(@NonNull Run run) {
-            return new Get(run);
+        /**
+         * Returns an existing test run.
+         *
+         * @param runId the ID of the test run
+         * @return the request
+         * @throws java.lang.IllegalArgumentException if runId is not positive
+         */
+        public Get get(final int runId) {
+            checkArgument(runId > 0, "runId should be positive");
+            return new Get(runId);
         }
 
+        /**
+         * Returns a list of test runs for a project. Only returns those test runs that are not part of a test plan.
+         *
+         * @param project the project to get the test runs for
+         * @return the request
+         * @throws java.lang.NullPointerException if project is null
+         */
         public List list(@NonNull Project project) {
             return new List(project);
         }
 
+        /**
+         * Creates a new test run.
+         *
+         * @param run the test run to be added
+         * @return the request
+         * @throws java.lang.NullPointerException if run is null
+         */
         public Add add(@NonNull Run run) {
             return new Add(run);
         }
 
+        /**
+         * Updates an existing test run. Partial updates are supported, i.e. you can set and update specific fields only.
+         *
+         * @param run the test run to be updated
+         * @return the request
+         * @throws java.lang.NullPointerException if run is null
+         */
         public Update update(@NonNull Run run) {
             return new Update(run);
         }
 
+        /**
+         * Closes an existing test run and archives its tests & results.
+         *
+         * @param run the test run to be closed
+         * @return the request
+         * @throws java.lang.NullPointerException if run is null
+         */
         public Close close(@NonNull Run run) {
             return new Close(run);
         }
 
+        /**
+         * Deletes an existing test run.
+         *
+         * @param run the test run to be deleted
+         * @return the request
+         * @throws java.lang.NullPointerException if run is null
+         */
         public Delete delete(@NonNull Run run) {
             return new Delete(run);
         }
@@ -728,8 +1166,8 @@ public class TestRail {
         public class Get extends Request<Run> {
             private static final String REST_PATH = "get_run/";
 
-            private Get(Run run) {
-                super(config, Method.GET, REST_PATH + run.getId(), Run.class);
+            private Get(int runId) {
+                super(config, Method.GET, REST_PATH + runId, Run.class);
             }
         }
 
@@ -792,25 +1230,77 @@ public class TestRail {
 
     }
 
+    /**
+     * Request factories for "Sections".
+     */
     @NoArgsConstructor
     public class Sections {
 
-        public Get get(@NonNull Section section) {
-            return new Get(section);
+        /**
+         * Returns an existing section.
+         *
+         * @param sectionId the ID of the section
+         * @return the request
+         * @throws java.lang.IllegalArgumentException if sectionId is not positive
+         */
+        public Get get(final int sectionId) {
+            checkArgument(sectionId > 0, "sectionId should be positive");
+            return new Get(sectionId);
         }
 
-        public List list(@NonNull Project project, Suite suite) {
+        /**
+         * Returns a list of sections for a project.
+         *
+         * @param project the project which is operating in single suite mode
+         * @return the request
+         * @throws java.lang.NullPointerException if project is null
+         */
+        public List list(@NonNull Project project) {
+            return new List(project, null);
+        }
+
+        /**
+         * Returns a list of sections for a project and test suite.
+         *
+         * @param project the project
+         * @param suite   the test suite
+         * @return the request
+         * @throws java.lang.NullPointerException if any argument is null
+         */
+        public List list(@NonNull Project project, @NonNull Suite suite) {
             return new List(project, suite);
         }
 
+        /**
+         * Creates a new section.
+         *
+         * @param project the project to add the section to
+         * @param section the section to be added
+         * @return the request
+         * @throws java.lang.NullPointerException if any argument is null
+         */
         public Add add(@NonNull Project project, @NonNull Section section) {
             return new Add(project, section);
         }
 
+        /**
+         * Updates an existing section. Partial updates are supported, i.e. you can set and update specific fields only.
+         *
+         * @param section the section to be updated
+         * @return the request
+         * @throws java.lang.NullPointerException if section is null
+         */
         public Update update(@NonNull Section section) {
             return new Update(section);
         }
 
+        /**
+         * Deletes an existing section.
+         *
+         * @param section the section to be deleted
+         * @return the request
+         * @throws java.lang.NullPointerException if section is null
+         */
         public Delete delete(@NonNull Section section) {
             return new Delete(section);
         }
@@ -818,8 +1308,8 @@ public class TestRail {
         public class Get extends Request<Section> {
             private static final String REST_PATH = "get_section/";
 
-            private Get(Section section) {
-                super(config, Method.GET, REST_PATH + section.getId(), Section.class);
+            private Get(int sectionId) {
+                super(config, Method.GET, REST_PATH + sectionId, Section.class);
             }
 
         }
@@ -874,9 +1364,17 @@ public class TestRail {
         }
     }
 
+    /**
+     * Request factories for "Statuses".
+     */
     @NoArgsConstructor
     public class Statuses {
 
+        /**
+         * Returns a list of available test statuses.
+         *
+         * @return the request
+         */
         public List list() {
             return new List();
         }
@@ -892,25 +1390,64 @@ public class TestRail {
 
     }
 
+    /**
+     * Request factories for "Suites".
+     */
     @NoArgsConstructor
     public class Suites {
 
-        public Get get(@NonNull Suite suite) {
-            return new Get(suite);
+        /**
+         * Returns an existing test suite.
+         *
+         * @param suiteId the ID of the test suite
+         * @return the request
+         * @throws java.lang.IllegalArgumentException if suiteId is not positive
+         */
+        public Get get(final int suiteId) {
+            checkArgument(suiteId > 0, "suiteId should be positive");
+            return new Get(suiteId);
         }
 
+        /**
+         * Returns a list of test suites for a project.
+         *
+         * @param project the project to get the test suites for
+         * @return the request
+         * @throws java.lang.NullPointerException if project is null
+         */
         public List list(@NonNull Project project) {
             return new List(project);
         }
 
+        /**
+         * Creates a new test suite.
+         *
+         * @param suite the test suite to be added
+         * @return the request
+         * @throws java.lang.NullPointerException if suite is null
+         */
         public Add add(@NonNull Suite suite) {
             return new Add(suite);
         }
 
+        /**
+         * Updates an existing test suite. Partial updates are supported, i.e. you can set and update specific fields only.
+         *
+         * @param suite the test suite to be updated
+         * @return the request
+         * @throws java.lang.NullPointerException if suite is null
+         */
         public Update update(@NonNull Suite suite) {
             return new Update(suite);
         }
 
+        /**
+         * Deletes an existing test suite.
+         *
+         * @param suite the test suite to be deleted
+         * @return the request
+         * @throws java.lang.NullPointerException if suite is null
+         */
         public Delete delete(@NonNull Suite suite) {
             return new Delete(suite);
         }
@@ -918,8 +1455,8 @@ public class TestRail {
         public class Get extends Request<Suite> {
             private static final String REST_PATH = "get_suite/";
 
-            private Get(Suite suite) {
-                super(config, Method.GET, REST_PATH + suite.getId(), Suite.class);
+            private Get(int suiteId) {
+                super(config, Method.GET, REST_PATH + suiteId, Suite.class);
             }
         }
 
@@ -974,13 +1511,31 @@ public class TestRail {
 
     }
 
+    /**
+     * Request factories for "Tests".
+     */
     @NoArgsConstructor
     public class Tests {
 
-        public Get get(@NonNull Test test) {
-            return new Get(test);
+        /**
+         * Returns an existing test.
+         *
+         * @param testId the ID of the test
+         * @return the request
+         * @throws java.lang.IllegalArgumentException if testId is not positive
+         */
+        public Get get(final int testId) {
+            checkArgument(testId > 0, "testId should be positive");
+            return new Get(testId);
         }
 
+        /**
+         * Returns a list of tests for a test run.
+         *
+         * @param run the test run to get the tests for
+         * @return the request
+         * @throws java.lang.NullPointerException if run is null
+         */
         public List list(@NonNull Run run) {
             return new List(run);
         }
@@ -988,8 +1543,8 @@ public class TestRail {
         public class Get extends Request<Test> {
             private static final String REST_PATH = "get_test/";
 
-            private Get(Test test) {
-                super(config, Method.GET, REST_PATH + test.getId(), Test.class);
+            private Get(int testId) {
+                super(config, Method.GET, REST_PATH + testId, Test.class);
             }
         }
 
@@ -1004,17 +1559,43 @@ public class TestRail {
 
     }
 
+    /**
+     * Request factories for "Users".
+     */
     @NoArgsConstructor
     public class Users {
 
-        public Get get(@NonNull User user) {
-            return new Get(user);
+        /**
+         * Returns an existing user.
+         *
+         * @param userId the ID of the user
+         * @return the request
+         * @throws java.lang.IllegalArgumentException if userId is not positive
+         */
+        public Get get(final int userId) {
+            checkArgument(userId > 0, "userId should be positive");
+            return new Get(userId);
         }
 
-        public GetByEmail getByEmail(@NonNull User user) {
-            return new GetByEmail(user);
+        /**
+         * Returns an existing user by his/her email address.
+         *
+         * @param email the email address to get the user for
+         * @return the request
+         * @throws java.lang.NullPointerException     if email is null
+         * @throws java.lang.IllegalArgumentException if email is empty
+         */
+        public GetByEmail getByEmail(@NonNull String email) {
+            email = email.trim();
+            checkArgument(!email.isEmpty(), "email cannot be empty");
+            return new GetByEmail(email);
         }
 
+        /**
+         * Returns a list of users.
+         *
+         * @return the request
+         */
         public List list() {
             return new List();
         }
@@ -1022,16 +1603,16 @@ public class TestRail {
         public class Get extends Request<User> {
             private static final String REST_PATH = "get_user/";
 
-            private Get(User user) {
-                super(config, Method.GET, REST_PATH + user.getId(), User.class);
+            private Get(int userId) {
+                super(config, Method.GET, REST_PATH + userId, User.class);
             }
         }
 
         public class GetByEmail extends Request<User> {
             private static final String REST_PATH = "get_user_by_email&email=";
 
-            private GetByEmail(User user) {
-                super(config, Method.GET, REST_PATH + user.getEmail(), User.class);
+            private GetByEmail(String email) {
+                super(config, Method.GET, REST_PATH + email, User.class);
             }
         }
 
