@@ -2,24 +2,28 @@ package com.cymbocha.apis.testrail;
 
 import com.cymbocha.apis.testrail.internal.FieldModule;
 import com.cymbocha.apis.testrail.internal.PlanModule;
+import com.cymbocha.apis.testrail.internal.QueryParameterString;
 import com.cymbocha.apis.testrail.internal.UnixTimestampModule;
 import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.MapperFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.PropertyNamingStrategy;
+import com.fasterxml.jackson.databind.SerializationFeature;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.NonNull;
 import lombok.extern.log4j.Log4j;
 
-import javax.net.ssl.HttpsURLConnection;
 import javax.xml.bind.DatatypeConverter;
 import java.io.*;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.nio.charset.Charset;
+import java.util.Collections;
+import java.util.Map;
 
 /**
  * TestRail request.
@@ -32,7 +36,15 @@ public abstract class Request<T> {
             .setPropertyNamingStrategy(PropertyNamingStrategy.CAMEL_CASE_TO_LOWER_CASE_WITH_UNDERSCORES)
             .configure(MapperFeature.DEFAULT_VIEW_INCLUSION, false)
             .setSerializationInclusion(JsonInclude.Include.NON_DEFAULT)
+            .disable(SerializationFeature.FAIL_ON_EMPTY_BEANS)
             .registerModules(new FieldModule(), new PlanModule(), new UnixTimestampModule());
+
+    protected static final ObjectMapper QUERY_PARAM_MAPPER = new ObjectMapper()
+            .setPropertyNamingStrategy(PropertyNamingStrategy.CAMEL_CASE_TO_LOWER_CASE_WITH_UNDERSCORES)
+            .configure(MapperFeature.DEFAULT_VIEW_INCLUSION, false)
+            .setSerializationInclusion(JsonInclude.Include.NON_NULL)
+            .disable(SerializationFeature.FAIL_ON_EMPTY_BEANS)
+            .registerModules(new UnixTimestampModule());
 
     @NonNull
     private final TestRailConfig config;
@@ -67,7 +79,7 @@ public abstract class Request<T> {
         try {
 
             URL url = new URL(getUrl());
-            HttpsURLConnection con = (HttpsURLConnection) url.openConnection();
+            HttpURLConnection con = (HttpURLConnection) url.openConnection();
             con.setRequestMethod(method.name());
             con.setRequestProperty("User-Agent", config.getApplicationName());
             con.setRequestProperty("Content-Type", "application/json");
@@ -100,8 +112,7 @@ public abstract class Request<T> {
                     if (errorStream == null) {
                         throw exceptionBuilder.setError("<server did not send any error message>").build();
                     }
-                    throw ((TestRailException.Builder) JSON.readerForUpdating(exceptionBuilder).readValue(
-                            new BufferedInputStream(errorStream))).build();
+                    throw JSON.readerForUpdating(exceptionBuilder).<TestRailException.Builder>readValue(new BufferedInputStream(errorStream)).build();
                 }
             }
 
@@ -123,10 +134,29 @@ public abstract class Request<T> {
         }
     }
 
-    private String getUrl() {
-        return config.getBaseApiUrl() + restPath;
+    /**
+     * Get URL string for this request.
+     *
+     * @return the string URL
+     * @throws IOException if there is an error creating query parameter string
+     */
+    private String getUrl() throws IOException {
+        StringBuilder urlBuilder = new StringBuilder(config.getBaseApiUrl()).append(restPath);
+
+        String queryParamJson = QUERY_PARAM_MAPPER.writerWithView(getClass()).writeValueAsString(this);
+        String queryParamString = QUERY_PARAM_MAPPER.readValue(queryParamJson, QueryParameterString.class).toString();
+        if(!queryParamString.isEmpty()) {
+            urlBuilder.append("&").append(queryParamString);
+        }
+
+        return urlBuilder.toString();
     }
 
+    /**
+     * Override this method to provide content to be send with {@code Method#POST} requests.
+     *
+     * @return content
+     */
     protected Object getContent() {
         return null;
     }
