@@ -1,11 +1,16 @@
 package com.cymbocha.apis.testrail;
 
+import com.cymbocha.apis.testrail.internal.ListToCsvSerializer;
 import com.cymbocha.apis.testrail.model.*;
+import com.fasterxml.jackson.annotation.JsonView;
 import com.fasterxml.jackson.core.type.TypeReference;
-import lombok.AccessLevel;
-import lombok.AllArgsConstructor;
-import lombok.NoArgsConstructor;
-import lombok.NonNull;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import lombok.*;
+import lombok.experimental.Accessors;
+
+import java.util.Date;
+import java.util.List;
+import java.util.Map;
 
 import static com.google.common.base.Preconditions.checkArgument;
 
@@ -309,37 +314,27 @@ public class TestRail {
         /**
          * Returns the list of available test cases.
          *
-         * @param project the project which is operating in a single suite mode
+         * @param projectId the ID of the project which is operating in a single suite mode
          * @return the request
-         * @throws java.lang.NullPointerException if project is null
+         * @throws java.lang.IllegalArgumentException if projectId is not positive
          */
-        public List list(@NonNull Project project) {
-            return new List(project, null, null);
+        public List list(final int projectId) {
+            checkArgument(projectId > 0, "projectId should be positive");
+            return new List(projectId);
         }
 
         /**
          * Returns the list of available test cases.
          *
-         * @param project the project
-         * @param suite   the test suite
+         * @param projectId the ID of the project
+         * @param suiteId the ID of the suite
          * @return the request
-         * @throws java.lang.NullPointerException if any argument is null
+         * @throws java.lang.IllegalArgumentException if any argument is not positive
          */
-        public List list(@NonNull Project project, @NonNull Suite suite) {
-            return new List(project, suite, null);
-        }
-
-        /**
-         * Returns the list of available test cases.
-         *
-         * @param project the project
-         * @param suite   the test suite
-         * @param section the section
-         * @return the request
-         * @throws java.lang.NullPointerException if any argument is null
-         */
-        public List list(@NonNull Project project, @NonNull Suite suite, @NonNull Section section) {
-            return new List(project, suite, section);
+        public List list(final int projectId, final int suiteId) {
+            checkArgument(projectId > 0, "projectId should be positive");
+            checkArgument(suiteId > 0, "suiteId should be positive");
+            return new List(projectId, suiteId);
         }
 
         /**
@@ -383,13 +378,55 @@ public class TestRail {
             }
         }
 
+        @Getter
+        @Setter
+        @Accessors(fluent = true)
         public class List extends Request<java.util.List<Case>> {
-            private static final String REST_PATH = "get_cases/%s&suite_id=%s&section_id=%s";
+            private static final String REST_PATH = "get_cases/%s&suite_id=%s";
 
-            private List(Project project, Suite suite, Section section) {
-                super(config, Method.GET, String.format(REST_PATH, project.getId(), suite == null ? "" : suite.getId(), section == null ? "" : section.getId()), new TypeReference<java.util.List<Case>>() {
-                });
+            @JsonView(List.class)
+            private Integer sectionId;
+
+            @JsonView(List.class)
+            private Date createdAfter;
+
+            @JsonView(List.class)
+            private Date createdBefore;
+
+            @JsonView(List.class)
+            @JsonSerialize(using = ListToCsvSerializer.class)
+            private java.util.List<Integer> createdBy;
+
+            @JsonView(List.class)
+            @JsonSerialize(using = ListToCsvSerializer.class)
+            private java.util.List<Integer> milestoneId;
+
+            @JsonView(List.class)
+            @JsonSerialize(using = ListToCsvSerializer.class)
+            private java.util.List<Integer> priorityId;
+
+            @JsonView(List.class)
+            @JsonSerialize(using = ListToCsvSerializer.class)
+            private java.util.List<Integer> typeId;
+
+            @JsonView(List.class)
+            private Date updatedAfter;
+
+            @JsonView(List.class)
+            private Date updatedBefore;
+
+            @JsonView(List.class)
+            @JsonSerialize(using = ListToCsvSerializer.class)
+            private java.util.List<Integer> updatedBy;
+
+            private List(int projectId) {
+                super(config, Method.GET, String.format(REST_PATH, projectId, ""), new TypeReference<java.util.List<Case>>() {});
             }
+
+            private List(int projectId, int suiteId) {
+                super(config, Method.GET, String.format(REST_PATH, projectId, suiteId), new TypeReference<java.util.List<Case>>() {});
+            }
+
         }
 
         public class Add extends Request<Case> {

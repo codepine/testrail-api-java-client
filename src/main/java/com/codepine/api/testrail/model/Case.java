@@ -43,7 +43,7 @@ public class Case {
     private int priorityId;
 
     @JsonView({TestRail.Cases.Add.class, TestRail.Cases.Update.class})
-    private int milestoneId;
+    private Integer milestoneId;
 
     @JsonView({TestRail.Cases.Add.class, TestRail.Cases.Update.class})
     private String refs;

@@ -10,12 +10,12 @@ import java.io.IOException;
 import java.util.List;
 
 /**
- * Serializer to convert {@code List<String>} to csv string.
+ * Serializer to convert {@code List<?>} to csv string.
  */
-public class ListToCsvSerializer extends JsonSerializer<List<String>> {
+public class ListToCsvSerializer extends JsonSerializer<List<?>> {
 
     @Override
-    public void serialize(List<String> value, JsonGenerator jgen, SerializerProvider provider) throws IOException, JsonProcessingException {
+    public void serialize(List<?> value, JsonGenerator jgen, SerializerProvider provider) throws IOException, JsonProcessingException {
         jgen.writeString(Joiner.on(',').join(value));
     }
 }
