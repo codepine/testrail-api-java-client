@@ -634,13 +634,7 @@ public class TestRail {
 
             @JsonView(List.class)
             @JsonSerialize(using = BooleanToIntSerializer.class)
-            @Setter(value = AccessLevel.NONE)
             private Boolean isCompleted;
-
-            public List isCompleted(boolean isCompleted) {
-                this.isCompleted = isCompleted;
-                return this;
-            }
 
             private List(int projectId) {
                 super(config, Method.GET, REST_PATH + projectId, new TypeReference<java.util.List<Milestone>>() {
@@ -737,12 +731,13 @@ public class TestRail {
         /**
          * Returns a list of test plans for a project.
          *
-         * @param project the project to get the test plans for
+         * @param projectId the ID of the project to get the plans for
          * @return the request
-         * @throws java.lang.NullPointerException if project is null
+         * @throws java.lang.IllegalArgumentException if projectId is not positive
          */
-        public List list(@NonNull Project project) {
-            return new List(project);
+        public List list(final int projectId) {
+            checkArgument(projectId > 0, "projectId should be positive");
+            return new List(projectId);
         }
 
         /**
@@ -833,11 +828,38 @@ public class TestRail {
             }
         }
 
+        @Getter
+        @Setter
+        @Accessors(fluent = true)
         public class List extends Request<java.util.List<Plan>> {
             private static final String REST_PATH = "get_plans/";
 
-            private List(Project project) {
-                super(config, Method.GET, REST_PATH + project.getId(), new TypeReference<java.util.List<Plan>>() {
+            @JsonView(List.class)
+            private Date createdAfter;
+
+            @JsonView(List.class)
+            private Date createdBefore;
+
+            @JsonView(List.class)
+            @JsonSerialize(using = ListToCsvSerializer.class)
+            private java.util.List<Integer> createdBy;
+
+            @JsonView(List.class)
+            @JsonSerialize(using = BooleanToIntSerializer.class)
+            private Boolean isCompleted;
+
+            @JsonView(List.class)
+            private Integer limit;
+
+            @JsonView(List.class)
+            private Integer offset;
+
+            @JsonView(List.class)
+            @JsonSerialize(using = ListToCsvSerializer.class)
+            private java.util.List<Integer> milestoneId;
+
+            private List(int projectId) {
+                super(config, Method.GET, REST_PATH + projectId, new TypeReference<java.util.List<Plan>>() {
                 });
             }
         }
