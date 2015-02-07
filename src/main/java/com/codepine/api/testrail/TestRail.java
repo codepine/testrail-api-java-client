@@ -240,8 +240,15 @@ public class TestRail {
             }
         }
 
+        @Getter
+        @Setter
+        @Accessors(fluent = true)
         public class List extends Request<java.util.List<Project>> {
             private static final String REST_PATH = "get_projects";
+
+            @JsonView(List.class)
+            @JsonSerialize(using = BooleanToIntSerializer.class)
+            private Boolean isCompleted;
 
             private List() {
                 super(config, Method.GET, REST_PATH, new TypeReference<java.util.List<Project>>() {
@@ -962,35 +969,39 @@ public class TestRail {
         /**
          * Returns a list of test results for a test.
          *
-         * @param test the test to get the results for
+         * @param testId the ID of the test to get the results for
          * @return the request
-         * @throws java.lang.NullPointerException if test is null
+         * @throws java.lang.IllegalArgumentException if testId is not positive
          */
-        public List list(@NonNull Test test) {
-            return new List(test);
+        public List list(final int testId) {
+            checkArgument(testId > 0, "testId should be positive");
+            return new List(testId);
         }
 
         /**
          * Returns a list of test results for a test run and case combination.
          *
-         * @param run      the test run
-         * @param testCase the test case
+         * @param runId      the ID of the test run
+         * @param testCaseId the ID of the test case
          * @return the request
-         * @throws java.lang.NullPointerException if any argument is null
+         * @throws java.lang.IllegalArgumentException if any argument is not positive
          */
-        public ListForCase list(@NonNull Run run, @NonNull Case testCase) {
-            return new ListForCase(run, testCase);
+        public ListForCase listForCase(final int runId, final int testCaseId) {
+            checkArgument(runId > 0, "runId should be positive");
+            checkArgument(testCaseId > 0, "testCaseId should be positive");
+            return new ListForCase(runId, testCaseId);
         }
 
         /**
          * Returns a list of test results for a test run.
          *
-         * @param run the test run to get the results for
+         * @param runId the ID of the test run to get the results for
          * @return the request
-         * @throws java.lang.NullPointerException if run is null
+         * @throws java.lang.IllegalArgumentException if runId is not positive
          */
-        public ListForRun list(@NonNull Run run) {
-            return new ListForRun(run);
+        public ListForRun listForRun(final int runId) {
+            checkArgument(runId > 0, "runId should be positive");
+            return new ListForRun(runId);
         }
 
         /**
@@ -1045,29 +1056,78 @@ public class TestRail {
             return new AddListForCases(run, results);
         }
 
+        @Getter
+        @Setter
+        @Accessors(fluent = true)
         public class List extends Request<java.util.List<Result>> {
             private static final String REST_PATH = "get_results/";
 
-            private List(Test test) {
-                super(config, Method.GET, REST_PATH + test.getId(), new TypeReference<java.util.List<Result>>() {
+            @JsonView(List.class)
+            private Integer limit;
+
+            @JsonView(List.class)
+            private Integer offset;
+
+            @JsonView(List.class)
+            @JsonSerialize(using = ListToCsvSerializer.class)
+            private java.util.List<Integer> statusId;
+
+            private List(int testId) {
+                super(config, Method.GET, REST_PATH + testId, new TypeReference<java.util.List<Result>>() {
                 });
             }
         }
 
+        @Getter
+        @Setter
+        @Accessors(fluent = true)
         public class ListForRun extends Request<java.util.List<Result>> {
             private static final String REST_PATH = "get_results_for_run/";
 
-            private ListForRun(Run run) {
-                super(config, Method.GET, REST_PATH + run.getId(), new TypeReference<java.util.List<Result>>() {
+            @JsonView(ListForRun.class)
+            private Date createdAfter;
+
+            @JsonView(ListForRun.class)
+            private Date createdBefore;
+
+            @JsonView(ListForRun.class)
+            @JsonSerialize(using = ListToCsvSerializer.class)
+            private java.util.List<Integer> createdBy;
+
+            @JsonView(ListForRun.class)
+            private Integer limit;
+
+            @JsonView(ListForRun.class)
+            private Integer offset;
+
+            @JsonView(ListForRun.class)
+            @JsonSerialize(using = ListToCsvSerializer.class)
+            private java.util.List<Integer> statusId;
+
+            private ListForRun(int runId) {
+                super(config, Method.GET, REST_PATH + runId, new TypeReference<java.util.List<Result>>() {
                 });
             }
         }
 
+        @Getter
+        @Setter
+        @Accessors(fluent = true)
         public class ListForCase extends Request<java.util.List<Result>> {
             private static final String REST_PATH = "get_results_for_case/";
 
-            private ListForCase(Run run, Case testCase) {
-                super(config, Method.GET, REST_PATH + run.getId() + "/" + testCase.getId(), new TypeReference<java.util.List<Result>>() {
+            @JsonView(ListForCase.class)
+            private Integer limit;
+
+            @JsonView(ListForCase.class)
+            private Integer offset;
+
+            @JsonView(ListForCase.class)
+            @JsonSerialize(using = ListToCsvSerializer.class)
+            private java.util.List<Integer> statusId;
+
+            private ListForCase(int runId, int testCaseId) {
+                super(config, Method.GET, REST_PATH + runId + "/" + testCaseId, new TypeReference<java.util.List<Result>>() {
                 });
             }
         }
