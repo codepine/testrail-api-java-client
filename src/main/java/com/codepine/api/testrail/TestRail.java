@@ -1,19 +1,15 @@
 package com.cymbocha.apis.testrail;
 
-import com.cymbocha.apis.testrail.internal.BooleanToIntDeserializer;
 import com.cymbocha.apis.testrail.internal.BooleanToIntSerializer;
 import com.cymbocha.apis.testrail.internal.ListToCsvSerializer;
 import com.cymbocha.apis.testrail.model.*;
 import com.fasterxml.jackson.annotation.JsonView;
 import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import lombok.*;
 import lombok.experimental.Accessors;
 
 import java.util.Date;
-import java.util.List;
-import java.util.Map;
 
 import static com.google.common.base.Preconditions.checkArgument;
 
@@ -337,7 +333,7 @@ public class TestRail {
          * Returns the list of available test cases.
          *
          * @param projectId the ID of the project
-         * @param suiteId the ID of the suite
+         * @param suiteId   the ID of the suite
          * @return the request
          * @throws java.lang.IllegalArgumentException if any argument is not positive
          */
@@ -430,11 +426,13 @@ public class TestRail {
             private java.util.List<Integer> updatedBy;
 
             private List(int projectId) {
-                super(config, Method.GET, String.format(REST_PATH, projectId, ""), new TypeReference<java.util.List<Case>>() {});
+                super(config, Method.GET, String.format(REST_PATH, projectId, ""), new TypeReference<java.util.List<Case>>() {
+                });
             }
 
             private List(int projectId, int suiteId) {
-                super(config, Method.GET, String.format(REST_PATH, projectId, suiteId), new TypeReference<java.util.List<Case>>() {});
+                super(config, Method.GET, String.format(REST_PATH, projectId, suiteId), new TypeReference<java.util.List<Case>>() {
+                });
             }
 
         }
@@ -1247,12 +1245,13 @@ public class TestRail {
         /**
          * Returns a list of test runs for a project. Only returns those test runs that are not part of a test plan.
          *
-         * @param project the project to get the test runs for
+         * @param projectId the ID of the project to get the runs for
          * @return the request
-         * @throws java.lang.NullPointerException if project is null
+         * @throws java.lang.IllegalArgumentException if projectId is not positive
          */
-        public List list(@NonNull Project project) {
-            return new List(project);
+        public List list(final int projectId) {
+            checkArgument(projectId > 0, "projectId should be positive");
+            return new List(projectId);
         }
 
         /**
@@ -1307,11 +1306,42 @@ public class TestRail {
             }
         }
 
+        @Getter
+        @Setter
+        @Accessors(fluent = true)
         public class List extends Request<java.util.List<Run>> {
             private static final String REST_PATH = "get_runs/";
 
-            private List(Project project) {
-                super(config, Method.GET, REST_PATH + project.getId(), new TypeReference<java.util.List<Run>>() {
+            @JsonView(List.class)
+            private Date createdAfter;
+
+            @JsonView(List.class)
+            private Date createdBefore;
+
+            @JsonView(List.class)
+            @JsonSerialize(using = ListToCsvSerializer.class)
+            private java.util.List<Integer> createdBy;
+
+            @JsonView(List.class)
+            @JsonSerialize(using = BooleanToIntSerializer.class)
+            private Boolean isCompleted;
+
+            @JsonView(List.class)
+            private Integer limit;
+
+            @JsonView(List.class)
+            private Integer offset;
+
+            @JsonView(List.class)
+            @JsonSerialize(using = ListToCsvSerializer.class)
+            private java.util.List<Integer> milestoneId;
+
+            @JsonView(List.class)
+            @JsonSerialize(using = ListToCsvSerializer.class)
+            private java.util.List<Integer> suiteId;
+
+            private List(int projectId) {
+                super(config, Method.GET, REST_PATH + projectId, new TypeReference<java.util.List<Run>>() {
                 });
             }
         }
@@ -1387,24 +1417,27 @@ public class TestRail {
         /**
          * Returns a list of sections for a project.
          *
-         * @param project the project which is operating in single suite mode
+         * @param projectId the ID of the project which is operating in a single suite mode
          * @return the request
-         * @throws java.lang.NullPointerException if project is null
+         * @throws java.lang.IllegalArgumentException if projectId is not positive
          */
-        public List list(@NonNull Project project) {
-            return new List(project, null);
+        public List list(final int projectId) {
+            checkArgument(projectId > 0, "projectId should be positive");
+            return new List(projectId);
         }
 
         /**
          * Returns a list of sections for a project and test suite.
          *
-         * @param project the project
-         * @param suite   the test suite
+         * @param projectId the ID of the project
+         * @param suiteId   the ID of the suite
          * @return the request
-         * @throws java.lang.NullPointerException if any argument is null
+         * @throws java.lang.IllegalArgumentException if any argument is not positive
          */
-        public List list(@NonNull Project project, @NonNull Suite suite) {
-            return new List(project, suite);
+        public List list(final int projectId, final int suiteId) {
+            checkArgument(projectId > 0, "projectId should be positive");
+            checkArgument(suiteId > 0, "suiteId should be positive");
+            return new List(projectId, suiteId);
         }
 
         /**
@@ -1453,8 +1486,13 @@ public class TestRail {
         public class List extends Request<java.util.List<Section>> {
             private static final String REST_PATH = "get_sections/%s&suite_id=%s";
 
-            private List(Project project, Suite suite) {
-                super(config, Method.GET, String.format(REST_PATH, project.getId(), suite.getId()), new TypeReference<java.util.List<Section>>() {
+            private List(int projectId) {
+                super(config, Method.GET, String.format(REST_PATH, projectId, ""), new TypeReference<java.util.List<Section>>() {
+                });
+            }
+
+            private List(int projectId, int suiteId) {
+                super(config, Method.GET, String.format(REST_PATH, projectId, suiteId), new TypeReference<java.util.List<Section>>() {
                 });
             }
         }
@@ -1547,12 +1585,13 @@ public class TestRail {
         /**
          * Returns a list of test suites for a project.
          *
-         * @param project the project to get the test suites for
+         * @param projectId the ID of the project to get the test suites for
          * @return the request
-         * @throws java.lang.NullPointerException if project is null
+         * @throws java.lang.IllegalArgumentException if projectId is not positive
          */
-        public List list(@NonNull Project project) {
-            return new List(project);
+        public List list(final int projectId) {
+            checkArgument(projectId > 0, "projectId should be positive");
+            return new List(projectId);
         }
 
         /**
@@ -1599,8 +1638,8 @@ public class TestRail {
         public class List extends Request<java.util.List<Suite>> {
             private static final String REST_PATH = "get_suites/";
 
-            private List(Project project) {
-                super(config, Method.GET, REST_PATH + project.getId(), new TypeReference<java.util.List<Suite>>() {
+            private List(int projectId) {
+                super(config, Method.GET, REST_PATH + projectId, new TypeReference<java.util.List<Suite>>() {
                 });
             }
         }
@@ -1668,12 +1707,13 @@ public class TestRail {
         /**
          * Returns a list of tests for a test run.
          *
-         * @param run the test run to get the tests for
+         * @param runId the ID of the test run to get the tests for
          * @return the request
-         * @throws java.lang.NullPointerException if run is null
+         * @throws java.lang.IllegalArgumentException if runId is not positive
          */
-        public List list(@NonNull Run run) {
-            return new List(run);
+        public List list(final int runId) {
+            checkArgument(runId > 0, "runId should be positive");
+            return new List(runId);
         }
 
         public class Get extends Request<Test> {
@@ -1684,11 +1724,18 @@ public class TestRail {
             }
         }
 
+        @Getter
+        @Setter
+        @Accessors(fluent = true)
         public class List extends Request<java.util.List<Test>> {
             private static final String REST_PATH = "get_tests/";
 
-            private List(Run run) {
-                super(config, Method.GET, REST_PATH + run.getId(), new TypeReference<java.util.List<Test>>() {
+            @JsonView(List.class)
+            @JsonSerialize(using = ListToCsvSerializer.class)
+            private java.util.List<Integer> statusId;
+
+            private List(int runId) {
+                super(config, Method.GET, REST_PATH + runId, new TypeReference<java.util.List<Test>>() {
                 });
             }
         }
