@@ -1,9 +1,12 @@
 package com.cymbocha.apis.testrail;
 
+import com.cymbocha.apis.testrail.internal.BooleanToIntDeserializer;
+import com.cymbocha.apis.testrail.internal.BooleanToIntSerializer;
 import com.cymbocha.apis.testrail.internal.ListToCsvSerializer;
 import com.cymbocha.apis.testrail.model.*;
 import com.fasterxml.jackson.annotation.JsonView;
 import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import lombok.*;
 import lombok.experimental.Accessors;
@@ -573,12 +576,13 @@ public class TestRail {
         /**
          * Returns the list of milestones for a project.
          *
-         * @param project the project to get the milestones for
+         * @param projectId the ID of the project to get the milestones for
          * @return the request
-         * @throws java.lang.NullPointerException if project is null
+         * @throws java.lang.IllegalArgumentException if projectId is not positive
          */
-        public List list(@NonNull Project project) {
-            return new List(project);
+        public List list(final int projectId) {
+            checkArgument(projectId > 0, "projectId should be positive");
+            return new List(projectId);
         }
 
         /**
@@ -622,11 +626,24 @@ public class TestRail {
             }
         }
 
+        @Getter
+        @Setter
+        @Accessors(fluent = true)
         public class List extends Request<java.util.List<Milestone>> {
             private static final String REST_PATH = "get_milestones/";
 
-            private List(Project project) {
-                super(config, Method.GET, REST_PATH + project.getId(), new TypeReference<java.util.List<Milestone>>() {
+            @JsonView(List.class)
+            @JsonSerialize(using = BooleanToIntSerializer.class)
+            @Setter(value = AccessLevel.NONE)
+            private Boolean isCompleted;
+
+            public List isCompleted(boolean isCompleted) {
+                this.isCompleted = isCompleted;
+                return this;
+            }
+
+            private List(int projectId) {
+                super(config, Method.GET, REST_PATH + projectId, new TypeReference<java.util.List<Milestone>>() {
                 });
             }
         }
