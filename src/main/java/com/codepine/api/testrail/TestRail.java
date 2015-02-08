@@ -1,8 +1,8 @@
-package com.cymbocha.apis.testrail;
+package com.codepine.api.testrail;
 
-import com.cymbocha.apis.testrail.internal.BooleanToIntSerializer;
-import com.cymbocha.apis.testrail.internal.ListToCsvSerializer;
-import com.cymbocha.apis.testrail.model.*;
+import com.codepine.api.testrail.internal.BooleanToIntSerializer;
+import com.codepine.api.testrail.internal.ListToCsvSerializer;
+import com.codepine.api.testrail.model.*;
 import com.fasterxml.jackson.annotation.JsonView;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;

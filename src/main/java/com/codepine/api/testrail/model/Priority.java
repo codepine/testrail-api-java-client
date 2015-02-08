@@ -1,4 +1,4 @@
-package com.cymbocha.apis.testrail.model;
+package com.codepine.api.testrail.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;

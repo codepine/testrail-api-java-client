@@ -1,4 +1,4 @@
-package com.cymbocha.apis.testrail.internal;
+package com.codepine.api.testrail.internal;
 
 import com.fasterxml.jackson.annotation.JsonAnySetter;
 

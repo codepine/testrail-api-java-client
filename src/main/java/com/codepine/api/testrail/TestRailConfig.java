@@ -1,4 +1,4 @@
-package com.cymbocha.apis.testrail;
+package com.codepine.api.testrail;
 
 import com.google.common.base.Preconditions;
 import lombok.*;

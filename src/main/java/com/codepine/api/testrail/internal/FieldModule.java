@@ -1,6 +1,6 @@
-package com.cymbocha.apis.testrail.internal;
+package com.codepine.api.testrail.internal;
 
-import com.cymbocha.apis.testrail.model.Field;
+import com.codepine.api.testrail.model.Field;
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.*;
@@ -12,7 +12,7 @@ import com.fasterxml.jackson.databind.module.SimpleModule;
 import java.io.IOException;
 
 /**
- * Jackson module for {@link com.cymbocha.apis.testrail.model.Field}.
+ * Jackson module for {@link com.codepine.api.testrail.model.Field}.
  * <p/>
  * INTERNAL ONLY
  */

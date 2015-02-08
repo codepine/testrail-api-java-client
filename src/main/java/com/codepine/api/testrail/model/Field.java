@@ -1,7 +1,7 @@
-package com.cymbocha.apis.testrail.model;
+package com.codepine.api.testrail.model;
 
-import com.cymbocha.apis.testrail.internal.IntToBooleanDeserializer;
-import com.cymbocha.apis.testrail.internal.StringToMapDeserializer;
+import com.codepine.api.testrail.internal.IntToBooleanDeserializer;
+import com.codepine.api.testrail.internal.StringToMapDeserializer;
 import com.fasterxml.jackson.annotation.*;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import lombok.*;

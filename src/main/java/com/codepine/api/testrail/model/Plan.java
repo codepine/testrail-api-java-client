@@ -1,6 +1,6 @@
-package com.cymbocha.apis.testrail.model;
+package com.codepine.api.testrail.model;
 
-import com.cymbocha.apis.testrail.TestRail;
+import com.codepine.api.testrail.TestRail;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonView;
@@ -102,7 +102,7 @@ public class Plan {
         @Data
         @EqualsAndHashCode(callSuper = true)
         @ToString(callSuper = true)
-        public static class Run extends com.cymbocha.apis.testrail.model.Run {
+        public static class Run extends com.codepine.api.testrail.model.Run {
             private String entryId;
             private int entryIndex;
         }

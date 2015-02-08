@@ -1,8 +1,8 @@
-package com.cymbocha.apis.testrail.model;
+package com.codepine.api.testrail.model;
 
-import com.cymbocha.apis.testrail.TestRail;
-import com.cymbocha.apis.testrail.internal.CsvToListDeserializer;
-import com.cymbocha.apis.testrail.internal.ListToCsvSerializer;
+import com.codepine.api.testrail.TestRail;
+import com.codepine.api.testrail.internal.CsvToListDeserializer;
+import com.codepine.api.testrail.internal.ListToCsvSerializer;
 import com.fasterxml.jackson.annotation.JsonAnyGetter;
 import com.fasterxml.jackson.annotation.JsonAnySetter;
 import com.fasterxml.jackson.annotation.JsonIgnore;

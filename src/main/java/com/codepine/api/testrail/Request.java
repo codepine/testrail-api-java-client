@@ -1,9 +1,9 @@
-package com.cymbocha.apis.testrail;
+package com.codepine.api.testrail;
 
-import com.cymbocha.apis.testrail.internal.FieldModule;
-import com.cymbocha.apis.testrail.internal.PlanModule;
-import com.cymbocha.apis.testrail.internal.QueryParameterString;
-import com.cymbocha.apis.testrail.internal.UnixTimestampModule;
+import com.codepine.api.testrail.internal.FieldModule;
+import com.codepine.api.testrail.internal.PlanModule;
+import com.codepine.api.testrail.internal.QueryParameterString;
+import com.codepine.api.testrail.internal.UnixTimestampModule;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;

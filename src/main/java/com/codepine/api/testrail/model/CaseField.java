@@ -1,4 +1,4 @@
-package com.cymbocha.apis.testrail.model;
+package com.codepine.api.testrail.model;
 
 /**
  * TestRail case field.

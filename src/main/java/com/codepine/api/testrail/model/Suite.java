@@ -1,6 +1,6 @@
-package com.cymbocha.apis.testrail.model;
+package com.codepine.api.testrail.model;
 
-import com.cymbocha.apis.testrail.TestRail;
+import com.codepine.api.testrail.TestRail;
 import com.fasterxml.jackson.annotation.JsonView;
 import lombok.Data;
 import lombok.experimental.Accessors;
