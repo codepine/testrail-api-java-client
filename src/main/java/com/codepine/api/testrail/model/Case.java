@@ -24,7 +24,6 @@ import java.util.Map;
  * TestRail case.
  */
 @Data
-@Accessors(chain = true)
 public class Case {
 
     private static final String CUSTOM_FIELD_KEY_PREFIX = "custom_";

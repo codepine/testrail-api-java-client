@@ -22,7 +22,6 @@ import java.util.Map;
  * TestRail test.
  */
 @Data
-@Accessors(chain = true)
 public class Test {
 
     private static final String CUSTOM_FIELD_KEY_PREFIX = "custom_";

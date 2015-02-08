@@ -9,7 +9,6 @@ import java.util.List;
  * TestRail configuration.
  */
 @Data
-@Accessors(chain = true)
 public class Configuration {
 
     private int id;

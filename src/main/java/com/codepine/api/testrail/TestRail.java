@@ -20,6 +20,7 @@ import static com.google.common.base.Preconditions.checkArgument;
  * @see <a href="http://docs.gurock.com/testrail-api2/start">TestRail API v2 Documentation</a>
  */
 @AllArgsConstructor
+@Accessors(fluent = true)
 public class TestRail {
 
     private final TestRailConfig config;
@@ -220,12 +221,13 @@ public class TestRail {
         /**
          * Deletes an existing project.
          *
-         * @param project the project to be deleted
+         * @param projectId the ID of the project to be deleted
          * @return the request
-         * @throws java.lang.NullPointerException if project is null
+         * @throws java.lang.IllegalArgumentException if projectId is not positive
          */
-        public Delete delete(@NonNull Project project) {
-            return new Delete(project);
+        public Delete delete(final int projectId) {
+            checkArgument(projectId > 0, "projectId should be positive");
+            return new Delete(projectId);
         }
 
         public class Get extends Request<Project> {
@@ -238,7 +240,6 @@ public class TestRail {
 
         @Getter
         @Setter
-        @Accessors(fluent = true)
         public class List extends Request<java.util.List<Project>> {
             private static final String REST_PATH = "get_projects";
 
@@ -289,11 +290,8 @@ public class TestRail {
         public class Delete extends Request<Void> {
             private static final String REST_PATH = "delete_project/";
 
-            private final Project project;
-
-            private Delete(@NonNull Project project) {
-                super(config, Method.POST, REST_PATH + project.getId(), Void.class);
-                this.project = project;
+            private Delete(int projectId) {
+                super(config, Method.POST, REST_PATH + projectId, Void.class);
             }
 
         }
@@ -346,12 +344,15 @@ public class TestRail {
         /**
          * Creates a new test case.
          *
-         * @param testCase the test case to be added
+         * @param sectionId the ID of the section to add the test case to
+         * @param testCase  the test case to be added
          * @return the request
-         * @throws java.lang.NullPointerException if testCase is null
+         * @throws java.lang.IllegalArgumentException if sectionId is not positive
+         * @throws java.lang.NullPointerException     if testCase is null
          */
-        public Add add(@NonNull Case testCase) {
-            return new Add(testCase);
+        public Add add(final int sectionId, @NonNull Case testCase) {
+            checkArgument(sectionId > 0, "projectId should be positive");
+            return new Add(sectionId, testCase);
         }
 
         /**
@@ -368,12 +369,13 @@ public class TestRail {
         /**
          * Deletes an existing test case.
          *
-         * @param testCase the test case to be deleted
+         * @param testCaseId the ID of the test case to be deleted
          * @return the request
-         * @throws java.lang.NullPointerException if testCase is null
+         * @throws java.lang.IllegalArgumentException if testCaseId is not positive
          */
-        public Delete delete(@NonNull Case testCase) {
-            return new Delete(testCase);
+        public Delete delete(final int testCaseId) {
+            checkArgument(testCaseId > 0, "testCaseId should be positive");
+            return new Delete(testCaseId);
         }
 
         public class Get extends Request<Case> {
@@ -442,8 +444,8 @@ public class TestRail {
 
             private final Case testCase;
 
-            private Add(Case testCase) {
-                super(config, Method.POST, REST_PATH + testCase.getSectionId(), Case.class);
+            private Add(int sectionId, Case testCase) {
+                super(config, Method.POST, REST_PATH + sectionId, Case.class);
                 this.testCase = testCase;
             }
 
@@ -474,8 +476,8 @@ public class TestRail {
         public class Delete extends Request<Void> {
             private static final String REST_PATH = "delete_case/";
 
-            private Delete(Case testCase) {
-                super(config, Method.POST, REST_PATH + testCase.getId(), Void.class);
+            private Delete(int testCaseId) {
+                super(config, Method.POST, REST_PATH + testCaseId, Void.class);
             }
         }
     }
@@ -540,19 +542,20 @@ public class TestRail {
         /**
          * Returns a list of available configurations, grouped by configuration groups.
          *
-         * @param project the project to get the configurations for
+         * @param projectId the ID of the project to get the configurations for
          * @return the request
-         * @throws java.lang.NullPointerException if project is null
+         * @throws java.lang.IllegalArgumentException if projectId is not positive
          */
-        public List list(@NonNull Project project) {
-            return new List(project);
+        public List list(final int projectId) {
+            checkArgument(projectId > 0, "projectId should be positive");
+            return new List(projectId);
         }
 
         public class List extends Request<java.util.List<Configuration>> {
             private static final String REST_PATH = "get_configs/";
 
-            private List(Project project) {
-                super(config, Method.GET, REST_PATH + project.getId(), new TypeReference<java.util.List<Configuration>>() {
+            private List(int projectId) {
+                super(config, Method.GET, REST_PATH + projectId, new TypeReference<java.util.List<Configuration>>() {
                 });
             }
 
@@ -593,12 +596,15 @@ public class TestRail {
         /**
          * Creates a new milestone.
          *
+         * @param projectId the ID of the project to add the milestone to
          * @param milestone the milestone to be added
          * @return the request
-         * @throws java.lang.NullPointerException if milestone is null
+         * @throws java.lang.IllegalArgumentException if projectId is not positive
+         * @throws java.lang.NullPointerException     if milestone is null
          */
-        public Add add(@NonNull Milestone milestone) {
-            return new Add(milestone);
+        public Add add(final int projectId, @NonNull Milestone milestone) {
+            checkArgument(projectId > 0, "projectId should be positive");
+            return new Add(projectId, milestone);
         }
 
         /**
@@ -615,12 +621,13 @@ public class TestRail {
         /**
          * Deletes an existing milestone.
          *
-         * @param milestone the milestone to be deleted
+         * @param milestoneId the ID of the milestone to be deleted
          * @return the request
-         * @throws java.lang.NullPointerException if milestone is null
+         * @throws java.lang.IllegalArgumentException if milestoneId is not positive
          */
-        public Delete delete(@NonNull Milestone milestone) {
-            return new Delete(milestone);
+        public Delete delete(final int milestoneId) {
+            checkArgument(milestoneId > 0, "milestoneId should be positive");
+            return new Delete(milestoneId);
         }
 
         public class Get extends Request<Milestone> {
@@ -652,8 +659,8 @@ public class TestRail {
 
             private final Milestone milestone;
 
-            private Add(Milestone milestone) {
-                super(config, Method.POST, REST_PATH + milestone.getProjectId(), Milestone.class);
+            private Add(int projectId, Milestone milestone) {
+                super(config, Method.POST, REST_PATH + projectId, Milestone.class);
                 this.milestone = milestone;
             }
 
@@ -682,8 +689,8 @@ public class TestRail {
         public class Delete extends Request<Void> {
             private static final String REST_PATH = "delete_milestone/";
 
-            private Delete(Milestone milestone) {
-                super(config, Method.POST, REST_PATH + milestone.getId(), Void.class);
+            private Delete(int milestoneId) {
+                super(config, Method.POST, REST_PATH + milestoneId, Void.class);
             }
         }
 
@@ -748,12 +755,15 @@ public class TestRail {
         /**
          * Creates a new test plan.
          *
-         * @param plan the test plan to be added
+         * @param projectId the ID of the project to add the plans to
+         * @param plan      the test plan to be added
          * @return the request
-         * @throws java.lang.NullPointerException if plan is null
+         * @throws java.lang.IllegalArgumentException if projectId is not positive
+         * @throws java.lang.NullPointerException     if plan is null
          */
-        public Add add(@NonNull Plan plan) {
-            return new Add(plan);
+        public Add add(final int projectId, @NonNull Plan plan) {
+            checkArgument(projectId > 0, "projectId should be positive");
+            return new Add(projectId, plan);
         }
 
         /**
@@ -770,59 +780,67 @@ public class TestRail {
         /**
          * Closes an existing test plan and archives its test runs & results.
          *
-         * @param plan the test plan to be closed
+         * @param planId the ID of the test plan to be closed
          * @return the request
-         * @throws java.lang.NullPointerException if plan is null
+         * @throws java.lang.IllegalArgumentException if planId is not positive
          */
-        public Close close(@NonNull Plan plan) {
-            return new Close(plan);
+        public Close close(final int planId) {
+            checkArgument(planId > 0, "planId should be positive");
+            return new Close(planId);
         }
 
         /**
          * Deletes an existing test plan.
          *
-         * @param plan the test plan to be deleted
+         * @param planId the ID of the test plan to be deleted
          * @return the request
-         * @throws java.lang.NullPointerException if plan is null
+         * @throws java.lang.IllegalArgumentException if planId is not positive
          */
-        public Delete delete(@NonNull Plan plan) {
-            return new Delete(plan);
+        public Delete delete(final int planId) {
+            checkArgument(planId > 0, "planId should be positive");
+            return new Delete(planId);
         }
 
         /**
          * Adds one or more new test runs to a test plan.
          *
-         * @param plan  the test plan to add the entry to
-         * @param entry the plan entry to be added
+         * @param planId the ID of the test plan to add the entry to
+         * @param entry  the plan entry to be added
          * @return the request
-         * @throws java.lang.NullPointerException if any argument is null
+         * @throws java.lang.IllegalArgumentException if planId is not positive
+         * @throws NullPointerException               if any argument is null
          */
-        public AddEntry addEntry(@NonNull Plan plan, @NonNull Plan.Entry entry) {
-            return new AddEntry(plan, entry);
+        public AddEntry addEntry(final int planId, @NonNull Plan.Entry entry) {
+            checkArgument(planId > 0, "planId should be positive");
+            return new AddEntry(planId, entry);
         }
 
         /**
          * Updates one or more existing test runs in a plan. Partial updates are supported, i.e. you can set and update specific fields only.
          *
-         * @param plan  the test plan to update the entry in
-         * @param entry the plan entry to be updated
+         * @param planId the ID of the test plan to update the entry in
+         * @param entry  the plan entry to be updated
          * @return the request
-         * @throws java.lang.NullPointerException if any argument is null
+         * @throws java.lang.IllegalArgumentException if planId is not positive
+         * @throws java.lang.NullPointerException     if any argument is null
          */
-        public UpdateEntry updateEntry(@NonNull Plan plan, @NonNull Plan.Entry entry) {
-            return new UpdateEntry(plan, entry);
+        public UpdateEntry updateEntry(final int planId, @NonNull Plan.Entry entry) {
+            checkArgument(planId > 0, "planId should be positive");
+            return new UpdateEntry(planId, entry);
         }
 
         /**
          * Deletes one or more existing test runs from a plan.
          *
-         * @param plan  the test plan to delete entry from
-         * @param entry the plan entry to be deleted
+         * @param planId  the ID of the test plan to delete entry from
+         * @param entryId the ID of the plan entry to be deleted
          * @return the request
-         * @throws java.lang.NullPointerException if any argument is null
+         * @throws java.lang.IllegalArgumentException if any argument is not positive
          */
-        public DeleteEntry deleteEntry(@NonNull Plan plan, @NonNull Plan.Entry entry) {
-            return new DeleteEntry(plan, entry);
+        public DeleteEntry deleteEntry(final int planId, final int entryId) {
+            checkArgument(planId > 0, "planId should be positive");
+            checkArgument(entryId > 0, "entryId should be positive");
+            return new DeleteEntry(planId, entryId);
         }
 
         public class Get extends Request<Plan> {
@@ -874,8 +892,8 @@ public class TestRail {
 
             private final Plan plan;
 
-            private Add(Plan plan) {
-                super(config, Method.POST, REST_PATH + plan.getProjectId(), Plan.class);
+            private Add(int projectId, Plan plan) {
+                super(config, Method.POST, REST_PATH + projectId, Plan.class);
                 this.plan = plan;
             }
 
@@ -890,8 +908,8 @@ public class TestRail {
 
             private final Plan.Entry entry;
 
-            private AddEntry(Plan plan, Plan.Entry entry) {
-                super(config, Method.POST, REST_PATH + plan.getId(), Plan.Entry.class);
+            private AddEntry(int planId, Plan.Entry entry) {
+                super(config, Method.POST, REST_PATH + planId, Plan.Entry.class);
                 this.entry = entry;
             }
 
@@ -922,8 +940,8 @@ public class TestRail {
 
             private final Plan.Entry entry;
 
-            private UpdateEntry(Plan plan, Plan.Entry entry) {
-                super(config, Method.POST, String.format(REST_PATH, plan.getId(), entry.getId()), Plan.Entry.class);
+            private UpdateEntry(int planId, Plan.Entry entry) {
+                super(config, Method.POST, String.format(REST_PATH, planId, entry.getId()), Plan.Entry.class);
                 this.entry = entry;
             }
 
@@ -936,24 +954,24 @@ public class TestRail {
         public class Close extends Request<Plan> {
             private static final String REST_PATH = "close_plan/";
 
-            private Close(Plan plan) {
-                super(config, Method.POST, REST_PATH + plan.getId(), Plan.class);
+            private Close(int planId) {
+                super(config, Method.POST, REST_PATH + planId, Plan.class);
             }
         }
 
         public class Delete extends Request<Void> {
             private static final String REST_PATH = "delete_plan/";
 
-            private Delete(Plan plan) {
-                super(config, Method.POST, REST_PATH + plan.getId(), Void.class);
+            private Delete(int planId) {
+                super(config, Method.POST, REST_PATH + planId, Void.class);
             }
         }
 
         public class DeleteEntry extends Request<Void> {
             private static final String REST_PATH = "delete_plan_entry/%s/%s";
 
-            private DeleteEntry(Plan plan, Plan.Entry entry) {
-                super(config, Method.POST, String.format(REST_PATH, plan.getId(), entry.getId()), Void.class);
+            private DeleteEntry(int planId, int entryId) {
+                super(config, Method.POST, String.format(REST_PATH, planId, entryId), Void.class);
             }
         }
     }
@@ -1005,53 +1023,61 @@ public class TestRail {
         /**
          * Adds a new test result, comment or assigns a test.
          *
+         * @param testId the ID of the test whose result is to be added
          * @param result the test result to be added
          * @return the request
-         * @throws java.lang.NullPointerException if result is null
+         * @throws java.lang.IllegalArgumentException if testId is not positive
+         * @throws java.lang.NullPointerException     if result is null
          */
-        public Add add(@NonNull Result result) {
-            return new Add(result);
+        public Add add(final int testId, @NonNull Result result) {
+            checkArgument(testId > 0, "testId should be positive");
+            return new Add(testId, result);
         }
 
         /**
          * Adds a new test result, comment or assigns a test (for a test run and case combination).
          *
-         * @param run      the test run
-         * @param testCase the test case
-         * @param result   the test result to be added
+         * @param runId      the ID of the test run
+         * @param testCaseId the ID of the test case
+         * @param result     the test result to be added
          * @return the request
-         * @throws java.lang.NullPointerException if any argument is null
+         * @throws java.lang.IllegalArgumentException if runId or testCaseId is not positive
+         * @throws java.lang.NullPointerException     if result is null
          */
-        public AddForCase add(@NonNull Run run, @NonNull Case testCase, @NonNull Result result) {
-            return new AddForCase(run, testCase, result);
+        public AddForCase addForCase(final int runId, final int testCaseId, @NonNull Result result) {
+            checkArgument(runId > 0, "runId should be positive");
+            checkArgument(testCaseId > 0, "testCaseId should be positive");
+            return new AddForCase(runId, testCaseId, result);
         }
 
         /**
          * Adds one or more new test results, comments or assigns one or more tests.
          *
-         * @param run     the test run to add the results to
+         * @param runId   the ID of the test run to add the results to
          * @param results the test results to be added
          * @return the request
-         * @throws java.lang.NullPointerException     if any argument is null
-         * @throws java.lang.IllegalArgumentException if results is empty
+         * @throws java.lang.NullPointerException     if results is null
+         * @throws java.lang.IllegalArgumentException if runId is not positive or results is empty
          */
-        public AddList add(@NonNull Run run, @NonNull java.util.List<Result> results) {
+        public AddList add(final int runId, @NonNull java.util.List<Result> results) {
+            checkArgument(runId > 0, "runId should be positive");
             checkArgument(!results.isEmpty(), "results cannot be empty");
-            return new AddList(run, results);
+            return new AddList(runId, results);
         }
 
         /**
          * Adds one or more new test results, comments or assigns one or more tests (using the case IDs).
          *
-         * @param run     the test run to add the results to
+         * @param runId   the ID of the test run to add the results to
          * @param results the test results to be added
          * @return the request
-         * @throws java.lang.NullPointerException     if any argument is null
-         * @throws java.lang.IllegalArgumentException if results is empty
+         * @throws java.lang.NullPointerException     if results is null
+         * @throws java.lang.IllegalArgumentException if runId is not positive or results is empty
          */
-        public AddListForCases addForCases(@NonNull Run run, @NonNull java.util.List<Result> results) {
+        public AddListForCases addForCases(final int runId, @NonNull java.util.List<Result> results) {
+            checkArgument(runId > 0, "runId should be positive");
             checkArgument(!results.isEmpty(), "results cannot be empty");
-            return new AddListForCases(run, results);
+            return new AddListForCases(runId, results);
         }
 
         @Getter
@@ -1135,8 +1161,8 @@ public class TestRail {
 
             private final Result result;
 
-            private Add(Result result) {
-                super(config, Method.POST, REST_PATH + result.getTestId(), Result.class);
+            private Add(int testId, Result result) {
+                super(config, Method.POST, REST_PATH + testId, Result.class);
                 this.result = result;
             }
 
@@ -1151,8 +1177,8 @@ public class TestRail {
 
             private final Result result;
 
-            private AddForCase(Run run, Case testCase, Result result) {
-                super(config, Method.POST, REST_PATH + run.getId() + "/" + testCase.getId(), Result.class);
+            private AddForCase(int runId, int testCaseId, Result result) {
+                super(config, Method.POST, REST_PATH + runId + "/" + testCaseId, Result.class);
                 this.result = result;
             }
 
@@ -1167,8 +1193,8 @@ public class TestRail {
 
             private final Result.List results;
 
-            private AddList(Run run, java.util.List<Result> results) {
-                super(config, Method.POST, REST_PATH + run.getId(), new TypeReference<java.util.List<Result>>() {
+            private AddList(final int runId, java.util.List<Result> results) {
+                super(config, Method.POST, REST_PATH + runId, new TypeReference<java.util.List<Result>>() {
                 });
                 this.results = new Result.List(results);
             }
@@ -1184,8 +1210,8 @@ public class TestRail {
 
             private final Result.List results;
 
-            private AddListForCases(Run run, java.util.List<Result> results) {
-                super(config, Method.POST, REST_PATH + run.getId(), new TypeReference<java.util.List<Result>>() {
+            private AddListForCases(int runId, java.util.List<Result> results) {
+                super(config, Method.POST, REST_PATH + runId, new TypeReference<java.util.List<Result>>() {
                 });
                 this.results = new Result.List(results);
             }
@@ -1257,12 +1283,15 @@ public class TestRail {
         /**
          * Creates a new test run.
          *
-         * @param run the test run to be added
+         * @param projectId the ID of the project to add the run to
+         * @param run       the test run to be added
          * @return the request
-         * @throws java.lang.NullPointerException if run is null
+         * @throws java.lang.IllegalArgumentException if projectId is not positive
+         * @throws java.lang.NullPointerException     if run is null
          */
-        public Add add(@NonNull Run run) {
-            return new Add(run);
+        public Add add(final int projectId, @NonNull Run run) {
+            checkArgument(projectId > 0, "projectId should be positive");
+            return new Add(projectId, run);
         }
 
         /**
@@ -1279,23 +1308,25 @@ public class TestRail {
         /**
          * Closes an existing test run and archives its tests & results.
          *
-         * @param run the test run to be closed
+         * @param runId the ID of the test run to be closed
          * @return the request
-         * @throws java.lang.NullPointerException if run is null
+         * @throws java.lang.IllegalArgumentException if runId is not positive
          */
-        public Close close(@NonNull Run run) {
-            return new Close(run);
+        public Close close(final int runId) {
+            checkArgument(runId > 0, "runId should be positive");
+            return new Close(runId);
         }
 
         /**
          * Deletes an existing test run.
          *
-         * @param run the test run to be deleted
+         * @param runId the ID of the test run to be deleted
          * @return the request
-         * @throws java.lang.NullPointerException if run is null
+         * @throws java.lang.IllegalArgumentException if runId is not positive
          */
-        public Delete delete(@NonNull Run run) {
-            return new Delete(run);
+        public Delete delete(final int runId) {
+            checkArgument(runId > 0, "runId should be positive");
+            return new Delete(runId);
         }
 
         public class Get extends Request<Run> {
@@ -1351,8 +1382,8 @@ public class TestRail {
 
             private final Run run;
 
-            private Add(Run run) {
-                super(config, Method.POST, REST_PATH + run.getProjectId(), Run.class);
+            private Add(int projectId, Run run) {
+                super(config, Method.POST, REST_PATH + projectId, Run.class);
                 this.run = run;
             }
 
@@ -1381,16 +1412,16 @@ public class TestRail {
         public class Close extends Request<Run> {
             private static final String REST_PATH = "close_run/";
 
-            private Close(Run run) {
-                super(config, Method.POST, REST_PATH + run.getId(), Run.class);
+            private Close(int runId) {
+                super(config, Method.POST, REST_PATH + runId, Run.class);
             }
         }
 
         public class Delete extends Request<Void> {
             private static final String REST_PATH = "delete_run/";
 
-            private Delete(Run run) {
-                super(config, Method.POST, REST_PATH + run.getId(), Void.class);
+            private Delete(int runId) {
+                super(config, Method.POST, REST_PATH + runId, Void.class);
             }
         }
 
@@ -1443,13 +1474,14 @@ public class TestRail {
         /**
          * Creates a new section.
          *
-         * @param project the project to add the section to
-         * @param section the section to be added
+         * @param projectId the ID of the project to add the section to
+         * @param section   the section to be added
          * @return the request
-         * @throws java.lang.NullPointerException if any argument is null
+         * @throws java.lang.NullPointerException if section is null
          */
-        public Add add(@NonNull Project project, @NonNull Section section) {
-            return new Add(project, section);
+        public Add add(final int projectId, @NonNull Section section) {
+            checkArgument(projectId > 0, "projectId should be positive");
+            return new Add(projectId, section);
         }
 
         /**
@@ -1466,12 +1498,13 @@ public class TestRail {
         /**
          * Deletes an existing section.
          *
-         * @param section the section to be deleted
+         * @param sectionId the ID of the section to be deleted
          * @return the request
-         * @throws java.lang.NullPointerException if section is null
+         * @throws java.lang.IllegalArgumentException if sectionId is not positive
          */
-        public Delete delete(@NonNull Section section) {
-            return new Delete(section);
+        public Delete delete(final int sectionId) {
+            checkArgument(sectionId > 0, "sectionId should be positive");
+            return new Delete(sectionId);
         }
 
         public class Get extends Request<Section> {
@@ -1502,8 +1535,8 @@ public class TestRail {
 
             private final Section section;
 
-            private Add(Project project, Section section) {
-                super(config, Method.POST, REST_PATH + project.getId(), Section.class);
+            private Add(int projectId, Section section) {
+                super(config, Method.POST, REST_PATH + projectId, Section.class);
                 this.section = section;
             }
 
@@ -1532,8 +1565,8 @@ public class TestRail {
         public class Delete extends Request<Void> {
             private static final String REST_PATH = "delete_section/";
 
-            private Delete(Section section) {
-                super(config, Method.POST, REST_PATH + section.getId(), Void.class);
+            private Delete(int sectionId) {
+                super(config, Method.POST, REST_PATH + sectionId, Void.class);
             }
         }
     }
@@ -1597,12 +1630,15 @@ public class TestRail {
         /**
          * Creates a new test suite.
          *
-         * @param suite the test suite to be added
+         * @param projectId the ID of the project to add the test suite to
+         * @param suite     the test suite to be added
          * @return the request
-         * @throws java.lang.NullPointerException if suite is null
+         * @throws java.lang.IllegalArgumentException if projectId is not positive
+         * @throws java.lang.NullPointerException     if suite is null
          */
-        public Add add(@NonNull Suite suite) {
-            return new Add(suite);
+        public Add add(final int projectId, @NonNull Suite suite) {
+            checkArgument(projectId > 0, "projectId should be positive");
+            return new Add(projectId, suite);
         }
 
         /**
@@ -1619,12 +1655,13 @@ public class TestRail {
         /**
          * Deletes an existing test suite.
          *
-         * @param suite the test suite to be deleted
+         * @param suiteId the ID of the test suite to be deleted
          * @return the request
-         * @throws java.lang.NullPointerException if suite is null
+         * @throws java.lang.IllegalArgumentException if suiteId is not positive
          */
-        public Delete delete(@NonNull Suite suite) {
-            return new Delete(suite);
+        public Delete delete(final int suiteId) {
+            checkArgument(suiteId > 0, "suiteId should be positive");
+            return new Delete(suiteId);
         }
 
         public class Get extends Request<Suite> {
@@ -1649,8 +1686,8 @@ public class TestRail {
 
             private final Suite suite;
 
-            private Add(Suite suite) {
-                super(config, Method.POST, REST_PATH + suite.getProjectId(), Suite.class);
+            private Add(final int projectId, Suite suite) {
+                super(config, Method.POST, REST_PATH + projectId, Suite.class);
                 this.suite = suite;
             }
 
@@ -1679,8 +1716,8 @@ public class TestRail {
         public class Delete extends Request<Void> {
             private static final String REST_PATH = "delete_suite/";
 
-            private Delete(Suite suite) {
-                super(config, Method.POST, REST_PATH + suite.getId(), Void.class);
+            private Delete(int suiteId) {
+                super(config, Method.POST, REST_PATH + suiteId, Void.class);
             }
         }
 

@@ -24,7 +24,6 @@ import java.util.*;
  * TestRail result.
  */
 @Data
-@Accessors(chain = true)
 @ToString(exclude = "caseId")
 public class Result {
 

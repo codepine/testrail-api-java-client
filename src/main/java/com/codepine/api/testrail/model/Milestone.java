@@ -16,7 +16,6 @@ import java.util.Date;
  * TestRail milestone.
  */
 @Data
-@Accessors(chain = true)
 public class Milestone {
 
     private int id;

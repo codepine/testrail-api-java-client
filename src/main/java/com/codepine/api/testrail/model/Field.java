@@ -16,7 +16,6 @@ import java.util.Map;
  * TestRail field.
  */
 @Data
-@Accessors(chain = true)
 public class Field {
 
     private int id;
@@ -49,7 +48,6 @@ public class Field {
      * Configuration for a {@code Field}.
      */
     @Data
-    @Accessors(chain = true)
     public static class Config {
 
         private String id;
@@ -60,7 +58,6 @@ public class Field {
          * Options for a {@code Field} configuration.
          */
         @Data
-        @Accessors(chain = true)
         public static class Options {
 
             @JsonProperty
@@ -84,7 +81,7 @@ public class Field {
          * Options for a {@code Field} of type {@link Type#STRING}.
          */
         @Data
-        @Accessors(chain = true)
+        @EqualsAndHashCode(callSuper = true)
         @ToString(callSuper = true)
         public static class StringOptions extends Options {
             private String defaultValue;
@@ -94,7 +91,7 @@ public class Field {
          * Options for a {@code Field} of type {@link Type#INTEGER}.
          */
         @Data
-        @Accessors(chain = true)
+        @EqualsAndHashCode(callSuper = true)
         @ToString(callSuper = true)
         public static class IntegerOptions extends Options {
             private BigInteger defaultValue;
@@ -104,7 +101,7 @@ public class Field {
          * Options for a {@code Field} of type {@link Type#TEXT}.
          */
         @Data
-        @Accessors(chain = true)
+        @EqualsAndHashCode(callSuper = true)
         @ToString(callSuper = true)
         public static class TextOptions extends Options {
             private String defaultValue;
@@ -116,7 +113,7 @@ public class Field {
          * Options for a {@code Field} of type {@link Type#URL}.
          */
         @Data
-        @Accessors(chain = true)
+        @EqualsAndHashCode(callSuper = true)
         @ToString(callSuper = true)
         public static class UrlOptions extends Options {
             private String defaultValue;
@@ -126,7 +123,7 @@ public class Field {
          * Options for a {@code Field} of type {@link Type#CHECKBOX}.
          */
         @Data
-        @Accessors(chain = true)
+        @EqualsAndHashCode(callSuper = true)
         @ToString(callSuper = true)
         public static class CheckboxOptions extends Options {
             @JsonDeserialize(using = IntToBooleanDeserializer.class)
@@ -137,7 +134,7 @@ public class Field {
          * Options for a {@code Field} of type {@link Type#DROPDOWN}.
          */
         @Data
-        @Accessors(chain = true)
+        @EqualsAndHashCode(callSuper = true)
         @ToString(callSuper = true)
         public static class DropdownOptions extends Options {
             private String defaultValue;
@@ -149,7 +146,7 @@ public class Field {
          * Options for a {@code Field} of type {@link Type#USER}.
          */
         @Data
-        @Accessors(chain = true)
+        @EqualsAndHashCode(callSuper = true)
         @ToString(callSuper = true)
         public static class UserOptions extends Options {
             private int defaultValue;
@@ -159,7 +156,7 @@ public class Field {
          * Options for a {@code Field} of type {@link Type#DATE}.
          */
         @Data
-        @Accessors(chain = true)
+        @EqualsAndHashCode(callSuper = true)
         @ToString(callSuper = true)
         public static class DateOptions extends Options {
         }
@@ -168,7 +165,7 @@ public class Field {
          * Options for a {@code Field} of type {@link Type#MILESTONE}.
          */
         @Data
-        @Accessors(chain = true)
+        @EqualsAndHashCode(callSuper = true)
         @ToString(callSuper = true)
         public static class MilestoneOptions extends Options {
         }
@@ -177,7 +174,7 @@ public class Field {
          * Options for a {@code Field} of type {@link Type#STEPS}.
          */
         @Data
-        @Accessors(chain = true)
+        @EqualsAndHashCode(callSuper = true)
         @ToString(callSuper = true)
         public static class StepsOptions extends Options {
             private String format;
@@ -189,7 +186,7 @@ public class Field {
          * Options for a {@code Field} of type {@link Type#STEP_RESULTS}.
          */
         @Data
-        @Accessors(chain = true)
+        @EqualsAndHashCode(callSuper = true)
         @ToString(callSuper = true)
         public static class StepResultsOptions extends Options {
             private String format;
@@ -201,7 +198,7 @@ public class Field {
          * Options for a {@code Field} of type {@link Type#MULTI_SELECT}.
          */
         @Data
-        @Accessors(chain = true)
+        @EqualsAndHashCode(callSuper = true)
         @ToString(callSuper = true)
         public static class MultiSelectOptions extends Options {
             @JsonDeserialize(using = StringToMapDeserializer.class)
@@ -210,7 +207,6 @@ public class Field {
 
 
         @Data
-        @Accessors(chain = true)
         public class Context {
             @JsonProperty
             @Getter(onMethod = @_({@JsonIgnore}))

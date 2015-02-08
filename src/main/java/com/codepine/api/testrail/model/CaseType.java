@@ -10,7 +10,6 @@ import lombok.experimental.Accessors;
  * TestRail case type.
  */
 @Data
-@Accessors(chain = true)
 public class CaseType {
 
     private int id;

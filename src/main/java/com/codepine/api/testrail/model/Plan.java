@@ -5,6 +5,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonView;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.ToString;
 import lombok.experimental.Accessors;
@@ -16,7 +17,6 @@ import java.util.List;
  * TestRail plan.
  */
 @Data
-@Accessors(chain = true)
 public class Plan {
 
     private int id;
@@ -100,8 +100,8 @@ public class Plan {
         private List<Run> runs;
 
         @Data
+        @EqualsAndHashCode(callSuper = true)
         @ToString(callSuper = true)
-        @Accessors(chain = true)
         public static class Run extends com.cymbocha.apis.testrail.model.Run {
             private String entryId;
             private int entryIndex;

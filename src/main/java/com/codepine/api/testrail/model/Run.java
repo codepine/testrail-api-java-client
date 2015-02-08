@@ -15,7 +15,6 @@ import java.util.List;
  * TestRail run.
  */
 @Data
-@Accessors(chain = true)
 public class Run {
 
     private int id;

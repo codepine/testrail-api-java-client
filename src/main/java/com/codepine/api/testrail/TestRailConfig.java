@@ -10,7 +10,6 @@ import lombok.experimental.Accessors;
  * @author kms
  */
 @Value
-@Accessors(chain = true)
 @Setter
 @RequiredArgsConstructor(access = AccessLevel.PRIVATE)
 @ToString(exclude = {"password"})

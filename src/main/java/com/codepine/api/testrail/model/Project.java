@@ -15,7 +15,6 @@ import lombok.experimental.Accessors;
  * TestRail project.
  */
 @Data
-@Accessors(chain = true)
 public class Project {
 
     private int id;

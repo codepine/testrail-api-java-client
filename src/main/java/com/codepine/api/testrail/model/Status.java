@@ -10,7 +10,6 @@ import lombok.experimental.Accessors;
  * TestRail status.
  */
 @Data
-@Accessors(chain = true)
 public class Status {
 
     private int id;

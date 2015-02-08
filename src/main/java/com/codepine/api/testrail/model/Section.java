@@ -9,7 +9,6 @@ import lombok.experimental.Accessors;
  * TestRail section.
  */
 @Data
-@Accessors(chain = true)
 public class Section {
 
     private int id;

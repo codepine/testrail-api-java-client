@@ -9,7 +9,6 @@ import lombok.experimental.Accessors;
  * TestRail suite.
  */
 @Data
-@Accessors(chain = true)
 public class Suite {
 
     private int id;

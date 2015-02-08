@@ -10,7 +10,6 @@ import lombok.experimental.Accessors;
  * TestRail test case priority.
  */
 @Data
-@Accessors(chain = true)
 public class Priority {
 
     private int id;
