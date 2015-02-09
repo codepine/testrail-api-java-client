@@ -1,3 +1,27 @@
+/*
+ * The MIT License (MIT)
+ *
+ * Copyright (c) 2015 Kunal Shah
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in all
+ * copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+ * SOFTWARE.
+ */
+
 package com.codepine.api.testrail;
 
 import com.codepine.api.testrail.internal.FieldModule;
@@ -5,7 +29,6 @@ import com.codepine.api.testrail.internal.PlanModule;
 import com.codepine.api.testrail.internal.QueryParameterString;
 import com.codepine.api.testrail.internal.UnixTimestampModule;
 import com.fasterxml.jackson.annotation.JsonInclude;
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.MapperFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -22,8 +45,6 @@ import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.nio.charset.Charset;
-import java.util.Collections;
-import java.util.Map;
 
 /**
  * TestRail request.
@@ -32,14 +53,14 @@ import java.util.Map;
 @Log4j
 public abstract class Request<T> {
 
-    protected static final ObjectMapper JSON = new ObjectMapper()
+    private static final ObjectMapper JSON = new ObjectMapper()
             .setPropertyNamingStrategy(PropertyNamingStrategy.CAMEL_CASE_TO_LOWER_CASE_WITH_UNDERSCORES)
             .configure(MapperFeature.DEFAULT_VIEW_INCLUSION, false)
             .setSerializationInclusion(JsonInclude.Include.NON_DEFAULT)
             .disable(SerializationFeature.FAIL_ON_EMPTY_BEANS)
             .registerModules(new FieldModule(), new PlanModule(), new UnixTimestampModule());
 
-    protected static final ObjectMapper QUERY_PARAM_MAPPER = new ObjectMapper()
+    private static final ObjectMapper QUERY_PARAM_MAPPER = new ObjectMapper()
             .setPropertyNamingStrategy(PropertyNamingStrategy.CAMEL_CASE_TO_LOWER_CASE_WITH_UNDERSCORES)
             .configure(MapperFeature.DEFAULT_VIEW_INCLUSION, false)
             .setSerializationInclusion(JsonInclude.Include.NON_NULL)
@@ -145,7 +166,7 @@ public abstract class Request<T> {
 
         String queryParamJson = QUERY_PARAM_MAPPER.writerWithView(getClass()).writeValueAsString(this);
         String queryParamString = QUERY_PARAM_MAPPER.readValue(queryParamJson, QueryParameterString.class).toString();
-        if(!queryParamString.isEmpty()) {
+        if (!queryParamString.isEmpty()) {
             urlBuilder.append("&").append(queryParamString);
         }
 
