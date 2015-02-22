@@ -35,7 +35,6 @@ import lombok.AccessLevel;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j;
-import main.java.codepine.api.testrail.internal.UrlConnectionFactory;
 
 import javax.xml.bind.DatatypeConverter;
 import java.io.*;
@@ -102,7 +101,7 @@ public abstract class Request<T> {
             String url = getUrl();
             HttpURLConnection con = (HttpURLConnection) urlConnectionFactory.getUrlConnection(url);
             con.setRequestMethod(method.name());
-            if(config.getApplicationName().isPresent()) {
+            if (config.getApplicationName().isPresent()) {
                 con.setRequestProperty("User-Agent", config.getApplicationName().get());
             }
             con.setRequestProperty("Content-Type", "application/json");

@@ -22,7 +22,7 @@
  * SOFTWARE.
  */
 
-package main.java.codepine.api.testrail.internal;
+package com.codepine.api.testrail.internal;
 
 import java.io.IOException;
 import java.net.URL;

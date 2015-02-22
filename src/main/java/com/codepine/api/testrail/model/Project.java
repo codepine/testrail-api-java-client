@@ -34,6 +34,8 @@ import lombok.Data;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.util.Date;
+
 /**
  * TestRail project.
  */
@@ -56,7 +58,7 @@ public class Project {
     @Setter(value = AccessLevel.PRIVATE)
     private Boolean isCompleted;
 
-    private Long completedOn;
+    private Date completedOn;
 
     private String url;
 

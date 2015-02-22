@@ -3,10 +3,10 @@
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
-    <groupId>com.cymbocha.apis</groupId>
-    <artifactId>testrail-java-client</artifactId>
+    <groupId>com.codepine.api</groupId>
+    <artifactId>testrail-api-java-client</artifactId>
     <version>0.0.1-SNAPSHOT</version>
-    <name>TestRail Java Client</name>
+    <name>TestRail API Java Client</name>
     <description>Java client for TestRail API</description>
 
     <properties>
@@ -16,6 +16,8 @@
         <jackson.version>2.3.1</jackson.version>
         <guava.version>16.0.1</guava.version>
         <log4j.version>1.2.17</log4j.version>
+        <junit.version>4.11</junit.version>
+        <mockito.version>1.9.5</mockito.version>
 
         <!-- plugins -->
         <lombok.plugin.version>1.14.8.0</lombok.plugin.version>
@@ -46,6 +48,18 @@
             <artifactId>log4j</artifactId>
             <version>${log4j.version}</version>
         </dependency>
+        <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+            <version>${junit.version}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.mockito</groupId>
+            <artifactId>mockito-core</artifactId>
+            <version>${mockito.version}</version>
+            <scope>test</scope>
+        </dependency>
     </dependencies>
 
     <build>
@@ -69,7 +83,7 @@
                                 <javaLangAsFQN>skip</javaLangAsFQN>
                             </formatPreferences>
                             <addOutputDirectory>false</addOutputDirectory>
-                            <sourceDirectory>src</sourceDirectory>
+                            <sourceDirectory>src/main/java</sourceDirectory>
                             <verbose>true</verbose>
                         </configuration>
                     </execution>
@@ -83,7 +97,7 @@
                             <encoding>UTF-8</encoding>
                             <verbose>true</verbose>
                             <addOutputDirectory>false</addOutputDirectory>
-                            <sourceDirectory>tst</sourceDirectory>
+                            <sourceDirectory>src/test/java</sourceDirectory>
                         </configuration>
                     </execution>
                 </executions>
@@ -115,6 +129,9 @@
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-javadoc-plugin</artifactId>
                 <version>${maven.javadoc.plugin.version}</version>
+                <configuration>
+                    <excludePackageNames>com.codepine.api.testrail.internal</excludePackageNames>
+                </configuration>
                 <executions>
                     <execution>
                         <id>attach-javadocs</id>
