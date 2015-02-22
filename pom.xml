@@ -23,6 +23,7 @@
         <lombok.plugin.version>1.14.8.0</lombok.plugin.version>
         <maven.compiler.plugin.version>3.1</maven.compiler.plugin.version>
         <maven.source.plugin.version>2.4</maven.source.plugin.version>
+        <jacoco.plugin.version>0.7.3.201502191951</jacoco.plugin.version>
         <maven.javadoc.plugin.version>2.10.1</maven.javadoc.plugin.version>
     </properties>
 
@@ -121,6 +122,26 @@
                         <id>attach-sources</id>
                         <goals>
                             <goal>jar</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.jacoco</groupId>
+                <artifactId>jacoco-maven-plugin</artifactId>
+                <version>${jacoco.plugin.version}</version>
+                <executions>
+                    <execution>
+                        <id>default-prepare-agent</id>
+                        <goals>
+                            <goal>prepare-agent</goal>
+                        </goals>
+                    </execution>
+                    <execution>
+                        <id>coverage-report</id>
+                        <phase>prepare-package</phase>
+                        <goals>
+                            <goal>report</goal>
                         </goals>
                     </execution>
                 </executions>
