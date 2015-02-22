@@ -35,6 +35,7 @@ import lombok.AccessLevel;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j;
+import main.java.codepine.api.testrail.internal.UrlConnectionFactory;
 
 import javax.xml.bind.DatatypeConverter;
 import java.io.*;
