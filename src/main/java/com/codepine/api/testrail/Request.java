@@ -24,10 +24,7 @@
 
 package com.codepine.api.testrail;
 
-import com.codepine.api.testrail.internal.FieldModule;
-import com.codepine.api.testrail.internal.PlanModule;
-import com.codepine.api.testrail.internal.QueryParameterString;
-import com.codepine.api.testrail.internal.UnixTimestampModule;
+import com.codepine.api.testrail.internal.*;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.MapperFeature;
@@ -35,23 +32,24 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.PropertyNamingStrategy;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import lombok.AccessLevel;
-import lombok.AllArgsConstructor;
 import lombok.NonNull;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j;
 
 import javax.xml.bind.DatatypeConverter;
 import java.io.*;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
-import java.net.URL;
 import java.nio.charset.Charset;
 
 /**
  * TestRail request.
  */
-@AllArgsConstructor(access = AccessLevel.PRIVATE)
+@RequiredArgsConstructor(access = AccessLevel.PRIVATE)
 @Log4j
 public abstract class Request<T> {
+
+    private static final UrlConnectionFactory DEFAULT_URL_CONNECTION_FACTORY = new UrlConnectionFactory();
 
     private static final ObjectMapper JSON = new ObjectMapper()
             .setPropertyNamingStrategy(PropertyNamingStrategy.CAMEL_CASE_TO_LOWER_CASE_WITH_UNDERSCORES)
@@ -75,6 +73,7 @@ public abstract class Request<T> {
     private final String restPath;
     private final Class<? extends T> responseClass;
     private final TypeReference<? extends T> responseType;
+    private UrlConnectionFactory urlConnectionFactory = DEFAULT_URL_CONNECTION_FACTORY;
 
     /**
      * @param config
@@ -99,10 +98,12 @@ public abstract class Request<T> {
     public T execute() {
         try {
 
-            URL url = new URL(getUrl());
-            HttpURLConnection con = (HttpURLConnection) url.openConnection();
+            String url = getUrl();
+            HttpURLConnection con = (HttpURLConnection) urlConnectionFactory.getUrlConnection(url);
             con.setRequestMethod(method.name());
-            con.setRequestProperty("User-Agent", config.getApplicationName());
+            if(config.getApplicationName().isPresent()) {
+                con.setRequestProperty("User-Agent", config.getApplicationName().get());
+            }
             con.setRequestProperty("Content-Type", "application/json");
             String basicAuth = "Basic "
                     + DatatypeConverter.printBase64Binary((config.getUsername()
@@ -180,6 +181,15 @@ public abstract class Request<T> {
      */
     protected Object getContent() {
         return null;
+    }
+
+    /**
+     * Set URL connection factory. Only used for testing.
+     *
+     * @param urlConnectionFactory the URL connection factory
+     */
+    protected void setUrlConnectionFactory(UrlConnectionFactory urlConnectionFactory) {
+        this.urlConnectionFactory = urlConnectionFactory;
     }
 
     /**

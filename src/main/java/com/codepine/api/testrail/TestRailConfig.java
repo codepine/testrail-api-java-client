@@ -24,33 +24,38 @@
 
 package com.codepine.api.testrail;
 
-import com.google.common.base.Preconditions;
+import com.google.common.base.Optional;
 import lombok.*;
 
 /**
  * Configuration for using this client library.
  */
 @Value
-@Setter
-@RequiredArgsConstructor(access = AccessLevel.PRIVATE)
 @ToString(exclude = {"password"})
 public class TestRailConfig {
 
-    private final String applicationName;
     private final String baseApiUrl;
     private final String username;
     private final String password;
+    private final Optional<String> applicationName;
+
+    private TestRailConfig(final String baseApiUrl, final String username, final String password, final String applicationName) {
+        this.baseApiUrl = baseApiUrl;
+        this.username = username;
+        this.password = password;
+        this.applicationName = Optional.fromNullable(applicationName);
+    }
 
     /**
      * Get a builder to build an instance of {@code TestRailConfig}.
      *
-     * @param applicationName the name of the application which will communicate with TestRail
-     * @param username        the username of the TestRail user on behalf of which the communication with TestRail will happen
-     * @param password        the password of the same TestRail user
+     * @param endPoint the URL end point where your TestRail is hosted, for e.g. https://example.com/testrail
+     * @param username the username of the TestRail user on behalf of which the communication with TestRail will happen
+     * @param password the password of the same TestRail user
      * @return a builder to build {@code TestRailConfig} instance
      */
-    public static Builder builder(@NonNull final String applicationName, @NonNull final String username, @NonNull final String password) {
-        return new Builder(applicationName, username, password);
+    public static Builder builder(@NonNull final String endPoint, @NonNull final String username, @NonNull final String password) {
+        return new Builder(endPoint, username, password);
     }
 
     /**
@@ -60,46 +65,56 @@ public class TestRailConfig {
 
         private static final String DEFAULT_BASE_API_PATH = "index.php?/api/v2/";
 
-        private final String applicationName;
+        private final String endPoint;
         private final String username;
         private final String password;
-        private String baseApiUrl;
+        private String apiPath;
+        private String applicationName;
 
         /**
-         * @param applicationName the name of the application which will communicate with TestRail
-         * @param username        the username of the TestRail user on behalf of which the communication with TestRail will happen
-         * @param password        the password of the same TestRail user
+         * @param endPoint the URL end point where your TestRail is hosted, for e.g. https://example.com/testrail
+         * @param username the username of the TestRail user on behalf of which the communication with TestRail will happen
+         * @param password the password of the same TestRail user
          */
-        private Builder(final String applicationName, final String username, final String password) {
-            this.applicationName = applicationName;
+        private Builder(final String endPoint, final String username, final String password) {
+            String sanitizedEndPoint = endPoint.trim();
+            if (!sanitizedEndPoint.endsWith("/")) {
+                sanitizedEndPoint = sanitizedEndPoint + "/";
+            }
+            this.endPoint = sanitizedEndPoint;
             this.username = username;
             this.password = password;
+            apiPath = DEFAULT_BASE_API_PATH;
         }
 
         /**
-         * Set the base URL of your TestRail API. The URL should be a complete URL where your TestRail API is hosted. For e.g. https://example.com/testrail/index.php?/api/v2/
-         * Note: This method cannot be used with {@link #endPoint}. Only use this method if {@link #endPoint} does not meet your requirements.
+         * Set the URL path of your TestRail API. Useful to override the default API path of standard TestRail deployments.
          *
-         * @param baseApiUrl the complete URL where your TestRail API is hosted
+         * @param apiPath the URL path of your TestRail API
          * @return this for chaining
+         * @throws java.lang.NullPointerException if apiPath is null
          */
-        public Builder baseApiUrl(final String baseApiUrl) {
-            Preconditions.checkState(baseApiUrl == null, "Base API URL is already set");
-            this.baseApiUrl = baseApiUrl;
+        public Builder apiPath(@NonNull final String apiPath) {
+            String sanitizedApiPath = apiPath.trim();
+            if (sanitizedApiPath.startsWith("/")) {
+                sanitizedApiPath = sanitizedApiPath.substring(1);
+            }
+            if (!sanitizedApiPath.endsWith("/")) {
+                sanitizedApiPath = sanitizedApiPath + "/";
+            }
+            this.apiPath = sanitizedApiPath;
             return this;
         }
 
-
         /**
-         * Set the end point URL where your TestRail is hosted. This is useful for standard TestRail deployments. E.g. https://example.com/testrail
-         * Note: This method cannot be used with {@link #baseApiUrl}. If possible, use this method over {@link #baseApiUrl}.
+         * Set the name of the application which will communicate with TestRail.
          *
-         * @param endPoint the end point URL where your TestRail is hosted
+         * @param applicationName name of the application
          * @return this for chaining
+         * @throws java.lang.NullPointerException if applicationName is null
          */
-        public Builder endPoint(final String endPoint) {
-            Preconditions.checkState(baseApiUrl == null, "Base API URL is already set");
-            this.baseApiUrl = (endPoint.endsWith("/") ? endPoint : endPoint + "/") + DEFAULT_BASE_API_PATH;
+        public Builder applicationName(@NonNull final String applicationName) {
+            this.applicationName = applicationName;
             return this;
         }
 
@@ -109,7 +124,7 @@ public class TestRailConfig {
          * @return a new instance
          */
         public TestRailConfig build() {
-            return new TestRailConfig(applicationName, baseApiUrl, username, password);
+            return new TestRailConfig(endPoint + apiPath, username, password, applicationName);
         }
     }
 
