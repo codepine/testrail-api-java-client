@@ -24,7 +24,11 @@
 
 package com.codepine.api.testrail;
 
-import com.codepine.api.testrail.internal.*;
+import com.codepine.api.testrail.internal.FieldModule;
+import com.codepine.api.testrail.internal.PlanModule;
+import com.codepine.api.testrail.internal.QueryParameterString;
+import com.codepine.api.testrail.internal.UnixTimestampModule;
+import com.codepine.api.testrail.internal.UrlConnectionFactory;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.MapperFeature;
@@ -37,7 +41,11 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j;
 
 import javax.xml.bind.DatatypeConverter;
-import java.io.*;
+import java.io.BufferedInputStream;
+import java.io.BufferedOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.nio.charset.Charset;
@@ -54,16 +62,9 @@ public abstract class Request<T> {
     private static final ObjectMapper JSON = new ObjectMapper()
             .setPropertyNamingStrategy(PropertyNamingStrategy.CAMEL_CASE_TO_LOWER_CASE_WITH_UNDERSCORES)
             .configure(MapperFeature.DEFAULT_VIEW_INCLUSION, false)
-            .setSerializationInclusion(JsonInclude.Include.NON_DEFAULT)
-            .disable(SerializationFeature.FAIL_ON_EMPTY_BEANS)
-            .registerModules(new FieldModule(), new PlanModule(), new UnixTimestampModule());
-
-    private static final ObjectMapper QUERY_PARAM_MAPPER = new ObjectMapper()
-            .setPropertyNamingStrategy(PropertyNamingStrategy.CAMEL_CASE_TO_LOWER_CASE_WITH_UNDERSCORES)
-            .configure(MapperFeature.DEFAULT_VIEW_INCLUSION, false)
             .setSerializationInclusion(JsonInclude.Include.NON_NULL)
             .disable(SerializationFeature.FAIL_ON_EMPTY_BEANS)
-            .registerModules(new UnixTimestampModule());
+            .registerModules(new FieldModule(), new PlanModule(), new UnixTimestampModule());
 
     @NonNull
     private final TestRailConfig config;
@@ -165,8 +166,8 @@ public abstract class Request<T> {
     private String getUrl() throws IOException {
         StringBuilder urlBuilder = new StringBuilder(config.getBaseApiUrl()).append(restPath);
 
-        String queryParamJson = QUERY_PARAM_MAPPER.writerWithView(getClass()).writeValueAsString(this);
-        String queryParamString = QUERY_PARAM_MAPPER.readValue(queryParamJson, QueryParameterString.class).toString();
+        String queryParamJson = JSON.writerWithView(getClass()).writeValueAsString(this);
+        String queryParamString = JSON.readValue(queryParamJson, QueryParameterString.class).toString();
         if (!queryParamString.isEmpty()) {
             urlBuilder.append("&").append(queryParamString);
         }
@@ -188,7 +189,7 @@ public abstract class Request<T> {
      *
      * @param urlConnectionFactory the URL connection factory
      */
-    protected void setUrlConnectionFactory(UrlConnectionFactory urlConnectionFactory) {
+    void setUrlConnectionFactory(UrlConnectionFactory urlConnectionFactory) {
         this.urlConnectionFactory = urlConnectionFactory;
     }
 

@@ -59,10 +59,10 @@ public class Case {
     private int sectionId;
 
     @JsonView({TestRail.Cases.Add.class, TestRail.Cases.Update.class})
-    private int typeId;
+    private Integer typeId;
 
     @JsonView({TestRail.Cases.Add.class, TestRail.Cases.Update.class})
-    private int priorityId;
+    private Integer priorityId;
 
     @JsonView({TestRail.Cases.Add.class, TestRail.Cases.Update.class})
     private Integer milestoneId;

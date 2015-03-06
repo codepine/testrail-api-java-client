@@ -36,13 +36,9 @@ import lombok.Getter;
 public class Priority {
 
     private int id;
-
     private String name;
-
     private String shortName;
-
     private int priority;
-
     @JsonProperty
     @Getter(onMethod = @_({@JsonIgnore}))
     private boolean isDefault;

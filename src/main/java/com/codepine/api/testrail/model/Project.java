@@ -51,7 +51,8 @@ public class Project {
     private String announcement;
 
     @JsonView({TestRail.Projects.Add.class, TestRail.Projects.Update.class})
-    private boolean showAnnouncement;
+    @Getter(value = AccessLevel.PRIVATE)
+    private Boolean showAnnouncement;
 
     @JsonView(TestRail.Projects.Update.class)
     @Getter(value = AccessLevel.PRIVATE)
@@ -63,7 +64,7 @@ public class Project {
     private String url;
 
     @JsonView({TestRail.Projects.Add.class, TestRail.Projects.Update.class})
-    private int suiteMode;
+    private Integer suiteMode;
 
     public Boolean isCompleted() {
         return getIsCompleted();
@@ -71,6 +72,10 @@ public class Project {
 
     public Project setCompleted(boolean isCompleted) {
         return setIsCompleted(isCompleted);
+    }
+
+    public Boolean isShowAnnouncement() {
+        return getShowAnnouncement();
     }
 
 }

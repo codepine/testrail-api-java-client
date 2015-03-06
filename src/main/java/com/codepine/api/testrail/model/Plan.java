@@ -28,6 +28,7 @@ import com.codepine.api.testrail.TestRail;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonView;
+import lombok.AccessLevel;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
@@ -105,12 +106,13 @@ public class Plan {
         private String name;
 
         @JsonView({TestRail.Plans.Add.class, TestRail.Plans.AddEntry.class})
-        private int suiteId;
+        private Integer suiteId;
 
         @JsonView({TestRail.Plans.Add.class, TestRail.Plans.AddEntry.class, TestRail.Plans.UpdateEntry.class})
         private Integer assignedtoId;
 
         @JsonView({TestRail.Plans.Add.class, TestRail.Plans.AddEntry.class, TestRail.Plans.UpdateEntry.class})
+        @Getter(value = AccessLevel.PRIVATE)
         private Boolean includeAll;
 
         @JsonView({TestRail.Plans.Add.class, TestRail.Plans.AddEntry.class, TestRail.Plans.UpdateEntry.class})
@@ -128,6 +130,10 @@ public class Plan {
         public static class Run extends com.codepine.api.testrail.model.Run {
             private String entryId;
             private int entryIndex;
+        }
+
+        public Boolean isIncludeAll() {
+            return getIncludeAll();
         }
     }
 }

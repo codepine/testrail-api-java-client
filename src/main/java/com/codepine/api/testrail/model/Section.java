@@ -40,10 +40,10 @@ public class Section {
     private String name;
 
     @JsonView(TestRail.Sections.Add.class)
-    private int suiteId;
+    private Integer suiteId;
 
     @JsonView(TestRail.Sections.Add.class)
-    private int parentId;
+    private Integer parentId;
 
     private int depth;
 

@@ -55,7 +55,7 @@ public class Run {
     private Integer planId;
 
     @JsonView(TestRail.Runs.Add.class)
-    private int suiteId;
+    private Integer suiteId;
 
     @JsonView({TestRail.Runs.Add.class, TestRail.Runs.Update.class})
     private Integer milestoneId;

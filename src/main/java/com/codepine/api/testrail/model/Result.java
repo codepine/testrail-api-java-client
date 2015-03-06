@@ -38,7 +38,12 @@ import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.fasterxml.jackson.databind.ser.std.StdKeySerializer;
 import com.google.common.base.Preconditions;
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.NonNull;
+import lombok.ToString;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -63,7 +68,7 @@ public class Result {
     private Integer caseId;
 
     @JsonView({TestRail.Results.Add.class, TestRail.Results.AddForCase.class, TestRail.Results.AddList.class, TestRail.Results.AddListForCases.class})
-    private int statusId;
+    private Integer statusId;
 
     private Date createdOn;
 
