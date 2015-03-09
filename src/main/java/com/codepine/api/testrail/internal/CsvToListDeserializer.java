@@ -40,6 +40,9 @@ public class CsvToListDeserializer extends JsonDeserializer<List<String>> {
 
     @Override
     public List<String> deserialize(JsonParser jp, DeserializationContext ctxt) throws IOException, JsonProcessingException {
-        return Splitter.on(',').trimResults().splitToList(jp.getValueAsString());
+        if (jp.getValueAsString() == null) {
+            return null;
+        }
+        return Splitter.on(',').trimResults().omitEmptyStrings().splitToList(jp.getValueAsString());
     }
 }
