@@ -24,7 +24,7 @@
 
 package com.codepine.api.testrail.internal;
 
-import com.fasterxml.jackson.core.JsonGenerator;
+import com.fasterxml.jackson.core.JsonParser;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -33,51 +33,63 @@ import org.mockito.runners.MockitoJUnitRunner;
 
 import java.io.IOException;
 
-import static org.mockito.Mockito.verify;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
+import static org.mockito.Mockito.when;
 
 /**
- * Tests for {@link com.codepine.api.testrail.internal.BooleanToIntSerializer}.
+ * Tests for {@link com.codepine.api.testrail.internal.IntToBooleanDeserializer}.
  */
 @RunWith(MockitoJUnitRunner.class)
-public class BooleanToIntSerializerTest {
+public class IntToBooleanDeserializerTest {
 
-    private BooleanToIntSerializer booleanToIntSerializer;
+    private IntToBooleanDeserializer intToBooleanDeserializer;
 
     @Mock
-    private JsonGenerator jsonGenerator;
+    private JsonParser jsonParser;
 
     @Before
     public void setUp() {
-        booleanToIntSerializer = new BooleanToIntSerializer();
+        intToBooleanDeserializer = new IntToBooleanDeserializer();
     }
 
     @Test
-    public void W_null_T_0() throws IOException {
+    public void W_0_T_false() throws IOException {
         // WHEN
-        Boolean value = null;
-        booleanToIntSerializer.serialize(value, jsonGenerator, null);
+        when(jsonParser.getValueAsInt(0)).thenReturn(0);
+        Boolean actualBoolean = intToBooleanDeserializer.deserialize(jsonParser, null);
 
         // THEN
-        verify(jsonGenerator).writeNumber(0);
+        assertFalse(actualBoolean);
     }
 
     @Test
-    public void W_false_T_0() throws IOException {
+    public void W_1_T_true() throws IOException {
         // WHEN
-        Boolean value = false;
-        booleanToIntSerializer.serialize(value, jsonGenerator, null);
+        when(jsonParser.getValueAsInt(0)).thenReturn(1);
+        Boolean actualBoolean = intToBooleanDeserializer.deserialize(jsonParser, null);
 
         // THEN
-        verify(jsonGenerator).writeNumber(0);
+        assertTrue(actualBoolean);
     }
 
     @Test
-    public void W_true_T_1() throws IOException {
+    public void W_negative_T_false() throws IOException {
         // WHEN
-        Boolean value = false;
-        booleanToIntSerializer.serialize(value, jsonGenerator, null);
+        when(jsonParser.getValueAsInt(0)).thenReturn(-1);
+        Boolean actualBoolean = intToBooleanDeserializer.deserialize(jsonParser, null);
 
         // THEN
-        verify(jsonGenerator).writeNumber(0);
+        assertFalse(actualBoolean);
+    }
+
+    @Test
+    public void W_greaterThan1_T_true() throws IOException {
+        // WHEN
+        when(jsonParser.getValueAsInt(0)).thenReturn(5);
+        Boolean actualBoolean = intToBooleanDeserializer.deserialize(jsonParser, null);
+
+        // THEN
+        assertTrue(actualBoolean);
     }
 }

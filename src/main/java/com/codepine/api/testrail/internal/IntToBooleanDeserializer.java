@@ -38,6 +38,6 @@ public class IntToBooleanDeserializer extends JsonDeserializer<Boolean> {
 
     @Override
     public Boolean deserialize(JsonParser jp, DeserializationContext ctxt) throws IOException, JsonProcessingException {
-        return jp.getValueAsInt(0) == 0 ? Boolean.FALSE : Boolean.TRUE;
+        return jp.getValueAsInt(0) <= 0 ? Boolean.FALSE : Boolean.TRUE;
     }
 }
