@@ -42,6 +42,8 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
+import static com.codepine.api.testrail.model.Field.Type;
+
 
 /**
  * TestRail case.
@@ -97,6 +99,18 @@ public class Case {
         }
         customFields.put(key.replaceFirst(CUSTOM_FIELD_KEY_PREFIX, ""), value);
         return this;
+    }
+
+    /**
+     * Get custom field.
+     * <p>Use Java Type Inference, to get the value with correct type. Refer to {@link Type} for a map of TestRail field types to Java types.</p>
+     *
+     * @param key the system name of custom field
+     * @param <T> the type of returned value
+     * @return the value of the custom field
+     */
+    public <T> T getCustomField(String key) {
+        return (T) getCustomFields().get(key);
     }
 
     /**

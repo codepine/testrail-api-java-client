@@ -24,16 +24,24 @@
 
 package com.codepine.api.testrail.model;
 
+import com.codepine.api.testrail.TestRail;
 import com.codepine.api.testrail.internal.IntToBooleanDeserializer;
 import com.codepine.api.testrail.internal.StringToMapDeserializer;
 import com.fasterxml.jackson.annotation.JsonAnyGetter;
 import com.fasterxml.jackson.annotation.JsonAnySetter;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonView;
+import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
-import lombok.*;
+import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.RequiredArgsConstructor;
+import lombok.ToString;
 
 import java.math.BigInteger;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -55,14 +63,58 @@ public class Field {
     private List<Config> configs;
 
     /**
-     * Type of field.
+     * TestRail type of field.
+     * <p>
+     * Map of TestRail field types to their corresponding Java types:
+     * <pre>
+     *      STRING -- java.lang.String
+     *      INTEGER -- java.lang.Integer
+     *      TEXT -- java.lang.String
+     *      URL -- java.lang.String
+     *      CHECKBOX -- java.lang.Boolean
+     *      DROPDOWN -- java.lang.String
+     *      USER -- java.lang.Integer
+     *      DATE -- java.util.Date
+     *      MILESTONE -- java.lang.Integer
+     *      STEPS -- java.util.List<{@link Step}>
+     *      STEP_RESULTS -- java.util.List<{@link StepResult}>
+     *      MULTI_SELECT -- java.util.List<String>
+     * </pre>
+     * </p>
      */
     @RequiredArgsConstructor
-    public enum Type {
-        UNKNOWN(Config.Options.class), STRING(Config.StringOptions.class), INTEGER(Config.IntegerOptions.class), TEXT(Config.TextOptions.class), URL(Config.UrlOptions.class), CHECKBOX(Config.CheckboxOptions.class), DROPDOWN(Config.DropdownOptions.class), USER(Config.UserOptions.class), DATE(Config.DateOptions.class), MILESTONE(Config.MilestoneOptions.class), STEPS(Config.StepsOptions.class), STEP_RESULTS(Config.StepResultsOptions.class), MULTI_SELECT(Config.MultiSelectOptions.class);
+    public static enum Type {
+        UNKNOWN(Config.Options.class, new TypeReference<Object>() {
+        }),
+        STRING(Config.StringOptions.class, new TypeReference<String>() {
+        }),
+        INTEGER(Config.IntegerOptions.class, new TypeReference<Integer>() {
+        }),
+        TEXT(Config.TextOptions.class, new TypeReference<String>() {
+        }),
+        URL(Config.UrlOptions.class, new TypeReference<String>() {
+        }),
+        CHECKBOX(Config.CheckboxOptions.class, new TypeReference<Boolean>() {
+        }),
+        DROPDOWN(Config.DropdownOptions.class, new TypeReference<String>() {
+        }),
+        USER(Config.UserOptions.class, new TypeReference<Integer>() {
+        }),
+        DATE(Config.DateOptions.class, new TypeReference<Date>() {
+        }),
+        MILESTONE(Config.MilestoneOptions.class, new TypeReference<Integer>() {
+        }),
+        STEPS(Config.StepsOptions.class, new TypeReference<List<Step>>() {
+        }),
+        STEP_RESULTS(Config.StepResultsOptions.class, new TypeReference<List<StepResult>>() {
+        }),
+        MULTI_SELECT(Config.MultiSelectOptions.class, new TypeReference<List<String>>() {
+        });
 
         @Getter
         private final Class<? extends Config.Options> optionsClass;
+        @Getter
+        private final TypeReference<?> typeReference;
 
         public static Type getType(int typeId) {
             return typeId >= 0 && typeId < Type.values().length ? Type.values()[typeId] : UNKNOWN;
@@ -239,6 +291,32 @@ public class Field {
             private boolean isGlobal;
             private List<Integer> projectIds;
         }
+
+    }
+
+    /**
+     * Step; a custom field type.
+     */
+    @Data
+    public static class Step {
+
+        @JsonView({TestRail.Cases.Add.class, TestRail.Cases.Update.class})
+        private String content;
+        @JsonView({TestRail.Cases.Add.class, TestRail.Cases.Update.class})
+        private String expected;
+
+    }
+
+    /**
+     * Step result; a custom field type.
+     */
+    @Data
+    public static class StepResult {
+
+        private String content;
+        private String expected;
+        private String actual;
+        private Integer statusId;
 
     }
 

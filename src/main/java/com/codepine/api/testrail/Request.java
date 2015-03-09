@@ -24,6 +24,7 @@
 
 package com.codepine.api.testrail;
 
+import com.codepine.api.testrail.internal.CaseModule;
 import com.codepine.api.testrail.internal.FieldModule;
 import com.codepine.api.testrail.internal.PlanModule;
 import com.codepine.api.testrail.internal.QueryParameterString;
@@ -31,6 +32,9 @@ import com.codepine.api.testrail.internal.UnixTimestampModule;
 import com.codepine.api.testrail.internal.UrlConnectionFactory;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.BeanProperty;
+import com.fasterxml.jackson.databind.DeserializationContext;
+import com.fasterxml.jackson.databind.InjectableValues;
 import com.fasterxml.jackson.databind.MapperFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.PropertyNamingStrategy;
@@ -46,6 +50,8 @@ import java.io.BufferedOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.lang.reflect.ParameterizedType;
+import java.lang.reflect.Type;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.nio.charset.Charset;
@@ -64,7 +70,7 @@ public abstract class Request<T> {
             .configure(MapperFeature.DEFAULT_VIEW_INCLUSION, false)
             .setSerializationInclusion(JsonInclude.Include.NON_NULL)
             .disable(SerializationFeature.FAIL_ON_EMPTY_BEANS)
-            .registerModules(new FieldModule(), new PlanModule(), new UnixTimestampModule());
+            .registerModules(new FieldModule(), new CaseModule(), new PlanModule(), new UnixTimestampModule());
 
     @NonNull
     private final TestRailConfig config;
@@ -140,12 +146,26 @@ public abstract class Request<T> {
             }
 
             try (InputStream responseStream = new BufferedInputStream(con.getInputStream())) {
+                Object supplementForDeserialization = getSupplementForDeserialization();
                 if (responseClass != null) {
                     if (responseClass == Void.class) {
                         return null;
                     }
+                    if(supplementForDeserialization != null) {
+                        return JSON.reader(responseClass).with(new InjectableValues.Std().addValue(responseClass.toString(), supplementForDeserialization)).readValue(responseStream);
+                    }
                     return JSON.readValue(responseStream, responseClass);
                 } else {
+                    if(supplementForDeserialization != null) {
+                        String supplementKey = responseType.getType().toString();
+                        if(responseType.getType() instanceof ParameterizedType) {
+                            Type[] actualTypes = ((ParameterizedType)responseType.getType()).getActualTypeArguments();
+                            if(actualTypes.length == 1 && actualTypes[0] instanceof Class<?>) {
+                                supplementKey = actualTypes[0].toString();
+                            }
+                        }
+                        return JSON.reader(responseType).with(new InjectableValues.Std().addValue(supplementKey, supplementForDeserialization)).readValue(responseStream);
+                    }
                     return JSON.readValue(responseStream, responseType);
                 }
             }
@@ -181,6 +201,15 @@ public abstract class Request<T> {
      * @return content
      */
     protected Object getContent() {
+        return null;
+    }
+
+    /**
+     * Override this method to provide supplementary information to deserializer.
+     *
+     * @return any object acting as supplement for deserialization
+     */
+    protected Object getSupplementForDeserialization() {
         return null;
     }
 

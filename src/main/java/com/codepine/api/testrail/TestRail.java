@@ -26,11 +26,31 @@ package com.codepine.api.testrail;
 
 import com.codepine.api.testrail.internal.BooleanToIntSerializer;
 import com.codepine.api.testrail.internal.ListToCsvSerializer;
-import com.codepine.api.testrail.model.*;
+import com.codepine.api.testrail.model.Case;
+import com.codepine.api.testrail.model.CaseField;
+import com.codepine.api.testrail.model.CaseType;
+import com.codepine.api.testrail.model.Configuration;
+import com.codepine.api.testrail.model.Milestone;
+import com.codepine.api.testrail.model.Plan;
+import com.codepine.api.testrail.model.Priority;
+import com.codepine.api.testrail.model.Project;
+import com.codepine.api.testrail.model.Result;
+import com.codepine.api.testrail.model.ResultField;
+import com.codepine.api.testrail.model.Run;
+import com.codepine.api.testrail.model.Section;
+import com.codepine.api.testrail.model.Status;
+import com.codepine.api.testrail.model.Suite;
+import com.codepine.api.testrail.model.Test;
+import com.codepine.api.testrail.model.User;
 import com.fasterxml.jackson.annotation.JsonView;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
-import lombok.*;
+import lombok.AccessLevel;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.NonNull;
+import lombok.Setter;
 import lombok.experimental.Accessors;
 
 import java.util.Date;
@@ -328,65 +348,83 @@ public class TestRail {
 
         /**
          * Returns an existing test case.
+         * <p>The custom case fields configured in TestRail can be fetched using {@link CaseFields#list()} request.
+         * The reason for not fetching this during execution of this request is to allow you to cache the list on your end to prevent an extra call on every execution.</p>
          *
          * @param testCaseId the ID of the test case
+         * @param caseFields the custom case fields configured in TestRail to get type information for custom fields in the test case
          * @return the request
          * @throws java.lang.IllegalArgumentException if testCaseId is not positive
+         * @throws java.lang.NullPointerException     if caseFields is null
          */
-        public Get get(final int testCaseId) {
+        public Get get(final int testCaseId, @NonNull java.util.List<CaseField> caseFields) {
             checkArgument(testCaseId > 0, "testCaseId should be positive");
-            return new Get(testCaseId);
+            return new Get(testCaseId, caseFields);
         }
 
         /**
          * Returns the list of available test cases.
+         * <p>The custom case fields configured in TestRail can be fetched using {@link CaseFields#list()} request.
+         * The reason for not fetching this during execution of this request is to allow you to cache the list on your end to prevent an extra call on every execution.</p>
          *
-         * @param projectId the ID of the project which is operating in a single suite mode
+         * @param projectId  the ID of the project which is operating in a single suite mode
+         * @param caseFields the custom case fields configured in TestRail to get type information for custom fields in the test cases
          * @return the request
          * @throws java.lang.IllegalArgumentException if projectId is not positive
+         * @throws java.lang.NullPointerException     if caseFields is null
          */
-        public List list(final int projectId) {
+        public List list(final int projectId, @NonNull java.util.List<CaseField> caseFields) {
             checkArgument(projectId > 0, "projectId should be positive");
-            return new List(projectId);
+            return new List(projectId, caseFields);
         }
 
         /**
          * Returns the list of available test cases.
+         * <p>The custom case fields configured in TestRail can be fetched using {@link CaseFields#list()} request.
+         * The reason for not fetching this during execution of this request is to allow you to cache the list on your end to prevent an extra call on every execution.</p>
          *
-         * @param projectId the ID of the project
-         * @param suiteId   the ID of the suite
+         * @param projectId  the ID of the project
+         * @param suiteId    the ID of the suite
+         * @param caseFields the custom case fields configured in TestRail to get type information for custom fields in the test cases
          * @return the request
          * @throws java.lang.IllegalArgumentException if any argument is not positive
+         * @throws java.lang.NullPointerException     if caseFields is null
          */
-        public List list(final int projectId, final int suiteId) {
+        public List list(final int projectId, final int suiteId, @NonNull java.util.List<CaseField> caseFields) {
             checkArgument(projectId > 0, "projectId should be positive");
             checkArgument(suiteId > 0, "suiteId should be positive");
-            return new List(projectId, suiteId);
+            return new List(projectId, suiteId, caseFields);
         }
 
         /**
          * Creates a new test case.
+         * <p>The custom case fields configured in TestRail can be fetched using {@link CaseFields#list()} request.
+         * The reason for not fetching this during execution of this request is to allow you to cache the list on your end to prevent an extra call on every execution.</p>
          *
-         * @param sectionId the ID of the section to add the test case to
-         * @param testCase  the test case to be added
+         * @param sectionId  the ID of the section to add the test case to
+         * @param testCase   the test case to be added
+         * @param caseFields the custom case fields configured in TestRail to get type information for custom fields in the test case
          * @return the request
          * @throws java.lang.IllegalArgumentException if sectionId is not positive
-         * @throws java.lang.NullPointerException     if testCase is null
+         * @throws java.lang.NullPointerException     if any other argument is null
          */
-        public Add add(final int sectionId, @NonNull Case testCase) {
+        public Add add(final int sectionId, @NonNull Case testCase, @NonNull java.util.List<CaseField> caseFields) {
             checkArgument(sectionId > 0, "projectId should be positive");
-            return new Add(sectionId, testCase);
+            return new Add(sectionId, testCase, caseFields);
         }
 
         /**
          * Updates an existing test case. Partial updates are supported, i.e. you can set and update specific fields only.
+         * <p>The custom case fields configured in TestRail can be fetched using {@link CaseFields#list()} request.
+         * The reason for not fetching this during execution of this request is to allow you to cache the list on your end to prevent an extra call on every execution.</p>
          *
-         * @param testCase the test case to be updated
+         * @param testCase   the test case to be updated
+         * @param caseFields the custom case fields configured in TestRail to get type information for custom fields in the test case
          * @return the request
-         * @throws java.lang.NullPointerException if testCase is null
+         * @throws java.lang.NullPointerException if any argument is null
          */
-        public Update update(@NonNull Case testCase) {
-            return new Update(testCase);
+        public Update update(@NonNull Case testCase, @NonNull java.util.List<CaseField> caseFields) {
+            return new Update(testCase, caseFields);
         }
 
         /**
@@ -404,8 +442,16 @@ public class TestRail {
         public class Get extends Request<Case> {
             private static final String REST_PATH = "get_case/";
 
-            private Get(int testCaseId) {
+            private final java.util.List<CaseField> caseFields;
+
+            private Get(int testCaseId, java.util.List<CaseField> caseFields) {
                 super(config, Method.GET, REST_PATH + testCaseId, Case.class);
+                this.caseFields = caseFields;
+            }
+
+            @Override
+            protected Object getSupplementForDeserialization() {
+                return caseFields;
             }
         }
 
@@ -414,50 +460,48 @@ public class TestRail {
         @Accessors(fluent = true)
         public class List extends Request<java.util.List<Case>> {
             private static final String REST_PATH = "get_cases/%s&suite_id=%s";
-
+            private final java.util.List<CaseField> caseFields;
             @JsonView(List.class)
             private Integer sectionId;
-
             @JsonView(List.class)
             private Date createdAfter;
-
             @JsonView(List.class)
             private Date createdBefore;
-
             @JsonView(List.class)
             @JsonSerialize(using = ListToCsvSerializer.class)
             private java.util.List<Integer> createdBy;
-
             @JsonView(List.class)
             @JsonSerialize(using = ListToCsvSerializer.class)
             private java.util.List<Integer> milestoneId;
-
             @JsonView(List.class)
             @JsonSerialize(using = ListToCsvSerializer.class)
             private java.util.List<Integer> priorityId;
-
             @JsonView(List.class)
             @JsonSerialize(using = ListToCsvSerializer.class)
             private java.util.List<Integer> typeId;
-
             @JsonView(List.class)
             private Date updatedAfter;
-
             @JsonView(List.class)
             private Date updatedBefore;
-
             @JsonView(List.class)
             @JsonSerialize(using = ListToCsvSerializer.class)
             private java.util.List<Integer> updatedBy;
 
-            private List(int projectId) {
+            private List(int projectId, java.util.List<CaseField> caseFields) {
                 super(config, Method.GET, String.format(REST_PATH, projectId, ""), new TypeReference<java.util.List<Case>>() {
                 });
+                this.caseFields = caseFields;
             }
 
-            private List(int projectId, int suiteId) {
+            private List(int projectId, int suiteId, java.util.List<CaseField> caseFields) {
                 super(config, Method.GET, String.format(REST_PATH, projectId, suiteId), new TypeReference<java.util.List<Case>>() {
                 });
+                this.caseFields = caseFields;
+            }
+
+            @Override
+            protected Object getSupplementForDeserialization() {
+                return caseFields;
             }
 
         }
@@ -466,15 +510,22 @@ public class TestRail {
             private static final String REST_PATH = "add_case/";
 
             private final Case testCase;
+            private final java.util.List<CaseField> caseFields;
 
-            private Add(int sectionId, Case testCase) {
+            private Add(int sectionId, Case testCase, java.util.List<CaseField> caseFields) {
                 super(config, Method.POST, REST_PATH + sectionId, Case.class);
                 this.testCase = testCase;
+                this.caseFields = caseFields;
             }
 
             @Override
             protected Object getContent() {
                 return testCase;
+            }
+
+            @Override
+            protected Object getSupplementForDeserialization() {
+                return caseFields;
             }
 
         }
@@ -483,15 +534,22 @@ public class TestRail {
             private static final String REST_PATH = "update_case/";
 
             private final Case testCase;
+            private final java.util.List<CaseField> caseFields;
 
-            private Update(Case testCase) {
+            private Update(Case testCase, java.util.List<CaseField> caseFields) {
                 super(config, Method.POST, REST_PATH + testCase.getId(), Case.class);
                 this.testCase = testCase;
+                this.caseFields = caseFields;
             }
 
             @Override
             protected Object getContent() {
                 return testCase;
+            }
+
+            @Override
+            protected Object getSupplementForDeserialization() {
+                return caseFields;
             }
 
         }
