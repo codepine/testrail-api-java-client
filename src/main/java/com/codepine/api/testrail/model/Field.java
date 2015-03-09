@@ -34,10 +34,12 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonView;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import lombok.AccessLevel;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
+import lombok.Setter;
 import lombok.ToString;
 
 import java.math.BigInteger;
@@ -74,7 +76,7 @@ public class Field {
      *      CHECKBOX -- java.lang.Boolean
      *      DROPDOWN -- java.lang.String
      *      USER -- java.lang.Integer
-     *      DATE -- java.util.Date
+     *      DATE -- java.lang.String
      *      MILESTONE -- java.lang.Integer
      *      STEPS -- java.util.List<{@link Step}>
      *      STEP_RESULTS -- java.util.List<{@link StepResult}>
@@ -100,7 +102,7 @@ public class Field {
         }),
         USER(Config.UserOptions.class, new TypeReference<Integer>() {
         }),
-        DATE(Config.DateOptions.class, new TypeReference<Date>() {
+        DATE(Config.DateOptions.class, new TypeReference<String>() {
         }),
         MILESTONE(Config.MilestoneOptions.class, new TypeReference<Integer>() {
         }),
@@ -141,11 +143,12 @@ public class Field {
             @JsonProperty
             @Getter(onMethod = @_({@JsonIgnore}))
             private boolean isRequired;
-            @Getter(onMethod = @_({@JsonAnyGetter}))
+            @Getter(value = AccessLevel.PRIVATE, onMethod = @_({@JsonAnyGetter}))
+            @Setter(value=AccessLevel.NONE)
             private Map<String, Object> unknownFields;
 
             @JsonAnySetter
-            public Options addCustomField(String key, Object value) {
+            private Options addUnknownField(String key, Object value) {
                 if (unknownFields == null) {
                     unknownFields = new HashMap<>();
                 }
