@@ -51,6 +51,8 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
+import static com.codepine.api.testrail.model.Field.Type;
+
 /**
  * TestRail result.
  */
@@ -91,6 +93,11 @@ public class Result {
     @JsonDeserialize(using = CsvToListDeserializer.class)
     private java.util.List<String> defects;
 
+    @JsonView({TestRail.Results.Add.class, TestRail.Results.AddForCase.class, TestRail.Results.AddList.class, TestRail.Results.AddListForCases.class})
+    @Getter(onMethod = @_({@JsonAnyGetter, @JsonSerialize(keyUsing = CustomFieldSerializer.class)}))
+    @JsonIgnore
+    private Map<String, Object> customFields;
+
     /**
      * Add a defect.
      *
@@ -108,13 +115,6 @@ public class Result {
         return this;
     }
 
-    // customstepresults
-
-    @JsonView({TestRail.Results.Add.class, TestRail.Results.AddForCase.class, TestRail.Results.AddList.class, TestRail.Results.AddListForCases.class})
-    @Getter(onMethod = @_({@JsonAnyGetter, @JsonSerialize(keyUsing = CustomFieldSerializer.class)}))
-    @JsonIgnore
-    private Map<String, Object> customFields;
-
     @JsonAnySetter
     public Result addCustomField(String key, Object value) {
         if (customFields == null) {
@@ -122,6 +122,18 @@ public class Result {
         }
         customFields.put(key.replaceFirst(CUSTOM_FIELD_KEY_PREFIX, ""), value);
         return this;
+    }
+
+    /**
+     * Get custom field.
+     * <p>Use Java Type Inference, to get the value with correct type. Refer to {@link Type} for a map of TestRail field types to Java types.</p>
+     *
+     * @param key the system name of custom field
+     * @param <T> the type of returned value
+     * @return the value of the custom field
+     */
+    public <T> T getCustomField(String key) {
+        return (T) getCustomFields().get(key);
     }
 
     /**

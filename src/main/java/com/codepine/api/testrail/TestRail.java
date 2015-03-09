@@ -352,7 +352,7 @@ public class TestRail {
          * The reason for not fetching this during execution of this request is to allow you to cache the list on your end to prevent an extra call on every execution.</p>
          *
          * @param testCaseId the ID of the test case
-         * @param caseFields the custom case fields configured in TestRail to get type information for custom fields in the test case
+         * @param caseFields the custom case fields configured in TestRail to get type information for custom fields in the test case returned
          * @return the request
          * @throws java.lang.IllegalArgumentException if testCaseId is not positive
          * @throws java.lang.NullPointerException     if caseFields is null
@@ -368,7 +368,7 @@ public class TestRail {
          * The reason for not fetching this during execution of this request is to allow you to cache the list on your end to prevent an extra call on every execution.</p>
          *
          * @param projectId  the ID of the project which is operating in a single suite mode
-         * @param caseFields the custom case fields configured in TestRail to get type information for custom fields in the test cases
+         * @param caseFields the custom case fields configured in TestRail to get type information for custom fields in the test cases returned
          * @return the request
          * @throws java.lang.IllegalArgumentException if projectId is not positive
          * @throws java.lang.NullPointerException     if caseFields is null
@@ -385,7 +385,7 @@ public class TestRail {
          *
          * @param projectId  the ID of the project
          * @param suiteId    the ID of the suite
-         * @param caseFields the custom case fields configured in TestRail to get type information for custom fields in the test cases
+         * @param caseFields the custom case fields configured in TestRail to get type information for custom fields in the test cases returned
          * @return the request
          * @throws java.lang.IllegalArgumentException if any argument is not positive
          * @throws java.lang.NullPointerException     if caseFields is null
@@ -403,7 +403,7 @@ public class TestRail {
          *
          * @param sectionId  the ID of the section to add the test case to
          * @param testCase   the test case to be added
-         * @param caseFields the custom case fields configured in TestRail to get type information for custom fields in the test case
+         * @param caseFields the custom case fields configured in TestRail to get type information for custom fields in the test case returned
          * @return the request
          * @throws java.lang.IllegalArgumentException if sectionId is not positive
          * @throws java.lang.NullPointerException     if any other argument is null
@@ -419,7 +419,7 @@ public class TestRail {
          * The reason for not fetching this during execution of this request is to allow you to cache the list on your end to prevent an extra call on every execution.</p>
          *
          * @param testCase   the test case to be updated
-         * @param caseFields the custom case fields configured in TestRail to get type information for custom fields in the test case
+         * @param caseFields the custom case fields configured in TestRail to get type information for custom fields in the test case returned
          * @return the request
          * @throws java.lang.NullPointerException if any argument is null
          */
@@ -1065,100 +1065,124 @@ public class TestRail {
 
         /**
          * Returns a list of test results for a test.
+         * <p>The custom result fields configured in TestRail can be fetched using {@link ResultFields#list()} request.
+         * The reason for not fetching this during execution of this request is to allow you to cache the list on your end to prevent an extra call on every execution.</p>
          *
-         * @param testId the ID of the test to get the results for
+         * @param testId       the ID of the test to get the results for
+         * @param resultFields the custom result fields configured in TestRail to get type information for custom fields in the results returned
          * @return the request
          * @throws java.lang.IllegalArgumentException if testId is not positive
+         * @throws java.lang.NullPointerException     if resultFields is null
          */
-        public List list(final int testId) {
+        public List list(final int testId, @NonNull java.util.List<ResultField> resultFields) {
             checkArgument(testId > 0, "testId should be positive");
-            return new List(testId);
+            return new List(testId, resultFields);
         }
 
         /**
          * Returns a list of test results for a test run and case combination.
+         * <p>The custom result fields configured in TestRail can be fetched using {@link ResultFields#list()} request.
+         * The reason for not fetching this during execution of this request is to allow you to cache the list on your end to prevent an extra call on every execution.</p>
          *
-         * @param runId      the ID of the test run
-         * @param testCaseId the ID of the test case
+         * @param runId        the ID of the test run
+         * @param testCaseId   the ID of the test case
+         * @param resultFields the custom result fields configured in TestRail to get type information for custom fields in the results returned
          * @return the request
          * @throws java.lang.IllegalArgumentException if any argument is not positive
+         * @throws java.lang.NullPointerException     if resultFields is null
          */
-        public ListForCase listForCase(final int runId, final int testCaseId) {
+        public ListForCase listForCase(final int runId, final int testCaseId, @NonNull java.util.List<ResultField> resultFields) {
             checkArgument(runId > 0, "runId should be positive");
             checkArgument(testCaseId > 0, "testCaseId should be positive");
-            return new ListForCase(runId, testCaseId);
+            return new ListForCase(runId, testCaseId, resultFields);
         }
 
         /**
          * Returns a list of test results for a test run.
+         * <p>The custom result fields configured in TestRail can be fetched using {@link ResultFields#list()} request.
+         * The reason for not fetching this during execution of this request is to allow you to cache the list on your end to prevent an extra call on every execution.</p>
          *
-         * @param runId the ID of the test run to get the results for
+         * @param runId        the ID of the test run to get the results for
+         * @param resultFields the custom result fields configured in TestRail to get type information for custom fields in the results returned
          * @return the request
          * @throws java.lang.IllegalArgumentException if runId is not positive
+         * @throws java.lang.NullPointerException     if resultFields is null
          */
-        public ListForRun listForRun(final int runId) {
+        public ListForRun listForRun(final int runId, @NonNull java.util.List<ResultField> resultFields) {
             checkArgument(runId > 0, "runId should be positive");
-            return new ListForRun(runId);
+            return new ListForRun(runId, resultFields);
         }
 
         /**
          * Adds a new test result, comment or assigns a test.
+         * <p>The custom result fields configured in TestRail can be fetched using {@link ResultFields#list()} request.
+         * The reason for not fetching this during execution of this request is to allow you to cache the list on your end to prevent an extra call on every execution.</p>
          *
-         * @param testId the ID of the test whose result is to be added
-         * @param result the test result to be added
+         * @param testId       the ID of the test whose result is to be added
+         * @param result       the test result to be added
+         * @param resultFields the custom result fields configured in TestRail to get type information for custom fields in the result returned
          * @return the request
          * @throws java.lang.IllegalArgumentException if testId is not positive
-         * @throws java.lang.NullPointerException     if result is null
+         * @throws java.lang.NullPointerException     if any other argument is null
          */
-        public Add add(final int testId, @NonNull Result result) {
+        public Add add(final int testId, @NonNull Result result, @NonNull java.util.List<ResultField> resultFields) {
             checkArgument(testId > 0, "testId should be positive");
-            return new Add(testId, result);
+            return new Add(testId, result, resultFields);
         }
 
         /**
          * Adds a new test result, comment or assigns a test (for a test run and case combination).
+         * <p>The custom result fields configured in TestRail can be fetched using {@link ResultFields#list()} request.
+         * The reason for not fetching this during execution of this request is to allow you to cache the list on your end to prevent an extra call on every execution.</p>
          *
-         * @param runId      the ID of the test run
-         * @param testCaseId the ID of the test case
-         * @param result     the test result to be added
+         * @param runId        the ID of the test run
+         * @param testCaseId   the ID of the test case
+         * @param result       the test result to be added
+         * @param resultFields the custom result fields configured in TestRail to get type information for custom fields in the result returned
          * @return the request
          * @throws java.lang.IllegalArgumentException if runId or testCaseId is not positive
-         * @throws java.lang.NullPointerException     if result is null
+         * @throws java.lang.NullPointerException     if any other argument is null
          */
-        public AddForCase addForCase(final int runId, final int testCaseId, @NonNull Result result) {
+        public AddForCase addForCase(final int runId, final int testCaseId, @NonNull Result result, @NonNull java.util.List<ResultField> resultFields) {
             checkArgument(runId > 0, "runId should be positive");
             checkArgument(testCaseId > 0, "testCaseId should be positive");
-            return new AddForCase(runId, testCaseId, result);
+            return new AddForCase(runId, testCaseId, result, resultFields);
         }
 
         /**
          * Adds one or more new test results, comments or assigns one or more tests.
+         * <p>The custom result fields configured in TestRail can be fetched using {@link ResultFields#list()} request.
+         * The reason for not fetching this during execution of this request is to allow you to cache the list on your end to prevent an extra call on every execution.</p>
          *
-         * @param runId   the ID of the test run to add the results to
-         * @param results the test results to be added
+         * @param runId        the ID of the test run to add the results to
+         * @param results      the test results to be added
+         * @param resultFields the custom result fields configured in TestRail to get type information for custom fields in the results returned
          * @return the request
-         * @throws java.lang.NullPointerException     if results is null
          * @throws java.lang.IllegalArgumentException if runId is not positive or results is empty
+         * @throws java.lang.NullPointerException     if results or resultFields are null
          */
-        public AddList add(final int runId, @NonNull java.util.List<Result> results) {
+        public AddList add(final int runId, @NonNull java.util.List<Result> results, @NonNull java.util.List<ResultField> resultFields) {
             checkArgument(runId > 0, "runId should be positive");
             checkArgument(!results.isEmpty(), "results cannot be empty");
-            return new AddList(runId, results);
+            return new AddList(runId, results, resultFields);
         }
 
         /**
          * Adds one or more new test results, comments or assigns one or more tests (using the case IDs).
+         * <p>The custom result fields configured in TestRail can be fetched using {@link ResultFields#list()} request.
+         * The reason for not fetching this during execution of this request is to allow you to cache the list on your end to prevent an extra call on every execution.</p>
          *
-         * @param runId   the ID of the test run to add the results to
-         * @param results the test results to be added
+         * @param runId        the ID of the test run to add the results to
+         * @param results      the test results to be added
+         * @param resultFields the custom result fields configured in TestRail to get type information for custom fields in the results returned
          * @return the request
-         * @throws java.lang.NullPointerException     if results is null
          * @throws java.lang.IllegalArgumentException if runId is not positive or results is empty
+         * @throws java.lang.NullPointerException     if results or resultFields are null
          */
-        public AddListForCases addForCases(final int runId, @NonNull java.util.List<Result> results) {
+        public AddListForCases addForCases(final int runId, @NonNull java.util.List<Result> results, @NonNull java.util.List<ResultField> resultFields) {
             checkArgument(runId > 0, "runId should be positive");
             checkArgument(!results.isEmpty(), "results cannot be empty");
-            return new AddListForCases(runId, results);
+            return new AddListForCases(runId, results, resultFields);
         }
 
         @Getter
@@ -1166,20 +1190,24 @@ public class TestRail {
         @Accessors(fluent = true)
         public class List extends Request<java.util.List<Result>> {
             private static final String REST_PATH = "get_results/";
-
+            private final java.util.List<ResultField> resultFields;
             @JsonView(List.class)
             private Integer limit;
-
             @JsonView(List.class)
             private Integer offset;
-
             @JsonView(List.class)
             @JsonSerialize(using = ListToCsvSerializer.class)
             private java.util.List<Integer> statusId;
 
-            private List(int testId) {
+            private List(int testId, java.util.List<ResultField> resultFields) {
                 super(config, Method.GET, REST_PATH + testId, new TypeReference<java.util.List<Result>>() {
                 });
+                this.resultFields = resultFields;
+            }
+
+            @Override
+            protected Object getSupplementForDeserialization() {
+                return resultFields;
             }
         }
 
@@ -1188,30 +1216,31 @@ public class TestRail {
         @Accessors(fluent = true)
         public class ListForRun extends Request<java.util.List<Result>> {
             private static final String REST_PATH = "get_results_for_run/";
-
+            private final java.util.List<ResultField> resultFields;
             @JsonView(ListForRun.class)
             private Date createdAfter;
-
             @JsonView(ListForRun.class)
             private Date createdBefore;
-
             @JsonView(ListForRun.class)
             @JsonSerialize(using = ListToCsvSerializer.class)
             private java.util.List<Integer> createdBy;
-
             @JsonView(ListForRun.class)
             private Integer limit;
-
             @JsonView(ListForRun.class)
             private Integer offset;
-
             @JsonView(ListForRun.class)
             @JsonSerialize(using = ListToCsvSerializer.class)
             private java.util.List<Integer> statusId;
 
-            private ListForRun(int runId) {
+            private ListForRun(int runId, java.util.List<ResultField> resultFields) {
                 super(config, Method.GET, REST_PATH + runId, new TypeReference<java.util.List<Result>>() {
                 });
+                this.resultFields = resultFields;
+            }
+
+            @Override
+            protected Object getSupplementForDeserialization() {
+                return resultFields;
             }
         }
 
@@ -1220,20 +1249,24 @@ public class TestRail {
         @Accessors(fluent = true)
         public class ListForCase extends Request<java.util.List<Result>> {
             private static final String REST_PATH = "get_results_for_case/";
-
+            private final java.util.List<ResultField> resultFields;
             @JsonView(ListForCase.class)
             private Integer limit;
-
             @JsonView(ListForCase.class)
             private Integer offset;
-
             @JsonView(ListForCase.class)
             @JsonSerialize(using = ListToCsvSerializer.class)
             private java.util.List<Integer> statusId;
 
-            private ListForCase(int runId, int testCaseId) {
+            private ListForCase(int runId, int testCaseId, java.util.List<ResultField> resultFields) {
                 super(config, Method.GET, REST_PATH + runId + "/" + testCaseId, new TypeReference<java.util.List<Result>>() {
                 });
+                this.resultFields = resultFields;
+            }
+
+            @Override
+            protected Object getSupplementForDeserialization() {
+                return resultFields;
             }
         }
 
@@ -1241,15 +1274,22 @@ public class TestRail {
             private static final String REST_PATH = "add_result/";
 
             private final Result result;
+            private final java.util.List<ResultField> resultFields;
 
-            private Add(int testId, Result result) {
+            private Add(int testId, Result result, java.util.List<ResultField> resultFields) {
                 super(config, Method.POST, REST_PATH + testId, Result.class);
                 this.result = result;
+                this.resultFields = resultFields;
             }
 
             @Override
             protected Object getContent() {
                 return result;
+            }
+
+            @Override
+            protected Object getSupplementForDeserialization() {
+                return resultFields;
             }
         }
 
@@ -1257,15 +1297,22 @@ public class TestRail {
             private static final String REST_PATH = "add_result_for_case/";
 
             private final Result result;
+            private final java.util.List<ResultField> resultFields;
 
-            private AddForCase(int runId, int testCaseId, Result result) {
+            private AddForCase(int runId, int testCaseId, Result result, java.util.List<ResultField> resultFields) {
                 super(config, Method.POST, REST_PATH + runId + "/" + testCaseId, Result.class);
                 this.result = result;
+                this.resultFields = resultFields;
             }
 
             @Override
             protected Object getContent() {
                 return result;
+            }
+
+            @Override
+            protected Object getSupplementForDeserialization() {
+                return resultFields;
             }
         }
 
@@ -1273,16 +1320,23 @@ public class TestRail {
             private static final String REST_PATH = "add_results/";
 
             private final Result.List results;
+            private final java.util.List<ResultField> resultFields;
 
-            private AddList(final int runId, java.util.List<Result> results) {
+            private AddList(final int runId, java.util.List<Result> results, java.util.List<ResultField> resultFields) {
                 super(config, Method.POST, REST_PATH + runId, new TypeReference<java.util.List<Result>>() {
                 });
                 this.results = new Result.List(results);
+                this.resultFields = resultFields;
             }
 
             @Override
             protected Object getContent() {
                 return results;
+            }
+
+            @Override
+            protected Object getSupplementForDeserialization() {
+                return resultFields;
             }
         }
 
@@ -1290,16 +1344,23 @@ public class TestRail {
             private static final String REST_PATH = "add_results_for_cases/";
 
             private final Result.List results;
+            private final java.util.List<ResultField> resultFields;
 
-            private AddListForCases(int runId, java.util.List<Result> results) {
+            private AddListForCases(int runId, java.util.List<Result> results, java.util.List<ResultField> resultFields) {
                 super(config, Method.POST, REST_PATH + runId, new TypeReference<java.util.List<Result>>() {
                 });
                 this.results = new Result.List(results);
+                this.resultFields = resultFields;
             }
 
             @Override
             protected Object getContent() {
                 return results;
+            }
+
+            @Override
+            protected Object getSupplementForDeserialization() {
+                return resultFields;
             }
         }
 

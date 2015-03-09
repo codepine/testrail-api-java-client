@@ -28,12 +28,11 @@ import com.codepine.api.testrail.internal.CaseModule;
 import com.codepine.api.testrail.internal.FieldModule;
 import com.codepine.api.testrail.internal.PlanModule;
 import com.codepine.api.testrail.internal.QueryParameterString;
+import com.codepine.api.testrail.internal.ResultModule;
 import com.codepine.api.testrail.internal.UnixTimestampModule;
 import com.codepine.api.testrail.internal.UrlConnectionFactory;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.BeanProperty;
-import com.fasterxml.jackson.databind.DeserializationContext;
 import com.fasterxml.jackson.databind.InjectableValues;
 import com.fasterxml.jackson.databind.MapperFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -70,7 +69,7 @@ public abstract class Request<T> {
             .configure(MapperFeature.DEFAULT_VIEW_INCLUSION, false)
             .setSerializationInclusion(JsonInclude.Include.NON_NULL)
             .disable(SerializationFeature.FAIL_ON_EMPTY_BEANS)
-            .registerModules(new FieldModule(), new CaseModule(), new PlanModule(), new UnixTimestampModule());
+            .registerModules(new CaseModule(), new FieldModule(), new PlanModule(), new ResultModule(), new UnixTimestampModule());
 
     @NonNull
     private final TestRailConfig config;
@@ -151,16 +150,16 @@ public abstract class Request<T> {
                     if (responseClass == Void.class) {
                         return null;
                     }
-                    if(supplementForDeserialization != null) {
+                    if (supplementForDeserialization != null) {
                         return JSON.reader(responseClass).with(new InjectableValues.Std().addValue(responseClass.toString(), supplementForDeserialization)).readValue(responseStream);
                     }
                     return JSON.readValue(responseStream, responseClass);
                 } else {
-                    if(supplementForDeserialization != null) {
+                    if (supplementForDeserialization != null) {
                         String supplementKey = responseType.getType().toString();
-                        if(responseType.getType() instanceof ParameterizedType) {
-                            Type[] actualTypes = ((ParameterizedType)responseType.getType()).getActualTypeArguments();
-                            if(actualTypes.length == 1 && actualTypes[0] instanceof Class<?>) {
+                        if (responseType.getType() instanceof ParameterizedType) {
+                            Type[] actualTypes = ((ParameterizedType) responseType.getType()).getActualTypeArguments();
+                            if (actualTypes.length == 1 && actualTypes[0] instanceof Class<?>) {
                                 supplementKey = actualTypes[0].toString();
                             }
                         }
