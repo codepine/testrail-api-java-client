@@ -40,6 +40,8 @@ public class ListToCsvSerializer extends JsonSerializer<List<?>> {
 
     @Override
     public void serialize(List<?> value, JsonGenerator jgen, SerializerProvider provider) throws IOException, JsonProcessingException {
-        jgen.writeString(Joiner.on(',').join(value));
+        if (value != null) {
+            jgen.writeString(Joiner.on(',').join(value));
+        }
     }
 }

@@ -36,7 +36,6 @@ import java.io.IOException;
  */
 public class BooleanToIntSerializer extends JsonSerializer<Boolean> {
 
-
     @Override
     public void serialize(final Boolean value, final JsonGenerator jgen, final SerializerProvider provider) throws IOException, JsonProcessingException {
         jgen.writeNumber(value == null ? 0 : value ? 1 : 0);

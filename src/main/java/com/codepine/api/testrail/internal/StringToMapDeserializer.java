@@ -42,6 +42,9 @@ public class StringToMapDeserializer extends JsonDeserializer<Map<String, String
 
     @Override
     public Map<String, String> deserialize(JsonParser jp, DeserializationContext ctxt) throws IOException, JsonProcessingException {
+        if (jp.getValueAsString() == null) {
+            return null;
+        }
         Map<String, String> items = Splitter.on("\n").omitEmptyStrings().withKeyValueSeparator(',').split(jp.getValueAsString());
         items = Maps.transformValues(items, new Function<String, String>() {
             @Override
