@@ -51,23 +51,27 @@ public class UnixTimestampModule extends SimpleModule {
     /**
      * Serializer to convert {@code java.util.Date} to unit timestamps in seconds.
      */
-    private static class UnixTimestampSerializer extends JsonSerializer<Date> {
+    static class UnixTimestampSerializer extends JsonSerializer<Date> {
 
         @Override
         public void serialize(Date value, JsonGenerator jgen, SerializerProvider provider) throws IOException, JsonProcessingException {
-            jgen.writeNumber(value.getTime() / 1000);
+            if(value != null) {
+                jgen.writeNumber(value.getTime() / 1000);
+            }
         }
     }
 
     /**
      * Deserializer to convert unit timestamps in seconds to {@code java.util.Date}.
      */
-    private static class UnixTimestampDeserializer extends JsonDeserializer<Date> {
+    static class UnixTimestampDeserializer extends JsonDeserializer<Date> {
 
         @Override
         public Date deserialize(JsonParser jp, DeserializationContext ctxt) throws IOException, JsonProcessingException {
-            String timestamp = jp.getText().trim();
-            return new Date(Long.valueOf(timestamp + "000"));
+            if(jp.getText() == null) {
+                return null;
+            }
+            return new Date(jp.getValueAsInt() * 1000L);
         }
     }
 }
