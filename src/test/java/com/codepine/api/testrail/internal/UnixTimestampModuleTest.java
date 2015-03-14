@@ -37,7 +37,8 @@ import java.util.Date;
 import static org.junit.Assert.assertEquals;
 
 /**
- * Tests for {@link com.codepine.api.testrail.internal.UnixTimestampModule}
+ * Tests for {@link com.codepine.api.testrail.internal.UnixTimestampModule}.
+ * <p>This test does not use mocks. It has some dependencies which it assumes are tested separately.</p>
  */
 public class UnixTimestampModuleTest {
 

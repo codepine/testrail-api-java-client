@@ -24,38 +24,55 @@
 
 package com.codepine.api.testrail.internal;
 
+import com.codepine.api.testrail.model.Case;
+import com.codepine.api.testrail.model.CaseField;
 import com.codepine.api.testrail.model.Field;
+import com.fasterxml.jackson.databind.InjectableValues;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.PropertyNamingStrategy;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import org.junit.Test;
 
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.Collections;
+import java.util.Date;
+import java.util.List;
 
 import static org.junit.Assert.assertEquals;
 
 /**
- * Tests for {@link com.codepine.api.testrail.internal.FieldModule}.
+ * Tests for {@link com.codepine.api.testrail.internal.CaseModule}.
  * <p>This test does not use mocks. It has some dependencies which it assumes are tested separately.</p>
  */
-public class FieldModuleTest {
+public class CaseModuleTest {
 
     private static final ObjectMapper objectMapper = new ObjectMapper()
             .setPropertyNamingStrategy(PropertyNamingStrategy.CAMEL_CASE_TO_LOWER_CASE_WITH_UNDERSCORES)
             .disable(SerializationFeature.FAIL_ON_EMPTY_BEANS)
-            .registerModules(new FieldModule());
+            .registerModules(new CaseModule(), new UnixTimestampModule());
+
+    @Test(expected = IllegalArgumentException.class)
+    public void G_noCustomCaseFields_W_caseStringWithCustomStepsField_T_exception() throws IOException {
+        // GIVEN
+        List<CaseField> caseFields = Collections.emptyList();
+
+        // WHEN
+        objectMapper.reader(Case.class).with(new InjectableValues.Std().addValue(Case.class.toString(), caseFields)).readValue(this.getClass().getResourceAsStream("/case_with_step_field_set.json"));
+    }
 
     @Test
-    public void W_stepFieldString_T_correctDeserializationAndStepsOptions() throws IOException {
+    public void G_customCaseFieldSteps_W_caseStringWithCustomStepsField_T_correctDeserializationAndStepsField() throws IOException {
+        // GIVEN
+        CaseField stepField = objectMapper.readValue(this.getClass().getResourceAsStream("/step_field.json"), CaseField.class);
+        List<CaseField> caseFields = Collections.singletonList(stepField);
+
         // WHEN
-        Field actualField = objectMapper.readValue(this.getClass().getResourceAsStream("/step_field.json"), Field.class);
+        Case actualCase = objectMapper.reader(Case.class).with(new InjectableValues.Std().addValue(Case.class.toString(), caseFields)).readValue(this.getClass().getResourceAsStream("/case_with_step_field_set.json"));
 
         // THEN
-        Field.Config.StepsOptions options = (Field.Config.StepsOptions) new Field.Config.StepsOptions().setFormat("markdown").setHasExpected(true).setRows(6).setRequired(false);
-        Field.Config.Context context = new Field.Config.Context().setGlobal(true).setProjectIds(Collections.<Integer>emptyList());
-        Field.Config config = new Field.Config().setId("47e68955-c7fc-4c01-8313-d9de6c4cad7c").setContext(context).setOptions(options);
-        Field expectedField = new Field().setId(4).setTypeId(10).setType(Field.Type.STEPS).setName("separated_steps").setSystemName("custom_separated_steps").setLabel("Separated Steps").setConfigs(Collections.singletonList(config)).setDisplayOrder(4);
-        assertEquals(expectedField, actualField);
+        List<Field.Step> steps = Arrays.asList(new Field.Step().setContent("Step 1").setExpected("Expected 1"), new Field.Step().setContent("Step 2").setExpected("Expected 2"));
+        Case expectedCase = new Case().setId(13).setTitle("Test Case 2").setSectionId(6).setTypeId(6).setPriorityId(4).setCreatedBy(1).setCreatedOn(new Date(1425683583000L)).setUpdatedBy(1).setUpdatedOn(new Date(1425845918000L)).setSuiteId(4).addCustomField("separated_steps", steps);
+        assertEquals(expectedCase, actualCase);
     }
 }
