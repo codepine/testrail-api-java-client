@@ -43,7 +43,6 @@ import lombok.Setter;
 import lombok.ToString;
 
 import java.math.BigInteger;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -144,7 +143,7 @@ public class Field {
             @Getter(onMethod = @_({@JsonIgnore}))
             private boolean isRequired;
             @Getter(value = AccessLevel.PRIVATE, onMethod = @_({@JsonAnyGetter}))
-            @Setter(value=AccessLevel.NONE)
+            @Setter(value = AccessLevel.NONE)
             private Map<String, Object> unknownFields;
 
             @JsonAnySetter
@@ -288,7 +287,7 @@ public class Field {
 
 
         @Data
-        public class Context {
+        public static class Context {
             @JsonProperty
             @Getter(onMethod = @_({@JsonIgnore}))
             private boolean isGlobal;

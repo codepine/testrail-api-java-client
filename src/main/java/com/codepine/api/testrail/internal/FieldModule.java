@@ -48,7 +48,7 @@ public class FieldModule extends SimpleModule {
         super.setupModule(setupContext);
     }
 
-    private static class FieldDeserializer extends StdDeserializer<Field> implements ResolvableDeserializer {
+    static class FieldDeserializer extends StdDeserializer<Field> implements ResolvableDeserializer {
         private final JsonDeserializer<?> defaultDeserializer;
 
         FieldDeserializer(JsonDeserializer<?> defaultDeserializer) {

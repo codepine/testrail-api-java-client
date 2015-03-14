@@ -1,0 +1,24 @@
+{
+  "id": 4,
+  "type_id": 10,
+  "name": "separated_steps",
+  "system_name": "custom_separated_steps",
+  "label": "Separated Steps",
+  "description": null,
+  "configs": [
+    {
+      "context": {
+        "is_global": true,
+        "project_ids": []
+      },
+      "options": {
+        "is_required": false,
+        "format": "markdown",
+        "has_expected": true,
+        "rows": "6"
+      },
+      "id": "47e68955-c7fc-4c01-8313-d9de6c4cad7c"
+    }
+  ],
+  "display_order": 4
+}
