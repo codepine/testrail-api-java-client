@@ -1,0 +1,24 @@
+{
+  "id": 9,
+  "type_id": 11,
+  "name": "step_results",
+  "system_name": "custom_step_results",
+  "label": "Step Results",
+  "description": null,
+  "configs": [
+    {
+      "context": {
+        "is_global": true,
+        "project_ids": []
+      },
+      "options": {
+        "is_required": false,
+        "format": "markdown",
+        "has_expected": true,
+        "has_actual": false
+      },
+      "id": "7ab8be69-8fd7-4e37-8d40-c78248091842"
+    }
+  ],
+  "display_order": 1
+}

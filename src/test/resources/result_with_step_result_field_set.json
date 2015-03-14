@@ -1,0 +1,26 @@
+{
+  "id": 11,
+  "test_id": 48,
+  "status_id": 1,
+  "created_by": 1,
+  "created_on": 1425687075,
+  "assignedto_id": null,
+  "comment": null,
+  "version": null,
+  "elapsed": null,
+  "defects": null,
+  "custom_step_results": [
+    {
+      "content": "Step 1",
+      "expected": "Expected 1",
+      "actual": "Expected 2",
+      "status_id": 4
+    },
+    {
+      "content": "Step 2",
+      "expected": "Expected 2",
+      "actual": "Unexpected",
+      "status_id": 3
+    }
+  ]
+}
