@@ -55,9 +55,7 @@ public class UnixTimestampModule extends SimpleModule {
 
         @Override
         public void serialize(Date value, JsonGenerator jgen, SerializerProvider provider) throws IOException, JsonProcessingException {
-            if(value != null) {
-                jgen.writeNumber(value.getTime() / 1000);
-            }
+            jgen.writeNumber(value.getTime() / 1000);
         }
     }
 
@@ -68,9 +66,6 @@ public class UnixTimestampModule extends SimpleModule {
 
         @Override
         public Date deserialize(JsonParser jp, DeserializationContext ctxt) throws IOException, JsonProcessingException {
-            if(jp.getText() == null) {
-                return null;
-            }
             return new Date(jp.getValueAsInt() * 1000L);
         }
     }

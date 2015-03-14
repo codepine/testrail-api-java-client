@@ -24,53 +24,46 @@
 
 package com.codepine.api.testrail.internal;
 
-import com.fasterxml.jackson.core.JsonGenerator;
-import org.junit.Before;
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.PropertyNamingStrategy;
+import com.fasterxml.jackson.databind.SerializationFeature;
 import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.mockito.Mock;
-import org.mockito.Mockito;
-import org.mockito.runners.MockitoJUnitRunner;
 
 import java.io.IOException;
 import java.util.Date;
 
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.verifyNoMoreInteractions;
-import static org.mockito.Mockito.verifyZeroInteractions;
+import static org.junit.Assert.assertEquals;
 
 /**
- * Tests for {@link com.codepine.api.testrail.internal.UnixTimestampModule.UnixTimestampSerializer}.
+ * Tests for {@link com.codepine.api.testrail.internal.UnixTimestampModule}
  */
-@RunWith(MockitoJUnitRunner.class)
-public class UnixTimestampSerializerTest {
+public class UnixTimestampModuleTest {
 
-    private UnixTimestampModule.UnixTimestampSerializer unixTimestampSerializer;
+    private static final ObjectMapper objectMapper = new ObjectMapper()
+            .setPropertyNamingStrategy(PropertyNamingStrategy.CAMEL_CASE_TO_LOWER_CASE_WITH_UNDERSCORES)
+            .setSerializationInclusion(JsonInclude.Include.NON_NULL)
+            .disable(SerializationFeature.FAIL_ON_EMPTY_BEANS)
+            .registerModules(new UnixTimestampModule());
 
-    @Mock
-    private JsonGenerator jsonGenerator;
+    @Test
+    public void W_date_T_serializedCorrectlyToUnixTimestamp() throws JsonProcessingException {
+        // WHEN
+        String actualDate = objectMapper.writeValueAsString(new Date(1424641170000L));
 
-    @Before
-    public void setUp() {
-        unixTimestampSerializer = new UnixTimestampModule.UnixTimestampSerializer();
+        // THEN
+        String expectedDate = "1424641170";
+        assertEquals(expectedDate, actualDate);
     }
 
     @Test
-    public void W_null_T_notSerialized() throws IOException {
+    public void W_unixTimestamp_T_deserializedCorrectlyToDate() throws IOException {
         // WHEN
-        unixTimestampSerializer.serialize(null, jsonGenerator, null);
+        Date actualDate = objectMapper.readValue("1424641170", Date.class);
 
         // THEN
-        verifyZeroInteractions(jsonGenerator);
+        Date expectedDate = new Date(1424641170000L);
+        assertEquals(expectedDate, actualDate);
     }
-
-    @Test
-    public void W_notNull_T_serializedCorrectly() throws IOException {
-        // WHEN
-        unixTimestampSerializer.serialize(new Date(1424641170000L), jsonGenerator, null);
-
-        // THEN
-        verify(jsonGenerator).writeNumber(1424641170L);
-    }
-
 }
