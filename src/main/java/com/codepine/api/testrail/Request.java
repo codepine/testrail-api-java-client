@@ -82,25 +82,30 @@ public abstract class Request<T> {
     private UrlConnectionFactory urlConnectionFactory = DEFAULT_URL_CONNECTION_FACTORY;
 
     /**
-     * @param config
-     * @param method
-     * @param restPath
-     * @param responseClass
+     * @param config TestRail configuration
+     * @param method the HTTP method for request
+     * @param restPath the path of the request URL
+     * @param responseClass the type of the response entity
      */
-    protected Request(TestRailConfig config, Method method, String restPath, @NonNull Class<? extends T> responseClass) {
+    Request(TestRailConfig config, Method method, String restPath, @NonNull Class<? extends T> responseClass) {
         this(config, method, restPath, responseClass, null);
     }
 
     /**
-     * @param config
-     * @param method
-     * @param restPath
-     * @param responseType
+     * @param config TestRail configuration
+     * @param method the HTTP method for request
+     * @param restPath the path of the request URL
+     * @param responseType the type of the response entity
      */
-    protected Request(TestRailConfig config, Method method, String restPath, @NonNull TypeReference<? extends T> responseType) {
+    Request(TestRailConfig config, Method method, String restPath, @NonNull TypeReference<? extends T> responseType) {
         this(config, method, restPath, null, responseType);
     }
 
+    /**
+     * Execute this request.
+     *
+     * @return response from TestRail
+     */
     public T execute() {
         try {
 
@@ -199,7 +204,7 @@ public abstract class Request<T> {
      *
      * @return content
      */
-    protected Object getContent() {
+    Object getContent() {
         return null;
     }
 
@@ -208,7 +213,7 @@ public abstract class Request<T> {
      *
      * @return any object acting as supplement for deserialization
      */
-    protected Object getSupplementForDeserialization() {
+    Object getSupplementForDeserialization() {
         return null;
     }
 
@@ -224,7 +229,7 @@ public abstract class Request<T> {
     /**
      * Allowed HTTP methods.
      */
-    protected static enum Method {
+    static enum Method {
         GET, POST;
     }
 
