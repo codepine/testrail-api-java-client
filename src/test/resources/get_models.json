@@ -1,0 +1,26 @@
+[
+  {
+    "id": 1,
+    "name": "Test Model 1",
+    "show_announcement": false,
+    "is_completed": true,
+    "completed_on": 1424641170,
+    "suite_mode": 2
+  },
+  {
+    "id": 3,
+    "name": "Test Model 3",
+    "show_announcement": true,
+    "is_completed": true,
+    "completed_on": 1424651896,
+    "suite_mode": 3
+  },
+  {
+    "id": 4,
+    "name": "Test Model 4",
+    "show_announcement": false,
+    "is_completed": false,
+    "completed_on": 1426110846,
+    "suite_mode": 1
+  }
+]

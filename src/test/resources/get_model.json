@@ -1,0 +1,8 @@
+{
+  "id": 1,
+  "name": "Test Model 1",
+  "show_announcement": false,
+  "is_completed": true,
+  "completed_on": 1424641170,
+  "suite_mode": 2
+}
