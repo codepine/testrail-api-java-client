@@ -6,8 +6,18 @@
     <groupId>com.codepine.api</groupId>
     <artifactId>testrail-api-java-client</artifactId>
     <version>0.0.1-SNAPSHOT</version>
+    <packaging>jar</packaging>
+
     <name>TestRail API Java Client</name>
     <description>Java client for TestRail API</description>
+
+    <licenses>
+        <license>
+            <name>MIT License</name>
+            <url>http://www.opensource.org/licenses/mit-license.php</url>
+            <distribution>repo</distribution>
+        </license>
+    </licenses>
 
     <properties>
         <!-- dependencies -->
@@ -25,6 +35,10 @@
         <maven.source.plugin.version>2.4</maven.source.plugin.version>
         <jacoco.plugin.version>0.7.3.201502191951</jacoco.plugin.version>
         <maven.javadoc.plugin.version>2.10.1</maven.javadoc.plugin.version>
+
+        <!-- misc -->
+        <src.dir>target/generated-sources/delombok</src.dir>
+        <tst.dir>target/generated-test-sources/delombok</tst.dir>
     </properties>
 
     <dependencies>
@@ -64,8 +78,8 @@
     </dependencies>
 
     <build>
-        <sourceDirectory>target/generated-sources/delombok</sourceDirectory>
-        <testSourceDirectory>target/generated-test-sources/delombok</testSourceDirectory>
+        <sourceDirectory>${src.dir}</sourceDirectory>
+        <testSourceDirectory>${tst.dir}</testSourceDirectory>
         <plugins>
             <plugin>
                 <groupId>org.projectlombok</groupId>
@@ -151,6 +165,8 @@
                 <artifactId>maven-javadoc-plugin</artifactId>
                 <version>${maven.javadoc.plugin.version}</version>
                 <configuration>
+                    <defaultVersion>${project.version}</defaultVersion>
+                    <sourcepath>${src.dir}</sourcepath>
                     <excludePackageNames>com.codepine.api.testrail.internal</excludePackageNames>
                 </configuration>
                 <executions>
