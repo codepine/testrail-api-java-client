@@ -97,7 +97,7 @@ public class Result {
 
     @JsonView({TestRail.Results.Add.class, TestRail.Results.AddForCase.class, TestRail.Results.AddList.class, TestRail.Results.AddListForCases.class})
     @JsonIgnore
-    private Map<String, Object> customFields = new HashMap<>();
+    private Map<String, Object> customFields;
 
     /**
      * Add a defect.
