@@ -8,14 +8,24 @@ A Java client library for [TestRail API](http://docs.gurock.com/testrail-api2/st
 ## Quick Start
 --------------
 
+### Maven Dependency
+```xml
+<dependency>
+    <groupId>com.codepine.api</groupId>
+    <artifactId>testrail-api-java-client</artifactId>
+    <version>${stable.version.shown.above}</version>
+</dependency>
+```
+
+### Example Usage
 ```java
-// create TestRail instance
+// create a TestRail instance
 TestRail testRail = TestRail.builder("https://some.testrail.net/", "username", "password").applicationName("playground").build();
 
-// create new project
+// create a new project
 Project project = testRail.projects().add(new Project().setName("Playground Project")).execute();
 
-// create new test suite
+// add a new test suite
 Suite suite = testRail.suites().add(project.getId(), new Suite().setName("Functional Tests")).execute();
 
 // add a new section
@@ -50,7 +60,7 @@ testRail.projects().update(project.setCompleted(true)).execute();
 ------------
 
 ### Thin Client Library
-Except the initial configration (refer to [Quick Start](#quick-start) for example), this client library does not maintain any state from your TestRail service. You can maintain/cache state on your end if you like.
+Except the initial configration (refer to [example](#example-usage)), this client library does not maintain any state from your TestRail service. You can maintain/cache state on your end if you like.
 
 ### Custom Case And Result Fields
 TestRail supports adding custom case and result fields. The request interfaces in ```TestRail.Cases``` and ```TestRail.Results``` requires a list of these fields in order to allow this library to map them to the correct Java types. Here's an example where we want to to know the separated test steps of a particular test case:
