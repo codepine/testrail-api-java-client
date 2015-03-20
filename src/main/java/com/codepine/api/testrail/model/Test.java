@@ -25,8 +25,10 @@
 package com.codepine.api.testrail.model;
 
 import com.fasterxml.jackson.annotation.JsonAnySetter;
+import com.google.common.base.Objects;
 import lombok.Data;
 
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -63,6 +65,10 @@ public class Test {
     private String estimateForecast;
 
     private Map<String, Object> customFields;
+
+    public Map<String, Object> getCustomFields() {
+        return Objects.firstNonNull(customFields, Collections.<String, Object>emptyMap());
+    }
 
     @JsonAnySetter
     public Test addCustomField(String key, Object value) {

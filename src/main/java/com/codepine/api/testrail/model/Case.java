@@ -34,10 +34,12 @@ import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.databind.SerializerProvider;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.fasterxml.jackson.databind.ser.std.StdKeySerializer;
+import com.google.common.base.Objects;
 import lombok.Data;
 import lombok.Getter;
 
 import java.io.IOException;
+import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
@@ -88,9 +90,14 @@ public class Case {
     private int suiteId;
 
     @JsonView({TestRail.Cases.Add.class, TestRail.Cases.Update.class})
-    @Getter(onMethod = @_({@JsonAnyGetter, @JsonSerialize(keyUsing = CustomFieldSerializer.class)}))
     @JsonIgnore
     private Map<String, Object> customFields;
+
+    @JsonAnyGetter
+    @JsonSerialize(keyUsing = CustomFieldSerializer.class)
+    public Map<String, Object> getCustomFields() {
+        return Objects.firstNonNull(customFields, Collections.<String, Object>emptyMap());
+    }
 
     @JsonAnySetter
     public Case addCustomField(String key, Object value) {

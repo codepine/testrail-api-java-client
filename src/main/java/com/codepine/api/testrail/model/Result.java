@@ -37,6 +37,7 @@ import com.fasterxml.jackson.databind.SerializerProvider;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.fasterxml.jackson.databind.ser.std.StdKeySerializer;
+import com.google.common.base.Objects;
 import com.google.common.base.Preconditions;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -47,6 +48,7 @@ import lombok.ToString;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
@@ -94,9 +96,8 @@ public class Result {
     private java.util.List<String> defects;
 
     @JsonView({TestRail.Results.Add.class, TestRail.Results.AddForCase.class, TestRail.Results.AddList.class, TestRail.Results.AddListForCases.class})
-    @Getter(onMethod = @_({@JsonAnyGetter, @JsonSerialize(keyUsing = CustomFieldSerializer.class)}))
     @JsonIgnore
-    private Map<String, Object> customFields;
+    private Map<String, Object> customFields = new HashMap<>();
 
     /**
      * Add a defect.
@@ -115,9 +116,15 @@ public class Result {
         return this;
     }
 
+    @JsonAnyGetter
+    @JsonSerialize(keyUsing = CustomFieldSerializer.class)
+    public Map<String, Object> getCustomFields() {
+        return Objects.firstNonNull(customFields, Collections.<String, Object>emptyMap());
+    }
+
     @JsonAnySetter
     public Result addCustomField(String key, Object value) {
-        if (customFields == null) {
+        if(customFields == null) {
             customFields = new HashMap<>();
         }
         customFields.put(key.replaceFirst(CUSTOM_FIELD_KEY_PREFIX, ""), value);

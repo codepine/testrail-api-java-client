@@ -62,6 +62,19 @@ public class CaseModuleTest {
     }
 
     @Test
+    public void G_noCustomCaseFields_W_caseStringWithNoCustomStepsField_T_correctDeserialization() throws IOException {
+        // GIVEN
+        List<CaseField> caseFields = Collections.emptyList();
+
+        // WHEN
+        Case actualCase = objectMapper.reader(Case.class).with(new InjectableValues.Std().addValue(Case.class.toString(), caseFields)).readValue(this.getClass().getResourceAsStream("/case_with_no_custom_fields.json"));
+
+        // THEN
+        Case expectedCase = new Case().setId(13).setTitle("Test Case 2").setSectionId(6).setTypeId(6).setPriorityId(4).setCreatedBy(1).setCreatedOn(new Date(1425683583000L)).setUpdatedBy(1).setUpdatedOn(new Date(1425845918000L)).setSuiteId(4);
+        assertEquals(expectedCase, actualCase);
+    }
+
+    @Test
     public void G_customCaseFieldSteps_W_caseStringWithCustomStepsField_T_correctDeserializationAndStepsField() throws IOException {
         // GIVEN
         CaseField stepField = objectMapper.readValue(this.getClass().getResourceAsStream("/step_field.json"), CaseField.class);

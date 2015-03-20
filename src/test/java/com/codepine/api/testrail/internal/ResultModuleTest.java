@@ -24,7 +24,6 @@
 
 package com.codepine.api.testrail.internal;
 
-import com.codepine.api.testrail.model.Case;
 import com.codepine.api.testrail.model.CaseField;
 import com.codepine.api.testrail.model.Field;
 import com.codepine.api.testrail.model.Result;
@@ -61,6 +60,19 @@ public class ResultModuleTest {
 
         // WHEN
         objectMapper.reader(Result.class).with(new InjectableValues.Std().addValue(Result.class.toString(), resultFields)).readValue(this.getClass().getResourceAsStream("/result_with_step_result_field_set.json"));
+    }
+
+    @Test
+    public void G_noCustomResultFields_W_resultStringWithNoCustomResultsField_T_correctDeserialization() throws IOException {
+        // GIVEN
+        List<CaseField> resultFields = Collections.emptyList();
+
+        // WHEN
+        Result actualResult = objectMapper.reader(Result.class).with(new InjectableValues.Std().addValue(Result.class.toString(), resultFields)).readValue(this.getClass().getResourceAsStream("/result_with_no_custom_fields.json"));
+
+        // THEN
+        Result expectedResult = new Result().setId(11).setTestId(48).setStatusId(1).setCreatedBy(1).setCreatedOn(new Date(1425687075000L));
+        assertEquals(expectedResult, actualResult);
     }
 
     @Test
