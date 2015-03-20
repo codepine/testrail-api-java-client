@@ -33,6 +33,7 @@ import com.codepine.api.testrail.internal.UnixTimestampModule;
 import com.codepine.api.testrail.internal.UrlConnectionFactory;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.InjectableValues;
 import com.fasterxml.jackson.databind.MapperFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -69,6 +70,7 @@ public abstract class Request<T> {
             .configure(MapperFeature.DEFAULT_VIEW_INCLUSION, false)
             .setSerializationInclusion(JsonInclude.Include.NON_NULL)
             .disable(SerializationFeature.FAIL_ON_EMPTY_BEANS)
+            .disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES)
             .registerModules(new CaseModule(), new FieldModule(), new PlanModule(), new ResultModule(), new UnixTimestampModule());
 
     @NonNull
