@@ -25,8 +25,11 @@
 package com.codepine.api.testrail.model;
 
 import com.codepine.api.testrail.TestRail;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonView;
 import lombok.Data;
+import lombok.Getter;
 
 /**
  * TestRail suite.
@@ -43,6 +46,18 @@ public class Suite {
     private String description;
 
     private int projectId;
+
+    @JsonProperty
+    @Getter(onMethod = @_({@JsonIgnore}))
+    private boolean isBaseline;
+
+    @JsonProperty
+    @Getter(onMethod = @_({@JsonIgnore}))
+    private boolean isCompleted;
+
+    @JsonProperty
+    @Getter(onMethod = @_({@JsonIgnore}))
+    private boolean isMaster;
 
     private String url;
 
