@@ -10,6 +10,7 @@
 
     <name>TestRail API Java Client</name>
     <description>Java client for TestRail API</description>
+    <url>https://github.com/codepine/testrail-api-java-client</url>
 
     <licenses>
         <license>
@@ -25,6 +26,15 @@
         <developerConnection>scm:git:git@github.com:codepine/testrail-api-java-client.git</developerConnection>
         <tag>HEAD</tag>
     </scm>
+
+    <developers>
+        <developer>
+            <name>Kunal Shah</name>
+            <email>kunal546@gmail.com</email>
+            <organization>codepine.com</organization>
+            <organizationUrl>https://github.com/codepine</organizationUrl>
+        </developer>
+    </developers>
 
     <distributionManagement>
         <snapshotRepository>
