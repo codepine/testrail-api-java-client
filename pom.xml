@@ -20,7 +20,7 @@
     </licenses>
 
     <scm>
-        <url>https://github.com/codepine/testrail-api-java-client.git</url>
+        <url>scm:git:git@github.com:codepine/testrail-api-java-client.git</url>
         <connection>scm:git:git@github.com:codepine/testrail-api-java-client.git</connection>
         <developerConnection>scm:git:git@github.com:codepine/testrail-api-java-client.git</developerConnection>
         <tag>HEAD</tag>
