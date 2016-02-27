@@ -122,13 +122,32 @@ public class Result {
         return Objects.firstNonNull(customFields, Collections.<String, Object>emptyMap());
     }
 
-    @JsonAnySetter
+    /**
+     * Add a custom field.
+     *
+     * @param key   the name of the custom field with or without "custom_" prefix
+     * @param value the value of the custom field
+     * @return result instance for chaining
+     */
     public Result addCustomField(String key, Object value) {
         if(customFields == null) {
             customFields = new HashMap<>();
         }
         customFields.put(key.replaceFirst(CUSTOM_FIELD_KEY_PREFIX, ""), value);
         return this;
+    }
+
+    /**
+     * Support for forward compatibility and extracting custom fields.
+     *
+     * @param key the name of the unknown field
+     * @param value the value of the unkown field
+     */
+    @JsonAnySetter
+    private void addUnknownField(String key, Object value) {
+        if (key.startsWith(CUSTOM_FIELD_KEY_PREFIX)) {
+            addCustomField(key, value);
+        }
     }
 
     /**
