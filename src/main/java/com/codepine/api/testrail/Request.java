@@ -129,6 +129,9 @@ public abstract class Request<T> {
                     try (OutputStream outputStream = new BufferedOutputStream(con.getOutputStream())) {
                         JSON.writerWithView(this.getClass()).writeValue(outputStream, content);
                     }
+                } else {
+                    con.setFixedLengthStreamingMode(0);
+                    con.setDoOutput(true);
                 }
             }
             log.debug("Sending " + method + " request to URL : " + url);
