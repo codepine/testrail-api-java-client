@@ -114,7 +114,6 @@ public abstract class Request<T> {
             String url = getUrl();
             HttpURLConnection con = (HttpURLConnection) urlConnectionFactory.getUrlConnection(url);
             con.setRequestMethod(method.name());
-            con.setFixedLengthStreamingMode(0);
             con.setDoOutput(true);
             if (config.getApplicationName().isPresent()) {
                 con.setRequestProperty("User-Agent", config.getApplicationName().get());
@@ -131,6 +130,8 @@ public abstract class Request<T> {
                     try (OutputStream outputStream = new BufferedOutputStream(con.getOutputStream())) {
                         JSON.writerWithView(this.getClass()).writeValue(outputStream, content);
                     }
+                } else {
+                    con.setFixedLengthStreamingMode(0);
                 }
             }
             log.debug("Sending " + method + " request to URL : " + url);
