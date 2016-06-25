@@ -124,11 +124,10 @@ public abstract class Request<T> {
             con.setRequestProperty("Authorization", basicAuth);
             if (method == Method.POST) {
                 Object content = getContent();
-                if (content != null) {
-                    con.setDoOutput(true);
-                    try (OutputStream outputStream = new BufferedOutputStream(con.getOutputStream())) {
-                        JSON.writerWithView(this.getClass()).writeValue(outputStream, content);
-                    }
+                con.setFixedLengthStreamingMode(0);
+                con.setDoOutput(true);
+                try (OutputStream outputStream = new BufferedOutputStream(con.getOutputStream())) {
+                    JSON.writerWithView(this.getClass()).writeValue(outputStream, content);
                 }
             }
             log.debug("Sending " + method + " request to URL : " + url);
