@@ -1,7 +1,13 @@
 # Change Log
 
-## [v1.0.1](https://github.com/codepine/testrail-api-java-client/tree/v1.0.1) (2016-02-27)
+## [v1.0.2](https://github.com/codepine/testrail-api-java-client/tree/v1.0.2) (2016-12-17)
+[Full Changelog](https://github.com/codepine/testrail-api-java-client/compare/v1.0.1...v1.0.2)
 
+**Closed issues:**
+
+- 411  [\#11](https://github.com/codepine/testrail-api-java-client/issues/11)
+
+## [v1.0.1](https://github.com/codepine/testrail-api-java-client/tree/v1.0.1) (2016-02-27)
 [Full Changelog](https://github.com/codepine/testrail-api-java-client/compare/v1.0.0...v1.0.1)
 
 **Closed issues:**
