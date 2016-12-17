@@ -123,12 +123,14 @@ public abstract class Request<T> {
                     + ":" + config.getPassword()).getBytes(Charset.forName("UTF-8")));
             con.setRequestProperty("Authorization", basicAuth);
             if (method == Method.POST) {
+                con.setDoOutput(true);
                 Object content = getContent();
                 if (content != null) {
-                    con.setDoOutput(true);
                     try (OutputStream outputStream = new BufferedOutputStream(con.getOutputStream())) {
                         JSON.writerWithView(this.getClass()).writeValue(outputStream, content);
                     }
+                } else {
+                    con.setFixedLengthStreamingMode(0);
                 }
             }
             log.debug("Sending " + method + " request to URL : " + url);

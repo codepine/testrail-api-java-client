@@ -63,6 +63,8 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Matchers.any;
+import static org.mockito.Matchers.eq;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 /**
@@ -212,6 +214,18 @@ public class RequestTest {
     }
 
     @Test
+    public void W_deleteModel_T_verifyZeroContentLength() throws IOException {
+        // set up
+        when(mockConnection.getResponseCode()).thenReturn(200);
+
+        // WHEN
+        models.delete(1).execute();
+
+        // THEN -- verify content length set to 0
+        verify(mockConnection).setFixedLengthStreamingMode(eq(0));
+    }
+
+    @Test
     public void W_listWithSupplementForDeserialization_T_verifyModelHasBeenInjectedWithSupplement() throws IOException {
         // set up
         when(mockConnection.getResponseCode()).thenReturn(200);
@@ -287,6 +301,12 @@ public class RequestTest {
             return update;
         }
 
+        public Delete delete(int id) {
+            final Delete delete = new Delete(id);
+            delete.setUrlConnectionFactory(urlConnectionFactory);
+            return delete;
+        }
+
         public static class Get extends Request<Model> {
 
             Get() {
@@ -358,6 +378,13 @@ public class RequestTest {
             @Override
             protected Object getContent() {
                 return model;
+            }
+        }
+
+        public static class Delete extends Request<Void> {
+
+            Delete(final int id) {
+                super(config, Method.POST, "delete_model/" + id, Void.class);
             }
         }
     }
