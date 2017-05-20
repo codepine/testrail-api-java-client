@@ -3,7 +3,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>com.codepine.api</groupId>
     <artifactId>testrail-api-java-client</artifactId>
-    <version>1.0.3-SNAPSHOT</version>
+    <version>1.1.0-SNAPSHOT</version>
     <packaging>jar</packaging>
 
     <name>TestRail API Java Client</name>
@@ -46,7 +46,7 @@
         <jdk.version>1.7</jdk.version>
         <lombok.version>1.16.2</lombok.version>
         <jackson.version>2.3.1</jackson.version>
-        <guava.version>16.0.1</guava.version>
+        <guava.version>21.0</guava.version>
         <log4j.version>1.2.17</log4j.version>
         <junit.version>4.11</junit.version>
         <mockito.version>1.9.5</mockito.version>

@@ -37,7 +37,7 @@ import com.fasterxml.jackson.databind.SerializerProvider;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.fasterxml.jackson.databind.ser.std.StdKeySerializer;
-import com.google.common.base.Objects;
+import com.google.common.base.MoreObjects;
 import com.google.common.base.Preconditions;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -119,7 +119,7 @@ public class Result {
     @JsonAnyGetter
     @JsonSerialize(keyUsing = CustomFieldSerializer.class)
     public Map<String, Object> getCustomFields() {
-        return Objects.firstNonNull(customFields, Collections.<String, Object>emptyMap());
+        return MoreObjects.firstNonNull(customFields, Collections.<String, Object>emptyMap());
     }
 
     /**

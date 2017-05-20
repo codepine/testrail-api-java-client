@@ -34,7 +34,7 @@ import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.databind.SerializerProvider;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.fasterxml.jackson.databind.ser.std.StdKeySerializer;
-import com.google.common.base.Objects;
+import com.google.common.base.MoreObjects;
 import lombok.Data;
 
 import java.io.IOException;
@@ -95,7 +95,7 @@ public class Case {
     @JsonAnyGetter
     @JsonSerialize(keyUsing = CustomFieldSerializer.class)
     public Map<String, Object> getCustomFields() {
-        return Objects.firstNonNull(customFields, Collections.<String, Object>emptyMap());
+        return MoreObjects.firstNonNull(customFields, Collections.<String, Object>emptyMap());
     }
 
     /**

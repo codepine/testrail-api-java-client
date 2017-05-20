@@ -25,7 +25,7 @@
 package com.codepine.api.testrail.model;
 
 import com.fasterxml.jackson.annotation.JsonAnySetter;
-import com.google.common.base.Objects;
+import com.google.common.base.MoreObjects;
 import lombok.Data;
 
 import java.util.Collections;
@@ -67,7 +67,7 @@ public class Test {
     private Map<String, Object> customFields;
 
     public Map<String, Object> getCustomFields() {
-        return Objects.firstNonNull(customFields, Collections.<String, Object>emptyMap());
+        return MoreObjects.firstNonNull(customFields, Collections.<String, Object>emptyMap());
     }
 
     /**
