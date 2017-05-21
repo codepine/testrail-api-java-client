@@ -114,6 +114,7 @@ public abstract class Request<T> {
             String url = getUrl();
             HttpURLConnection con = (HttpURLConnection) urlConnectionFactory.getUrlConnection(url);
             con.setRequestMethod(method.name());
+            con.setDoOutput(true);
             if (config.getApplicationName().isPresent()) {
                 con.setRequestProperty("User-Agent", config.getApplicationName().get());
             }
