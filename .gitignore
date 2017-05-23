@@ -1,0 +1,9 @@
+# Java Files
+target/
+
+# OS Files
+.DS_Store
+
+# IDE Files
+*.iml
+.idea/
