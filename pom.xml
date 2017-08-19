@@ -3,7 +3,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>com.codepine.api</groupId>
     <artifactId>testrail-api-java-client</artifactId>
-    <version>2.0.0-SNAPSHOT</version>
+    <version>2.0.0</version>
     <packaging>jar</packaging>
 
     <name>TestRail API Java Client</name>
@@ -22,7 +22,7 @@
         <url>scm:git:git@github.com:codepine/testrail-api-java-client.git</url>
         <connection>scm:git:git@github.com:codepine/testrail-api-java-client.git</connection>
         <developerConnection>scm:git:git@github.com:codepine/testrail-api-java-client.git</developerConnection>
-        <tag>HEAD</tag>
+        <tag>v2.0.0</tag>
     </scm>
 
     <developers>
