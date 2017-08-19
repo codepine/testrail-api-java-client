@@ -1,5 +1,19 @@
 # Change Log
 
+## [v2.0.0](https://github.com/codepine/testrail-api-java-client/tree/v2.0.0) (2017-08-19)
+
+[Full Changelog](https://github.com/codepine/testrail-api-java-client/compare/v1.0.2...v2.0.0)
+
+**Closed issues:**
+
+- Upgrade to JDK8 [\#23](https://github.com/codepine/testrail-api-java-client/issues/23)
+- Upgrade Guava version from 16.x to 21.x ([apolaskey](https://github.com/apolaskey))
+    * [\#21](https://github.com/codepine/testrail-api-java-client/issues/21)
+    * [\#20](https://github.com/codepine/testrail-api-java-client/issues/20)
+    * [\#18](https://github.com/codepine/testrail-api-java-client/issues/18)
+    * [\#14](https://github.com/codepine/testrail-api-java-client/issues/14)
+- Add section description [\#16](https://github.com/codepine/testrail-api-java-client/pull/16) ([sofiaguyang](https://github.com/sofiaguyang))
+
 ## [v1.0.2](https://github.com/codepine/testrail-api-java-client/tree/v1.0.2) (2016-12-17)
 [Full Changelog](https://github.com/codepine/testrail-api-java-client/compare/v1.0.1...v1.0.2)
 
