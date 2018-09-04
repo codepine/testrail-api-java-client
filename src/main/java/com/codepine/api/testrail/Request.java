@@ -24,6 +24,8 @@
 
 package com.codepine.api.testrail;
 
+import static com.fasterxml.jackson.databind.DeserializationFeature.ACCEPT_SINGLE_VALUE_AS_ARRAY;
+
 import com.codepine.api.testrail.internal.CaseModule;
 import com.codepine.api.testrail.internal.FieldModule;
 import com.codepine.api.testrail.internal.PlanModule;
@@ -68,6 +70,7 @@ public abstract class Request<T> {
     private static final ObjectMapper JSON = new ObjectMapper()
             .setPropertyNamingStrategy(PropertyNamingStrategy.CAMEL_CASE_TO_LOWER_CASE_WITH_UNDERSCORES)
             .configure(MapperFeature.DEFAULT_VIEW_INCLUSION, false)
+            .configure(ACCEPT_SINGLE_VALUE_AS_ARRAY, true)
             .setSerializationInclusion(JsonInclude.Include.NON_NULL)
             .disable(SerializationFeature.FAIL_ON_EMPTY_BEANS)
             .disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES)
