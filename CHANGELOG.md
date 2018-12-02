@@ -1,5 +1,14 @@
 # Change Log
 
+## [v2.0.1](https://github.com/codepine/testrail-api-java-client/tree/v2.0.1) (2018-12-02)
+
+[Full Changelog](https://github.com/codepine/testrail-api-java-client/compare/v2.0.0...v2.0.1)
+
+**Closed issues:**
+
+- Unable to delete Entry from testplan using EntryId [\#29](https://github.com/codepine/testrail-api-java-client/issues/29)
+- Cannot deserialize instance of java.util.ArrayList out of VALUE_STRING token for "config" property [\#15](https://github.com/codepine/testrail-api-java-client/issues/15)
+
 ## [v2.0.0](https://github.com/codepine/testrail-api-java-client/tree/v2.0.0) (2017-08-19)
 
 [Full Changelog](https://github.com/codepine/testrail-api-java-client/compare/v1.0.2...v2.0.0)
