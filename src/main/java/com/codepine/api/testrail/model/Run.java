@@ -25,9 +25,11 @@
 package com.codepine.api.testrail.model;
 
 import com.codepine.api.testrail.TestRail;
+import com.codepine.api.testrail.internal.CsvToListDeserializer;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonView;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import lombok.Data;
 import lombok.Getter;
 
@@ -79,6 +81,7 @@ public class Run {
 
     private Date completedOn;
 
+    @JsonDeserialize(using = CsvToListDeserializer.class)
     private List<String> config;
 
     @JsonView({TestRail.Plans.Add.class, TestRail.Plans.AddEntry.class})
