@@ -109,6 +109,9 @@ public class Plan {
         private Integer suiteId;
 
         @JsonView({TestRail.Plans.Add.class, TestRail.Plans.AddEntry.class, TestRail.Plans.UpdateEntry.class})
+        private String description;
+        
+        @JsonView({TestRail.Plans.Add.class, TestRail.Plans.AddEntry.class, TestRail.Plans.UpdateEntry.class})
         private Integer assignedtoId;
 
         @JsonView({TestRail.Plans.Add.class, TestRail.Plans.AddEntry.class, TestRail.Plans.UpdateEntry.class})
