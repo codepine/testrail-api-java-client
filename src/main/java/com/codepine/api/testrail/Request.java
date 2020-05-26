@@ -44,7 +44,6 @@ import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j;
 
-import javax.xml.bind.DatatypeConverter;
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
 import java.io.IOException;
@@ -55,6 +54,7 @@ import java.lang.reflect.Type;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.nio.charset.Charset;
+import java.util.Base64;
 
 /**
  * TestRail request.
@@ -118,9 +118,9 @@ public abstract class Request<T> {
                 con.setRequestProperty("User-Agent", config.getApplicationName().get());
             }
             con.setRequestProperty("Content-Type", "application/json");
-            String basicAuth = "Basic "
-                    + DatatypeConverter.printBase64Binary((config.getUsername()
-                    + ":" + config.getPassword()).getBytes(Charset.forName("UTF-8")));
+            String sourceString = config.getUsername() + ":" + config.getPassword();
+            String basicAuth = "Basic " +
+                Base64.getEncoder().encodeToString(sourceString.getBytes(Charset.forName("UTF-8")));
             con.setRequestProperty("Authorization", basicAuth);
             if (method == Method.POST) {
                 con.setDoOutput(true);
