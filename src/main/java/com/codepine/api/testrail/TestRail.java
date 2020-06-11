@@ -34,6 +34,7 @@ import com.codepine.api.testrail.model.Milestone;
 import com.codepine.api.testrail.model.Plan;
 import com.codepine.api.testrail.model.Priority;
 import com.codepine.api.testrail.model.Project;
+import com.codepine.api.testrail.model.ReportLinks;
 import com.codepine.api.testrail.model.Result;
 import com.codepine.api.testrail.model.ResultField;
 import com.codepine.api.testrail.model.Run;
@@ -1449,7 +1450,6 @@ public class TestRail {
 
     }
 
-
     /**
      * Request factories for "Result Fields".
      */
@@ -2070,5 +2070,53 @@ public class TestRail {
             }
         }
 
+    }
+
+    /**
+     * Request factories for "Report".
+     */
+    @NoArgsConstructor
+    public class Report {
+
+        /**
+         * Returns an existing report links.
+         *
+         * @param reportId the ID of the report
+         * @return the request
+         * @throws java.lang.IllegalArgumentException if reportId is not positive
+         */
+        public Get get(final int reportId) {
+            checkArgument(reportId > 0, "reportId should be positive");
+            return new Get(reportId);
+        }
+
+        /**
+         * Returns a list of reports for a project.
+         *
+         * @param projectId the ID of the project to get the reports for
+         * @return the request
+         * @throws java.lang.IllegalArgumentException if projectId is not positive
+         */
+        public List list(final int projectId) {
+            checkArgument(projectId > 0, "projectId should be positive");
+            return new List(projectId);
+        }
+
+        public class Get extends Request<ReportLinks> {
+            private static final String REST_PATH = "run_report/";
+
+            private Get(int reportId) {
+                super(config, Method.GET, REST_PATH + reportId, ReportLinks.class);
+            }
+        }
+
+        public class List extends Request<java.util.List<com.codepine.api.testrail.model.Report>> {
+            private static final String REST_PATH = "get_reports/";
+
+            private List(int projectId) {
+                super(config, Method.GET, REST_PATH + projectId, new TypeReference<java.util.List<com.codepine.api.testrail.model.Report>>() {
+                });
+            }
+        }
     }
 }
