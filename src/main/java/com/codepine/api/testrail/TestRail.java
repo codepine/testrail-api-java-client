@@ -571,6 +571,12 @@ public class TestRail {
             @JsonSerialize(using = ListToCsvSerializer.class)
             private java.util.List<Integer> updatedBy;
 
+            @JsonView(List.class)
+            private Integer templateId;
+
+            @JsonView(List.class)
+            private String refsFilter;
+
             private List(int projectId, java.util.List<CaseField> caseFields) {
                 super(config, Method.GET, String.format(REST_PATH, projectId, ""), new TypeReference<java.util.List<Case>>() {
                 });
@@ -1595,6 +1601,9 @@ public class TestRail {
             @JsonView(List.class)
             @JsonSerialize(using = ListToCsvSerializer.class)
             private java.util.List<Integer> suiteId;
+
+            @JsonView(List.class)
+            private String refsFilter;
 
             private List(int projectId) {
                 super(config, Method.GET, REST_PATH + projectId, new TypeReference<java.util.List<Run>>() {
