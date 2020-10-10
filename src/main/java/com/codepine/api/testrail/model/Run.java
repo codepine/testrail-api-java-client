@@ -111,4 +111,7 @@ public class Run {
 
     private int customStatus7Count;
 
+
+    @JsonView({TestRail.Runs.Add.class, TestRail.Runs.Update.class, TestRail.Plans.Add.class, TestRail.Plans.AddEntry.class})
+    private String refs;
 }

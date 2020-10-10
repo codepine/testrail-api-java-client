@@ -89,6 +89,9 @@ public class Case {
     private int suiteId;
 
     @JsonView({TestRail.Cases.Add.class, TestRail.Cases.Update.class})
+    private Integer templateId;
+
+    @JsonView({TestRail.Cases.Add.class, TestRail.Cases.Update.class})
     @JsonIgnore
     private Map<String, Object> customFields;
 
