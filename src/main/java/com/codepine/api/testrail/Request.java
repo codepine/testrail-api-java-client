@@ -44,7 +44,6 @@ import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j;
 
-import javax.xml.bind.DatatypeConverter;
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
 import java.io.IOException;
@@ -54,7 +53,10 @@ import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
-import java.nio.charset.Charset;
+import java.util.Base64;
+
+import static com.codepine.api.testrail.Request.Method.POST;
+import static com.codepine.api.testrail.internal.FileHelper.createFileFromIStream;
 
 /**
  * TestRail request.
@@ -117,17 +119,15 @@ public abstract class Request<T> {
             if (config.getApplicationName().isPresent()) {
                 con.setRequestProperty("User-Agent", config.getApplicationName().get());
             }
-            con.setRequestProperty("Content-Type", "application/json");
-            String basicAuth = "Basic "
-                    + DatatypeConverter.printBase64Binary((config.getUsername()
-                    + ":" + config.getPassword()).getBytes(Charset.forName("UTF-8")));
-            con.setRequestProperty("Authorization", basicAuth);
-            if (method == Method.POST) {
+            con.addRequestProperty("Content-Type", getContentType());
+            String auth = getAuthorization(config.getUsername(), config.getPassword());
+            con.addRequestProperty("Authorization", "Basic " + auth);
+            if (method == POST) {
                 con.setDoOutput(true);
                 Object content = getContent();
                 if (content != null) {
-                    try (OutputStream outputStream = new BufferedOutputStream(con.getOutputStream())) {
-                        JSON.writerWithView(this.getClass()).writeValue(outputStream, content);
+                    try (OutputStream outputStream = con.getOutputStream()) {
+                        write(content, outputStream);
                     }
                 } else {
                     con.setFixedLengthStreamingMode(0);
@@ -158,6 +158,11 @@ public abstract class Request<T> {
                 if (responseClass != null) {
                     if (responseClass == Void.class) {
                         return null;
+                    }
+                    if (responseClass == String.class) {
+                        String filePath = (String) getContent();
+                        createFileFromIStream(responseStream, filePath);
+                        return (T) filePath;
                     }
                     if (supplementForDeserialization != null) {
                         return JSON.reader(responseClass).with(new InjectableValues.Std().addValue(responseClass.toString(), supplementForDeserialization)).readValue(responseStream);
@@ -204,6 +209,18 @@ public abstract class Request<T> {
     }
 
     /**
+     * Override this method to body to be send with {@code Method#POST} requests.
+     *
+     * @param content         content to be send with {@code Method#POST}
+     * @param conOutputStream the HttpURLConnection output stream
+     */
+    void write(final Object content, final OutputStream conOutputStream) throws IOException {
+        try (OutputStream outputStream = new BufferedOutputStream(conOutputStream)) {
+            JSON.writerWithView(this.getClass()).writeValue(outputStream, content);
+        }
+    }
+
+    /**
      * Override this method to provide content to be send with {@code Method#POST} requests.
      *
      * @return content
@@ -231,10 +248,29 @@ public abstract class Request<T> {
     }
 
     /**
+     * Override this method to change Content-Type to be send with {@code Method#POST} requests headers.
+     *
+     * @return content
+     */
+    String getContentType() {
+        return "application/json";
+    }
+
+    /**
      * Allowed HTTP methods.
      */
-    static enum Method {
+    enum Method {
         GET, POST;
+    }
+
+    private static String getAuthorization(String user, String password) {
+        try {
+            return new String(Base64.getEncoder().encode((user + ":" + password).getBytes()));
+        } catch (IllegalArgumentException e) {
+            // Not thrown
+        }
+
+        return "";
     }
 
 }

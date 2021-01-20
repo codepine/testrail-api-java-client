@@ -26,6 +26,8 @@ package com.codepine.api.testrail;
 
 import com.codepine.api.testrail.internal.BooleanToIntSerializer;
 import com.codepine.api.testrail.internal.ListToCsvSerializer;
+import com.codepine.api.testrail.model.Attachment;
+import com.codepine.api.testrail.model.AttachmentId;
 import com.codepine.api.testrail.model.Case;
 import com.codepine.api.testrail.model.CaseField;
 import com.codepine.api.testrail.model.CaseType;
@@ -53,9 +55,16 @@ import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import lombok.experimental.Accessors;
 
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.IOException;
+import java.io.OutputStream;
+import java.io.OutputStreamWriter;
 import java.util.Date;
 
+import static com.codepine.api.testrail.internal.FileHelper.writeFileInOStream;
 import static com.google.common.base.Preconditions.checkArgument;
+import static java.util.Objects.nonNull;
 
 /**
  * Client for Test Rail API. Configure and use it to create requests for the API.
@@ -224,6 +233,15 @@ public class TestRail {
      */
     public Results results() {
         return new Results();
+    }
+
+    /**
+     * An accessor for creating attachments for "Attachments".
+     *
+     * @return a request factory
+     */
+    public Attachments attachments() {
+        return new Attachments();
     }
 
     /**
@@ -2068,6 +2086,167 @@ public class TestRail {
                 super(config, Method.GET, REST_PATH, new TypeReference<java.util.List<User>>() {
                 });
             }
+        }
+
+    }
+
+    /**
+     * Request factories for "Attachments".
+     */
+    @NoArgsConstructor
+    public class Attachments {
+
+        /**
+         * Adds an attachment inside result.
+         *
+         * @param resultId the ID of the result where to add attachment
+         * @param filePath the path of the file
+         * @return the request
+         * @throws java.lang.IllegalArgumentException if resultId is not positive or file path is empty or null
+         * @throws java.lang.NullPointerException     if any other argument is null
+         */
+        public Add add(final int resultId, String filePath) {
+            checkArgument(resultId > 0, "resultId should be positive");
+            checkArgument(!filePath.isEmpty() && nonNull(filePath), "specify filePath");
+            return new Attachments.Add(resultId, filePath);
+        }
+
+        /**
+         * Returns a list of attachments for a case id.
+         *
+         * @param caseId the ID of the case to get the attachments for
+         * @return the request
+         * @throws java.lang.IllegalArgumentException if caseId is not positive
+         */
+        public Attachments.ListForCase listForCase(final int caseId) {
+            checkArgument(caseId > 0, "caseId should be positive");
+            return new Attachments.ListForCase(caseId);
+        }
+
+        /**
+         * Returns a list of attachments for a test id.
+         *
+         * @param testId the ID of the case to get the attachments for
+         * @return the request
+         * @throws java.lang.IllegalArgumentException if testId is not positive
+         */
+        public Attachments.ListForTest listForTest(final int testId) {
+            checkArgument(testId > 0, "testId should be positive");
+            return new Attachments.ListForTest(testId);
+        }
+
+        /**
+         * Returns attachment path where it is put.
+         *
+         * @param attachmentId the ID of the attachment
+         * @param filePath the path of the file where attachment will be put
+         * @return the request
+         * @throws java.lang.IllegalArgumentException if attachmentId is not positive or file path is empty or null
+         */
+        public Attachments.Get get(final int attachmentId, String filePath) {
+            checkArgument(attachmentId > 0, "attachmentId should be positive");
+            checkArgument(!filePath.isEmpty() && nonNull(filePath), "specify filePath");
+            return new Attachments.Get(attachmentId, filePath);
+        }
+
+        /**
+         * Deletes an existing attachment.
+         *
+         * @param attachmentId the ID of the attachment to be deleted
+         * @return the request
+         * @throws java.lang.IllegalArgumentException if attachmentId is not positive
+         */
+        public Attachments.Delete delete(final int attachmentId) {
+            checkArgument(attachmentId > 0, "attachmentId should be positive");
+            return new Attachments.Delete(attachmentId);
+        }
+
+        public class Add extends Request<AttachmentId> {
+            private static final String REST_PATH = "add_attachment_to_result/";
+
+            private final String boundary = "TestRailAPIAttachmentBoundary";
+
+            private File uploadFile;
+
+            private Add(int resultId, String filePath) {
+                super(config, Method.POST, REST_PATH + resultId, AttachmentId.class);
+                this.uploadFile = new File(filePath);
+            }
+
+            @Override
+            void write(final Object content, final OutputStream oStream) throws IOException {
+                File file = (File) content;
+
+                try (BufferedWriter bodyWriter = new BufferedWriter(new OutputStreamWriter(oStream))) {
+                    bodyWriter.write("\n\n--" + boundary + "\r\n" +
+                            "Content-Disposition: form-data; name=\"attachment\"; filename=\"" + file.getName()
+                            + "\"" + "\r\n\r\n");
+                    bodyWriter.flush();
+
+                    writeFileInOStream(oStream, file);
+                    bodyWriter.flush();
+
+                    bodyWriter.write("\r\n--" + boundary + "--\r\n");
+                    bodyWriter.flush();
+                }
+            }
+
+            @Override
+            Object getContent() {
+                return uploadFile;
+            }
+
+            @Override
+            String getContentType() {
+                return "multipart/form-data; boundary=" + boundary;
+            }
+        }
+
+        @Getter
+        @Setter
+        public class ListForCase extends Request<java.util.List<Attachment>> {
+            private static final String REST_PATH = "get_attachments_for_case/";
+
+            private ListForCase(int caseId) {
+                super(config, Method.GET, REST_PATH + caseId, new TypeReference<java.util.List<Attachment>>() {
+                });
+            }
+        }
+
+        @Getter
+        @Setter
+        public class ListForTest extends Request<java.util.List<Attachment>> {
+            private static final String REST_PATH = "get_attachments_for_test/";
+
+            private ListForTest(int testId) {
+                super(config, Method.GET, REST_PATH + testId, new TypeReference<java.util.List<Attachment>>() {
+                });
+            }
+        }
+
+        public class Get extends Request<String> {
+            private static final String REST_PATH = "get_attachment/";
+
+            private String filePath;
+
+            private Get(int attachmentId, String filePath) {
+                super(config, Method.GET, REST_PATH + attachmentId, String.class);
+                this.filePath = filePath;
+            }
+
+            @Override
+            Object getContent() {
+                return filePath;
+            }
+        }
+
+        public class Delete extends Request<Void> {
+            private static final String REST_PATH = "delete_attachment/";
+
+            private Delete(int attachmentId) {
+                super(config, Method.POST, REST_PATH + attachmentId, Void.class);
+            }
+
         }
 
     }

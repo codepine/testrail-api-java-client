@@ -44,16 +44,16 @@
     <properties>
         <!-- dependencies -->
         <jdk.version>1.8</jdk.version>
-        <lombok.version>1.16.2</lombok.version>
-        <jackson.version>2.3.1</jackson.version>
+        <lombok.version>1.18.0</lombok.version>
+        <jackson.version>2.10.3</jackson.version>
         <guava.version>21.0</guava.version>
         <log4j.version>1.2.17</log4j.version>
         <junit.version>4.11</junit.version>
         <mockito.version>1.9.5</mockito.version>
 
         <!-- plugins -->
-        <lombok.plugin.version>1.16.2.0</lombok.plugin.version>
-        <maven.compiler.plugin.version>3.1</maven.compiler.plugin.version>
+        <lombok.plugin.version>1.18.0.0</lombok.plugin.version>
+        <maven.compiler.plugin.version>3.8.1</maven.compiler.plugin.version>
         <maven.source.plugin.version>2.4</maven.source.plugin.version>
         <jacoco.plugin.version>0.7.3.201502191951</jacoco.plugin.version>
         <maven.javadoc.plugin.version>3.0.0-M1</maven.javadoc.plugin.version>
