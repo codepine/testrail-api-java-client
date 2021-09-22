@@ -24,42 +24,31 @@
 
 package com.codepine.api.testrail;
 
-import com.codepine.api.testrail.internal.CaseModule;
-import com.codepine.api.testrail.internal.FieldModule;
-import com.codepine.api.testrail.internal.PlanModule;
-import com.codepine.api.testrail.internal.QueryParameterString;
-import com.codepine.api.testrail.internal.ResultModule;
-import com.codepine.api.testrail.internal.UnixTimestampModule;
-import com.codepine.api.testrail.internal.UrlConnectionFactory;
+import com.codepine.api.testrail.internal.*;
+import com.codepine.api.testrail.model.Page;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.DeserializationFeature;
-import com.fasterxml.jackson.databind.InjectableValues;
-import com.fasterxml.jackson.databind.MapperFeature;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.PropertyNamingStrategy;
-import com.fasterxml.jackson.databind.SerializationFeature;
-import lombok.AccessLevel;
+import com.fasterxml.jackson.databind.*;
+import com.google.common.base.Charsets;
+import com.google.common.io.ByteStreams;
 import lombok.NonNull;
-import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j;
 
 import javax.xml.bind.DatatypeConverter;
-import java.io.BufferedInputStream;
-import java.io.BufferedOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
+import java.io.*;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.nio.charset.Charset;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * TestRail request.
  */
-@RequiredArgsConstructor(access = AccessLevel.PRIVATE)
 @Log4j
 public abstract class Request<T> {
 
@@ -78,10 +67,21 @@ public abstract class Request<T> {
     @NonNull
     private final Method method;
     @NonNull
-    private final String restPath;
+    private String restPath;
     private final Class<? extends T> responseClass;
     private final TypeReference<? extends T> responseType;
+    private final TypeReference<Page<T>> pageType;
     private UrlConnectionFactory urlConnectionFactory = DEFAULT_URL_CONNECTION_FACTORY;
+
+    Request(TestRailConfig config, Method method, String restPath, Class<? extends T> responseClass, TypeReference<? extends T>
+            responseType, TypeReference<Page<T>> pageType) {
+        this.config = config;
+        this.method = method;
+        this.restPath = restPath;
+        this.responseClass = responseClass;
+        this.responseType = responseType;
+        this.pageType = pageType;
+    }
 
     /**
      * @param config TestRail configuration
@@ -90,7 +90,7 @@ public abstract class Request<T> {
      * @param responseClass the type of the response entity
      */
     Request(TestRailConfig config, Method method, String restPath, @NonNull Class<? extends T> responseClass) {
-        this(config, method, restPath, responseClass, null);
+        this(config, method, restPath, responseClass, null, null);
     }
 
     /**
@@ -100,7 +100,48 @@ public abstract class Request<T> {
      * @param responseType the type of the response entity
      */
     Request(TestRailConfig config, Method method, String restPath, @NonNull TypeReference<? extends T> responseType) {
-        this(config, method, restPath, null, responseType);
+        this(config, method, restPath, null, responseType, null);
+    }
+
+    Request(TestRailConfig config, Method method, String restPath, @NonNull TypeReference<? extends T> responseType,
+            @NonNull TypeReference<Page<T>> pageType) {
+        this(config, method, restPath, null, responseType, pageType);
+    }
+
+    /**
+     * Get URL string for this request.
+     *
+     * @return the string URL
+     * @throws IOException if there is an error creating query parameter string
+     */
+    private String getUrl() throws IOException {
+        StringBuilder urlBuilder = new StringBuilder(config.getBaseApiUrl()).append(restPath);
+
+        String queryParamJson = JSON.writerWithView(getClass()).writeValueAsString(this);
+        String queryParamString = JSON.readValue(queryParamJson, QueryParameterString.class).toString();
+        if (!queryParamString.isEmpty()) {
+            urlBuilder.append("&").append(queryParamString);
+        }
+
+        return urlBuilder.toString();
+    }
+
+    /**
+     * Override this method to provide content to be send with {@code Method#POST} requests.
+     *
+     * @return content
+     */
+    Object getContent() {
+        return null;
+    }
+
+    /**
+     * Override this method to provide supplementary information to deserializer.
+     *
+     * @return any object acting as supplement for deserialization
+     */
+    Object getSupplementForDeserialization() {
+        return null;
     }
 
     /**
@@ -174,7 +215,30 @@ public abstract class Request<T> {
                         }
                         return JSON.reader(responseType).with(new InjectableValues.Std().addValue(supplementKey, supplementForDeserialization)).readValue(responseStream);
                     }
-                    return JSON.readValue(responseStream, responseType);
+                    String payload = new String(ByteStreams.toByteArray(responseStream), Charsets.UTF_8).replace("\"_links\":", "\"links\":");
+                    if (((ParameterizedType) responseType.getType()).getRawType().getTypeName().equals("java.util.List")
+                    && payload.contains("\"offset\":") && payload.contains("\"limit\":") && payload.contains("\"offset\":")) {
+                        Matcher matcher = Pattern.compile("get_([^\\/]+)").matcher(restPath);
+                        if (matcher.find())
+                            PageDeserializer.field = matcher.group(1);
+                        try {
+                            PageDeserializer.type = Class.forName(((ParameterizedType) responseType.getType()).getActualTypeArguments()[0].getTypeName());
+                        }
+                        catch(Exception e) {
+                            return ((T)new ArrayList());
+                        }
+                        Page<T> page = JSON.readValue(payload, pageType);
+                        if (page._links.next != null) {
+                            restPath = page._links.next;
+                            T concat = execute();
+                            T models = page.objects;
+                            ((List)models).addAll(((List)concat));
+                            return models;
+                        }
+                        else
+                            return page.objects;
+                    }
+                    return JSON.readValue(payload, responseType);
                 }
             }
 
@@ -183,42 +247,6 @@ public abstract class Request<T> {
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
-    }
-
-    /**
-     * Get URL string for this request.
-     *
-     * @return the string URL
-     * @throws IOException if there is an error creating query parameter string
-     */
-    private String getUrl() throws IOException {
-        StringBuilder urlBuilder = new StringBuilder(config.getBaseApiUrl()).append(restPath);
-
-        String queryParamJson = JSON.writerWithView(getClass()).writeValueAsString(this);
-        String queryParamString = JSON.readValue(queryParamJson, QueryParameterString.class).toString();
-        if (!queryParamString.isEmpty()) {
-            urlBuilder.append("&").append(queryParamString);
-        }
-
-        return urlBuilder.toString();
-    }
-
-    /**
-     * Override this method to provide content to be send with {@code Method#POST} requests.
-     *
-     * @return content
-     */
-    Object getContent() {
-        return null;
-    }
-
-    /**
-     * Override this method to provide supplementary information to deserializer.
-     *
-     * @return any object acting as supplement for deserialization
-     */
-    Object getSupplementForDeserialization() {
-        return null;
     }
 
     /**

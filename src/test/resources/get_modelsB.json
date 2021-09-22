@@ -1,0 +1,20 @@
+{
+  "offset": 0,
+  "limit": 250,
+  "size": 1,
+  "_links": {
+    "next": "get_models/3",
+    "prev": "get_models/1"
+  },
+  "models": [
+      {
+        "id": 4,
+        "name": "Test Model 4",
+        "show_announcement": false,
+        "is_completed": false,
+        "completed_on": 1426110846,
+        "suite_mode": 1
+      }
+  ]
+}
+
