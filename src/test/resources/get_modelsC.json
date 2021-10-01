@@ -4,7 +4,7 @@
   "size": 1,
   "_links": {
     "next": null,
-    "prev": "get_models/2"
+    "prev": "/api/v2/get_models/2"
   },
   "models": [
       {

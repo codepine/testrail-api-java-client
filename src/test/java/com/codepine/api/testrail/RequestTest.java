@@ -27,6 +27,7 @@ package com.codepine.api.testrail;
 import com.codepine.api.testrail.internal.ListToCsvSerializer;
 import com.codepine.api.testrail.internal.UrlConnectionFactory;
 import com.codepine.api.testrail.model.Page;
+import com.codepine.api.testrail.model.Case;
 import com.fasterxml.jackson.annotation.JacksonInject;
 import com.fasterxml.jackson.annotation.JsonView;
 import com.fasterxml.jackson.core.type.TypeReference;
@@ -51,14 +52,7 @@ import org.mockito.runners.MockitoJUnitRunner;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.net.HttpURLConnection;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
@@ -167,6 +161,27 @@ public class RequestTest {
         expectedModels.add(new Model().setId(4).setName("Test Model 4").setShowAnnouncement(false).setIsCompleted(false).setCompletedOn(new Date(1426110846000L)).setSuiteMode(1));
         expectedModels.add(new Model().setId(5).setName("Test Model 5").setShowAnnouncement(false).setIsCompleted(false).setCompletedOn(new Date(1426110846000L)).setSuiteMode(1));
         assertEquals(expectedModels, actualModels);
+    }
+
+    @Test
+    public void G_casesExists_W_getCasesWithFilter_T_verifyFilterQueryAndCases() throws IOException {
+        // GIVEN
+        when(mockConnection.getResponseCode()).thenReturn(200);
+        when(mockConnection.getInputStream()).thenReturn(this.getClass().getResourceAsStream("/get_cases.json"));
+
+        // WHEN
+        final List<Case> actualCases = models.listCases().setSectionId(1).setCreatedAfter(new Date(1424641170000L)).execute();
+
+        // THEN -- verify filter query
+        String expectedUrlWithFilterQuery = String.format("%s/index.php?/api/v2/get_cases/1", TEST_END_POINT);
+        Mockito.verify(mockUrlConnectionFactory).getUrlConnection(expectedUrlWithFilterQuery);
+
+        // THEN -- verify models returned
+        final List<Case> expectedCases = new ArrayList<>();
+        expectedCases.add(new Case().setId(1).setTitle("[PERF] Login"));
+        expectedCases.add(new Case().setId(2).setTitle("[PERF] Create institution"));
+        expectedCases.add(new Case().setId(3).setTitle("[PERF] Import election configuration"));
+        assertEquals(expectedCases, actualCases);
     }
 
     @Test
@@ -317,6 +332,12 @@ public class RequestTest {
             return list;
         }
 
+        public ListCases listCases() {
+            ListCases list = new ListCases();
+            list.setUrlConnectionFactory(urlConnectionFactory);
+            return list;
+        }
+
         public ListWithAltName listWithAltName() {
             ListWithAltName list = new ListWithAltName();
             list.setUrlConnectionFactory(urlConnectionFactory);
@@ -386,6 +407,26 @@ public class RequestTest {
             ListPaginated() {
                 super(config, Method.GET, "get_models/1", new TypeReference<java.util.List<Model>>() {
                 }, new TypeReference<Page<java.util.List<Model>>>(){});
+            }
+        }
+
+        @Getter
+        @Setter
+        public static class ListCases extends Request<java.util.List<Case>> {
+
+            @JsonView(List.class)
+            private Integer sectionId;
+
+            @JsonView(List.class)
+            private Date createdAfter;
+
+            @JsonView(List.class)
+            @JsonSerialize(using = ListToCsvSerializer.class)
+            private java.util.List<Integer> createdBy;
+
+            ListCases() {
+                super(config, Method.GET, "get_cases/1", new TypeReference<java.util.List<Case>>() {
+                }, new TypeReference<Page<java.util.List<Case>>>(){});
             }
         }
 

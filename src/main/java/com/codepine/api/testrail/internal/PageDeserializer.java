@@ -11,12 +11,14 @@ import com.fasterxml.jackson.databind.node.ArrayNode;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 public class PageDeserializer extends StdDeserializer<Page> {
 
     public static String field = "objects";
     public static Class type = Object.class;
+    public static Object supplement = Collections.emptyList();
 
     public PageDeserializer() {
         this(null);
@@ -47,7 +49,7 @@ public class PageDeserializer extends StdDeserializer<Page> {
             .registerModules(new CaseModule(), new FieldModule(), new PlanModule(), new ResultModule(), new UnixTimestampModule());
         for(int i = 0; i < objects.size(); i++) {
             JsonNode element = objects.get(i);
-            list.add(mapper.readValue(element.toString(), type));
+            list.add(mapper.reader(type).with(new InjectableValues.Std().addValue(type.toString(), supplement)).readValue(element.toString()));
         }
         Page page = new Page();
         page.limit = limit;

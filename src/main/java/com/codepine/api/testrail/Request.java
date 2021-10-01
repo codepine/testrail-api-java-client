@@ -68,6 +68,7 @@ public abstract class Request<T> {
     private final Method method;
     @NonNull
     private String restPath;
+    private String apiSegment;
     private final Class<? extends T> responseClass;
     private final TypeReference<? extends T> responseType;
     private final TypeReference<Page<T>> pageType;
@@ -77,10 +78,12 @@ public abstract class Request<T> {
             responseType, TypeReference<Page<T>> pageType) {
         this.config = config;
         this.method = method;
-        this.restPath = restPath;
+
         this.responseClass = responseClass;
         this.responseType = responseType;
         this.pageType = pageType;
+        this.apiSegment = config.getBaseApiUrl().split("\\?")[1];
+        this.restPath = restPath.replace(this.apiSegment, "");
     }
 
     /**
@@ -205,16 +208,6 @@ public abstract class Request<T> {
                     }
                     return JSON.readValue(responseStream, responseClass);
                 } else {
-                    if (supplementForDeserialization != null) {
-                        String supplementKey = responseType.getType().toString();
-                        if (responseType.getType() instanceof ParameterizedType) {
-                            Type[] actualTypes = ((ParameterizedType) responseType.getType()).getActualTypeArguments();
-                            if (actualTypes.length == 1 && actualTypes[0] instanceof Class<?>) {
-                                supplementKey = actualTypes[0].toString();
-                            }
-                        }
-                        return JSON.reader(responseType).with(new InjectableValues.Std().addValue(supplementKey, supplementForDeserialization)).readValue(responseStream);
-                    }
                     String payload = new String(ByteStreams.toByteArray(responseStream), Charsets.UTF_8).replace("\"_links\":", "\"links\":");
                     if (((ParameterizedType) responseType.getType()).getRawType().getTypeName().equals("java.util.List")
                     && payload.contains("\"offset\":") && payload.contains("\"limit\":") && payload.contains("\"offset\":")) {
@@ -227,9 +220,12 @@ public abstract class Request<T> {
                         catch(Exception e) {
                             return ((T)new ArrayList());
                         }
+                        if (supplementForDeserialization != null) {
+                            PageDeserializer.supplement = supplementForDeserialization;
+                        }
                         Page<T> page = JSON.readValue(payload, pageType);
                         if (page._links.next != null) {
-                            restPath = page._links.next;
+                            restPath = page._links.next.replace(this.apiSegment, "");
                             T concat = execute();
                             T models = page.objects;
                             ((List)models).addAll(((List)concat));
@@ -237,6 +233,16 @@ public abstract class Request<T> {
                         }
                         else
                             return page.objects;
+                    }
+                    else if (supplementForDeserialization != null) {
+                        String supplementKey = responseType.getType().toString();
+                        if (responseType.getType() instanceof ParameterizedType) {
+                            Type[] actualTypes = ((ParameterizedType) responseType.getType()).getActualTypeArguments();
+                            if (actualTypes.length == 1 && actualTypes[0] instanceof Class<?>) {
+                                supplementKey = actualTypes[0].toString();
+                            }
+                        }
+                        return JSON.reader(responseType).with(new InjectableValues.Std().addValue(supplementKey, supplementForDeserialization)).readValue(payload);
                     }
                     return JSON.readValue(payload, responseType);
                 }

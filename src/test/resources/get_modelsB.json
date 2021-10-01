@@ -3,8 +3,8 @@
   "limit": 250,
   "size": 1,
   "_links": {
-    "next": "get_models/3",
-    "prev": "get_models/1"
+    "next": "/api/v2/get_models/3",
+    "prev": "/api/v2/get_models/1"
   },
   "models": [
       {

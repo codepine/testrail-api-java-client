@@ -3,7 +3,7 @@
   "limit": 250,
   "size": 2,
   "_links": {
-    "next": "get_models/2",
+    "next": "/api/v2/get_models/2",
     "prev": null
   },
   "models": [
