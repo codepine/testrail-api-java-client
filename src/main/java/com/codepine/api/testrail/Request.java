@@ -211,7 +211,7 @@ public abstract class Request<T> {
                     String payload = new String(ByteStreams.toByteArray(responseStream), Charsets.UTF_8).replace("\"_links\":", "\"links\":");
                     if (((ParameterizedType) responseType.getType()).getRawType().getTypeName().equals("java.util.List")
                     && payload.contains("\"offset\":") && payload.contains("\"limit\":") && payload.contains("\"offset\":")) {
-                        Matcher matcher = Pattern.compile("get_([^\\/]+)").matcher(restPath);
+                        Matcher matcher = Pattern.compile("get_([^\\_/]+)").matcher(restPath);
                         if (matcher.find())
                             PageDeserializer.field = matcher.group(1);
                         try {
