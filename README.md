@@ -6,6 +6,7 @@ A Java client library for [TestRail API](http://docs.gurock.com/testrail-api2/st
 [![Maven Central](https://maven-badges.herokuapp.com/maven-central/com.codepine.api/testrail-api-java-client/badge.svg)](https://maven-badges.herokuapp.com/maven-central/com.codepine.api/testrail-api-java-client)
 
 Actual version is **2.0.4**
+
 ## Quick Start
 --------------
 
