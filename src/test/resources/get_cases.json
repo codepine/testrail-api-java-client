@@ -1,0 +1,23 @@
+{
+  "offset": 0,
+  "limit": 250,
+  "size": 131,
+  "_links": {
+    "next": null,
+    "prev": null
+  },
+  "cases": [
+    {
+      "id": 1,
+      "title": "[PERF] Login"
+    },
+    {
+      "id": 2,
+      "title": "[PERF] Create institution"
+    },
+    {
+      "id": 3,
+      "title": "[PERF] Import election configuration"
+    }
+  ]
+}

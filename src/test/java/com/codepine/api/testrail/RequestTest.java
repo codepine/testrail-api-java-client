@@ -26,6 +26,8 @@ package com.codepine.api.testrail;
 
 import com.codepine.api.testrail.internal.ListToCsvSerializer;
 import com.codepine.api.testrail.internal.UrlConnectionFactory;
+import com.codepine.api.testrail.model.Page;
+import com.codepine.api.testrail.model.Case;
 import com.fasterxml.jackson.annotation.JacksonInject;
 import com.fasterxml.jackson.annotation.JsonView;
 import com.fasterxml.jackson.core.type.TypeReference;
@@ -50,14 +52,7 @@ import org.mockito.runners.MockitoJUnitRunner;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.net.HttpURLConnection;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
@@ -81,8 +76,10 @@ public class RequestTest {
 
     @Rule
     public final ExpectedException expectedException = ExpectedException.none();
-    @Mock
-    private HttpURLConnection mockConnection;
+    @Mock private HttpURLConnection mockConnection;
+    @Mock private HttpURLConnection mockConnection1;
+    @Mock private HttpURLConnection mockConnection2;
+    @Mock private HttpURLConnection mockConnection3;
     @Mock
     private UrlConnectionFactory mockUrlConnectionFactory;
 
@@ -96,6 +93,9 @@ public class RequestTest {
     @Before
     public void setUp() throws IOException {
         when(mockUrlConnectionFactory.getUrlConnection(any(String.class))).thenReturn(mockConnection);
+        when(mockUrlConnectionFactory.getUrlConnection("https://test.end.point.com/index.php?/api/v2/get_models/1")).thenReturn(mockConnection1);
+        when(mockUrlConnectionFactory.getUrlConnection("https://test.end.point.com/index.php?/api/v2/get_models/2")).thenReturn(mockConnection2);
+        when(mockUrlConnectionFactory.getUrlConnection("https://test.end.point.com/index.php?/api/v2/get_models/3")).thenReturn(mockConnection3);
         models = new Models(mockUrlConnectionFactory);
     }
 
@@ -142,6 +142,49 @@ public class RequestTest {
     }
 
     @Test
+    public void G_modelsExists_W_getModelsWithFilter_T_verifyFilterQueryAndModels_paginated() throws IOException {
+        // GIVEN
+        when(mockConnection1.getResponseCode()).thenReturn(200);
+        when(mockConnection2.getResponseCode()).thenReturn(200);
+        when(mockConnection3.getResponseCode()).thenReturn(200);
+        when(mockConnection1.getInputStream()).thenReturn(this.getClass().getResourceAsStream("/get_modelsA.json"));
+        when(mockConnection2.getInputStream()).thenReturn(this.getClass().getResourceAsStream("/get_modelsB.json"));
+        when(mockConnection3.getInputStream()).thenReturn(this.getClass().getResourceAsStream("/get_modelsC.json"));
+
+        // WHEN
+        final List<Model> actualModels = models.listPaginated().setSectionId(1).setCreatedAfter(new Date(1424641170000L)).execute();
+
+        // THEN -- verify objects returned
+        final List<Model> expectedModels = new ArrayList<>();
+        expectedModels.add(new Model().setId(1).setName("Test Model 1").setShowAnnouncement(false).setIsCompleted(true).setCompletedOn(new Date(1424641170000L)).setSuiteMode(2));
+        expectedModels.add(new Model().setId(3).setName("Test Model 3").setShowAnnouncement(true).setIsCompleted(true).setCompletedOn(new Date(1424651896000L)).setSuiteMode(3));
+        expectedModels.add(new Model().setId(4).setName("Test Model 4").setShowAnnouncement(false).setIsCompleted(false).setCompletedOn(new Date(1426110846000L)).setSuiteMode(1));
+        expectedModels.add(new Model().setId(5).setName("Test Model 5").setShowAnnouncement(false).setIsCompleted(false).setCompletedOn(new Date(1426110846000L)).setSuiteMode(1));
+        assertEquals(expectedModels, actualModels);
+    }
+
+    @Test
+    public void G_casesExists_W_getCasesWithFilter_T_verifyFilterQueryAndCases() throws IOException {
+        // GIVEN
+        when(mockConnection.getResponseCode()).thenReturn(200);
+        when(mockConnection.getInputStream()).thenReturn(this.getClass().getResourceAsStream("/get_cases.json"));
+
+        // WHEN
+        final List<Case> actualCases = models.listCases().setSectionId(1).setCreatedAfter(new Date(1424641170000L)).execute();
+
+        // THEN -- verify filter query
+        String expectedUrlWithFilterQuery = String.format("%s/index.php?/api/v2/get_cases/1", TEST_END_POINT);
+        Mockito.verify(mockUrlConnectionFactory).getUrlConnection(expectedUrlWithFilterQuery);
+
+        // THEN -- verify models returned
+        final List<Case> expectedCases = new ArrayList<>();
+        expectedCases.add(new Case().setId(1).setTitle("[PERF] Login"));
+        expectedCases.add(new Case().setId(2).setTitle("[PERF] Create institution"));
+        expectedCases.add(new Case().setId(3).setTitle("[PERF] Import election configuration"));
+        assertEquals(expectedCases, actualCases);
+    }
+
+    @Test
     public void G_modelsExists_W_getModelsWithFilter_T_verifyFilterQueryAndModels() throws IOException {
         // GIVEN
         when(mockConnection.getResponseCode()).thenReturn(200);
@@ -151,7 +194,7 @@ public class RequestTest {
         final List<Model> actualModels = models.list().setSectionId(1).setCreatedAfter(new Date(1424641170000L)).execute();
 
         // THEN -- verify filter query
-        String expectedUrlWithFilterQuery = String.format("%s/index.php?/api/v2/get_models/1&section_id=1&created_after=1424641170", TEST_END_POINT);
+        String expectedUrlWithFilterQuery = String.format("%s/index.php?/api/v2/get_models/0&section_id=1&created_after=1424641170", TEST_END_POINT);
         Mockito.verify(mockUrlConnectionFactory).getUrlConnection(expectedUrlWithFilterQuery);
 
         // THEN -- verify models returned
@@ -283,6 +326,18 @@ public class RequestTest {
             return list;
         }
 
+        public ListPaginated listPaginated() {
+            ListPaginated list = new ListPaginated();
+            list.setUrlConnectionFactory(urlConnectionFactory);
+            return list;
+        }
+
+        public ListCases listCases() {
+            ListCases list = new ListCases();
+            list.setUrlConnectionFactory(urlConnectionFactory);
+            return list;
+        }
+
         public ListWithAltName listWithAltName() {
             ListWithAltName list = new ListWithAltName();
             list.setUrlConnectionFactory(urlConnectionFactory);
@@ -330,8 +385,48 @@ public class RequestTest {
             private java.util.List<Integer> createdBy;
 
             List() {
-                super(config, Method.GET, "get_models/1", new TypeReference<java.util.List<Model>>() {
+                super(config, Method.GET, "get_models/0", new TypeReference<java.util.List<Model>>() {
                 });
+            }
+        }
+
+        @Getter
+        @Setter
+        public static class ListPaginated extends Request<java.util.List<Model>> {
+
+            @JsonView(List.class)
+            private Integer sectionId;
+
+            @JsonView(List.class)
+            private Date createdAfter;
+
+            @JsonView(List.class)
+            @JsonSerialize(using = ListToCsvSerializer.class)
+            private java.util.List<Integer> createdBy;
+
+            ListPaginated() {
+                super(config, Method.GET, "get_models/1", new TypeReference<java.util.List<Model>>() {
+                }, new TypeReference<Page<java.util.List<Model>>>(){});
+            }
+        }
+
+        @Getter
+        @Setter
+        public static class ListCases extends Request<java.util.List<Case>> {
+
+            @JsonView(List.class)
+            private Integer sectionId;
+
+            @JsonView(List.class)
+            private Date createdAfter;
+
+            @JsonView(List.class)
+            @JsonSerialize(using = ListToCsvSerializer.class)
+            private java.util.List<Integer> createdBy;
+
+            ListCases() {
+                super(config, Method.GET, "get_cases/1", new TypeReference<java.util.List<Case>>() {
+                }, new TypeReference<Page<java.util.List<Case>>>(){});
             }
         }
 
@@ -341,7 +436,7 @@ public class RequestTest {
             private String supplementModelName;
 
             ListWithAltName() {
-                super(config, Method.GET, "get_models/1", new TypeReference<java.util.List<ModelWithAltName>>() {
+                super(config, Method.GET, "get_models/0", new TypeReference<java.util.List<ModelWithAltName>>() {
                 });
             }
 
