@@ -1,5 +1,14 @@
 # Change Log
 
+## [v2.0.2](https://github.com/codepine/testrail-api-java-client/tree/v2.0.2) (2021-10-07)
+
+[Full Changelog](https://github.com/codepine/testrail-api-java-client/compare/v2.0.1...v2.0.2)
+
+**Close issues:**
+
+- Fix for pagination [\#68](https://github.com/codepine/testrail-api-java-client/pull/68) ([maksimsarychau](https://github.com/maksimsarychau))
+- Add entry's description in plans. [\#42](https://github.com/codepine/testrail-api-java-client/pull/42) ([ChenChiaHung](https://github.com/ChenChiaHung))
+
 ## [v2.0.1](https://github.com/codepine/testrail-api-java-client/tree/v2.0.1) (2018-12-02)
 
 [Full Changelog](https://github.com/codepine/testrail-api-java-client/compare/v2.0.0...v2.0.1)
