@@ -1,0 +1,27 @@
+{
+  "offset": 0,
+  "limit": 250,
+  "size": 2,
+  "_links": {
+    "next": "/api/v2/get_models/2",
+    "prev": null
+  },
+  "models": [
+      {
+        "id": 1,
+        "name": "Test Model 1",
+        "show_announcement": false,
+        "is_completed": true,
+        "completed_on": 1424641170,
+        "suite_mode": 2
+      },
+      {
+        "id": 3,
+        "name": "Test Model 3",
+        "show_announcement": true,
+        "is_completed": true,
+        "completed_on": 1424651896,
+        "suite_mode": 3
+      }
+  ]
+}

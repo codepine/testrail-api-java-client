@@ -26,22 +26,7 @@ package com.codepine.api.testrail;
 
 import com.codepine.api.testrail.internal.BooleanToIntSerializer;
 import com.codepine.api.testrail.internal.ListToCsvSerializer;
-import com.codepine.api.testrail.model.Case;
-import com.codepine.api.testrail.model.CaseField;
-import com.codepine.api.testrail.model.CaseType;
-import com.codepine.api.testrail.model.Configuration;
-import com.codepine.api.testrail.model.Milestone;
-import com.codepine.api.testrail.model.Plan;
-import com.codepine.api.testrail.model.Priority;
-import com.codepine.api.testrail.model.Project;
-import com.codepine.api.testrail.model.Result;
-import com.codepine.api.testrail.model.ResultField;
-import com.codepine.api.testrail.model.Run;
-import com.codepine.api.testrail.model.Section;
-import com.codepine.api.testrail.model.Status;
-import com.codepine.api.testrail.model.Suite;
-import com.codepine.api.testrail.model.Test;
-import com.codepine.api.testrail.model.User;
+import com.codepine.api.testrail.model.*;
 import com.fasterxml.jackson.annotation.JsonView;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
@@ -54,6 +39,7 @@ import lombok.Setter;
 import lombok.experimental.Accessors;
 
 import java.util.Date;
+import java.util.List;
 
 import static com.google.common.base.Preconditions.checkArgument;
 
@@ -376,7 +362,7 @@ public class TestRail {
 
             private List() {
                 super(config, Method.GET, REST_PATH, new TypeReference<java.util.List<Project>>() {
-                });
+                }, new TypeReference<Page<java.util.List<Project>>>(){});
             }
         }
 
@@ -573,13 +559,13 @@ public class TestRail {
 
             private List(int projectId, java.util.List<CaseField> caseFields) {
                 super(config, Method.GET, String.format(REST_PATH, projectId, ""), new TypeReference<java.util.List<Case>>() {
-                });
+                }, new TypeReference<Page<java.util.List<Case>>>(){});
                 this.caseFields = caseFields;
             }
 
             private List(int projectId, int suiteId, java.util.List<CaseField> caseFields) {
                 super(config, Method.GET, String.format(REST_PATH, projectId, suiteId), new TypeReference<java.util.List<Case>>() {
-                });
+                }, new TypeReference<Page<java.util.List<Case>>>(){});
                 this.caseFields = caseFields;
             }
 
@@ -667,7 +653,7 @@ public class TestRail {
 
             private List() {
                 super(config, Method.GET, REST_PATH, new TypeReference<java.util.List<CaseField>>() {
-                });
+                }, new TypeReference<Page<java.util.List<CaseField>>>(){});
             }
         }
     }
@@ -692,7 +678,7 @@ public class TestRail {
 
             private List() {
                 super(config, Method.GET, REST_PATH, new TypeReference<java.util.List<CaseType>>() {
-                });
+                }, new TypeReference<Page<java.util.List<CaseType>>>(){});
             }
         }
 
@@ -721,7 +707,7 @@ public class TestRail {
 
             private List(int projectId) {
                 super(config, Method.GET, REST_PATH + projectId, new TypeReference<java.util.List<Configuration>>() {
-                });
+                }, new TypeReference<Page<java.util.List<Configuration>>>(){});
             }
 
         }
@@ -815,7 +801,7 @@ public class TestRail {
 
             private List(int projectId) {
                 super(config, Method.GET, REST_PATH + projectId, new TypeReference<java.util.List<Milestone>>() {
-                });
+                }, new TypeReference<Page<java.util.List<Milestone>>>(){});
             }
         }
 
@@ -881,7 +867,7 @@ public class TestRail {
 
             private List() {
                 super(config, Method.GET, REST_PATH, new TypeReference<java.util.List<Priority>>() {
-                });
+                }, new TypeReference<Page<java.util.List<Priority>>>(){});
             }
         }
 
@@ -1047,7 +1033,7 @@ public class TestRail {
 
             private List(int projectId) {
                 super(config, Method.GET, REST_PATH + projectId, new TypeReference<java.util.List<Plan>>() {
-                });
+                }, new TypeReference<Page<java.util.List<Plan>>>(){});
             }
         }
 
@@ -1284,7 +1270,7 @@ public class TestRail {
 
             private List(int testId, java.util.List<ResultField> resultFields) {
                 super(config, Method.GET, REST_PATH + testId, new TypeReference<java.util.List<Result>>() {
-                });
+                }, new TypeReference<Page<java.util.List<Result>>>(){});
                 this.resultFields = resultFields;
             }
 
@@ -1317,7 +1303,7 @@ public class TestRail {
 
             private ListForRun(int runId, java.util.List<ResultField> resultFields) {
                 super(config, Method.GET, REST_PATH + runId, new TypeReference<java.util.List<Result>>() {
-                });
+                }, new TypeReference<Page<java.util.List<Result>>>(){});
                 this.resultFields = resultFields;
             }
 
@@ -1343,7 +1329,7 @@ public class TestRail {
 
             private ListForCase(int runId, int testCaseId, java.util.List<ResultField> resultFields) {
                 super(config, Method.GET, REST_PATH + runId + "/" + testCaseId, new TypeReference<java.util.List<Result>>() {
-                });
+                }, new TypeReference<Page<java.util.List<Result>>>(){});
                 this.resultFields = resultFields;
             }
 
@@ -1470,7 +1456,7 @@ public class TestRail {
 
             private List() {
                 super(config, Method.GET, REST_PATH, new TypeReference<java.util.List<ResultField>>() {
-                });
+                }, new TypeReference<Page<java.util.List<ResultField>>>(){});
             }
         }
     }
@@ -1598,7 +1584,7 @@ public class TestRail {
 
             private List(int projectId) {
                 super(config, Method.GET, REST_PATH + projectId, new TypeReference<java.util.List<Run>>() {
-                });
+                }, new TypeReference<Page<java.util.List<Run>>>(){});
             }
         }
 
@@ -1746,12 +1732,12 @@ public class TestRail {
 
             private List(int projectId) {
                 super(config, Method.GET, String.format(REST_PATH, projectId, ""), new TypeReference<java.util.List<Section>>() {
-                });
+                }, new TypeReference<Page<java.util.List<Section>>>(){});
             }
 
             private List(int projectId, int suiteId) {
                 super(config, Method.GET, String.format(REST_PATH, projectId, suiteId), new TypeReference<java.util.List<Section>>() {
-                });
+                }, new TypeReference<Page<java.util.List<Section>>>(){});
             }
         }
 
@@ -1816,7 +1802,7 @@ public class TestRail {
 
             private List() {
                 super(config, Method.GET, REST_PATH, new TypeReference<java.util.List<Status>>() {
-                });
+                }, new TypeReference<Page<java.util.List<Status>>>(){});
             }
         }
 
@@ -1902,7 +1888,7 @@ public class TestRail {
 
             private List(int projectId) {
                 super(config, Method.GET, REST_PATH + projectId, new TypeReference<java.util.List<Suite>>() {
-                });
+                }, new TypeReference<Page<java.util.List<Suite>>>(){});
             }
         }
 
@@ -1998,7 +1984,7 @@ public class TestRail {
 
             private List(int runId) {
                 super(config, Method.GET, REST_PATH + runId, new TypeReference<java.util.List<Test>>() {
-                });
+                }, new TypeReference<Page<java.util.List<Test>>>(){});
             }
         }
 
@@ -2066,7 +2052,7 @@ public class TestRail {
 
             private List() {
                 super(config, Method.GET, REST_PATH, new TypeReference<java.util.List<User>>() {
-                });
+                }, new TypeReference<Page<java.util.List<User>>>(){});
             }
         }
 
